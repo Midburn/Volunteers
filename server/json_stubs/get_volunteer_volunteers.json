@@ -1,0 +1,21 @@
+[{
+    "permission": 3,
+    "departmnet_id": 7,
+    "user_id": 17,
+    "first_name": "May",
+    "last_name": "Ben Arie",
+    "email": "may@gmail.com",
+    "phone_number": "0541234567",
+    "got_ticket": true,
+    "comment": "from Volunteers table"
+}, {
+    "permission": 3,
+    "departmnet_id": 7,
+    "user_id": 12,
+    "first_name": "Guy",
+    "last_name": "Ben Arie",
+    "email": "guy@gmail.com",
+    "phone_number": "0541234567",
+    "got_ticket": false,
+    "comment": "from Volunteers table"
+}]
