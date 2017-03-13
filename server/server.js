@@ -1,6 +1,12 @@
+require('babel-register')({
+  presets: ['react']
+});
 var express = require('express');
 var path = require('path');
 var fs = require('fs');
+var React = require('react');
+var ReactDOMServer = require('react-dom/server');
+var Component = require('../src/components/Component.jsx');
 
 var app = express();
 
@@ -10,9 +16,14 @@ var app = express();
 /////////////////////////////
 
 app.use('/static', express.static(path.join(__dirname, '../client/')))
+app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-   res.sendFile(path.join(__dirname, '../client/index.htm'));
+    var html = ReactDOMServer.renderToString(
+      React.createElement(Component)
+    )
+    res.send(html);
+   //res.sendFile(path.join(__dirname, '../client/index.htm'));
 })
 
 
