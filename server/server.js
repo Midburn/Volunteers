@@ -19,7 +19,7 @@ app.get('/', function (req, res) {
 
 /////////////////////////////
 // SPARK APIS
-////////////////////////////
+/////////////////////////////
 
 app.get('/volunteer/volunteers', function (req, res) {
 
@@ -29,8 +29,26 @@ app.get('/volunteer/volunteers', function (req, res) {
    got_ticket = req.query.got_ticket
 
    console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json')); 
+})
 
-   readJSONFile(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'), function(err, data) {
+app.get('/volunteer/departments', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json')); 
+})
+
+app.get('/volunteer/roles', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json')); 
+})
+
+
+/////////////////////////////
+// STUBS
+/////////////////////////////
+
+function retrunStub(filename, res) {
+   readJSONFile(filename, function(err, data) {
       if(err) {
          console.log(err)
          res.status(404).send('Not found');
@@ -39,7 +57,7 @@ app.get('/volunteer/volunteers', function (req, res) {
       }   
       res.end();
   }); 
-})
+}
 
 function readJSONFile(filename, callback) {
    fs.readFile(filename, function (err, data) {
