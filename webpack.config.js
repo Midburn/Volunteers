@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './src/components/VolunteerList.js',
+    entry: './src/components/VolunteerList/VolunteerList.js',
     output: {
         filename: 'bundle.js',
         path: 'public'

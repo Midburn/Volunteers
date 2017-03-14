@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var FilterComponent = require('./FilterComponent');
-var TableComponent = require('./TableComponent');
+var FilterComponent = require('../FilterComponent/FilterComponent');
+var TableComponent = require('../TableComponent/TableComponent');
 
 class VolunteerList extends React.Component {
     constructor(props) {
