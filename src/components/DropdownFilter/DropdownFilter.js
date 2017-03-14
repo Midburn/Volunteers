@@ -3,9 +3,9 @@ var React = require('react');
 module.exports = React.createClass({
     render: function() {
         return (
-            <div className="filter-component">
-                <label>Department</label>
-                <select>
+            <div className="filter-component form-group">
+                <label for="department">Department</label>
+                <select className="form-control" id="department">
                     <option value="all">All</option>
                     <option value="tech">Tech</option>
                     <option value="navadim">Navadim</option>

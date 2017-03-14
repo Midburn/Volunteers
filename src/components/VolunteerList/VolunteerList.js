@@ -20,8 +20,12 @@ class VolunteerList extends React.Component {
     render() {
         return (
             <div className="volunteer-list-component">
-                <FilterComponent />
-                <TableComponent />
+                <div className="row card">
+                    <FilterComponent />
+                </div>
+                <div className="row card">
+                    <TableComponent />
+                </div>
             </div>
         );
     }

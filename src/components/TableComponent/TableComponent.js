@@ -3,8 +3,8 @@ var React = require('react');
 module.exports = React.createClass({
     render: function() {
         return (
-            <div className="table-component">
-                <table>
+            <div className="table-component col-xs-12">
+                <table className="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Profile ID</th>
@@ -13,6 +13,16 @@ module.exports = React.createClass({
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Eyal</td>
+                            <td>Liebermann</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Eyal</td>
+                            <td>Liebermann</td>
+                        </tr>
                         <tr>
                             <td>1</td>
                             <td>Eyal</td>
