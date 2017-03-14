@@ -7,7 +7,6 @@ class VolunteerList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableData: {},
             filters: {
                 searchText: '',
                 department: '',
@@ -21,10 +20,63 @@ class VolunteerList extends React.Component {
         return (
             <div className="volunteer-list-component">
                 <FilterComponent />
-                <TableComponent />
+                <TableComponent volunteers={this.props.volunteers}/>
             </div>
         );
     }
 };
 
-ReactDOM.render(<VolunteerList />, document.getElementById('react-app'));
+
+var VOLUNTEERS = [ {
+profileId: '123fe',
+email: 'zoo@dd.com',
+firstName: 'Roe',
+lastName: 'Ben-Zeev',
+department: 'Medical',
+role: 'Manger',
+volunteerType: 'Manager',
+isProduction: true,
+phone: '+67.7.777.7777',
+gotTicket: false,
+},
+
+{
+profileId: '234234',
+email: 'abra@kadabra.com',
+firstName: 'Abraham',
+lastName: 'Ben Hur',
+department: 'fun',
+role: 'Manger',
+volunteerType: 'Manager',
+isProduction: true,
+phone: '+1-222-1222-123',
+gotTicket: true,
+},
+
+{
+profileId: '555555',
+email: 'eyal.liebermann@gmail.com',
+firstName: 'Eyal Zvi',
+lastName: 'Liebermann',
+department: 'Midbrun Tech',
+role: 'Volunteer',
+volunteerType: 'Volunteer',
+isProduction: false,
+phone: '036382020',
+gotTicket: true,
+},
+
+{
+profileId: '11111',
+email: 'omerpines@gmail.com',
+firstName: 'Omer',
+lastName: 'Pines',
+department: 'Midburn Tech',
+role: 'Manger',
+volunteerType: 'Manager',
+isProduction: true,
+phone: '054-6501091',
+gotTicket: true,
+}];
+
+ReactDOM.render(<VolunteerList volunteers={VOLUNTEERS}/>, document.getElementById('react-app'));
