@@ -1,6 +1,9 @@
 var express = require('express');
 var path = require('path');
 var fs = require('fs');
+var React = require('react');
+var ReactDOMServer = require('react-dom/server');
+// var VolunteerList = require('../src/components/VolunteerList.jsx');
 
 var app = express();
 
@@ -10,9 +13,10 @@ var app = express();
 /////////////////////////////
 
 app.use('/static', express.static(path.join(__dirname, '../client/')))
+app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-   res.sendFile(path.join(__dirname, '../client/index.htm'));
+   res.sendFile(path.join(__dirname, '../client/react-index.html'));
 })
 
 
