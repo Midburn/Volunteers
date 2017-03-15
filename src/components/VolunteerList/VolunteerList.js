@@ -19,10 +19,10 @@ class VolunteerList extends React.Component {
     render() {
         return (
             <div className="volunteer-list-component">
-                <div className="row card">
+                <div className="container card">
                     <FilterComponent />
                 </div>
-                <div className="row card">
+                <div className="container card">
                     <TableComponent volunteers={this.props.volunteers}/>
                 </div>
 
