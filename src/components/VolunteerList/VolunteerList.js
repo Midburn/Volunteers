@@ -15,12 +15,17 @@ class VolunteerList extends React.Component {
                 isProduction: null
             }
         };
+            
+        this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
     }
+
+    handleFilterTextInput(){}
+    
     render() {
         return (
             <div className="volunteer-list-component">
                 <div className="container card">
-                    <FilterComponent />
+                    <FilterComponent onFilterTextInput={this.handleFilterTextInput}/>
                 </div>
                 <div className="container card">
                     <TableComponent volunteers={this.props.volunteers} filters={this.state.filters}/>

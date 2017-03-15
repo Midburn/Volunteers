@@ -7,7 +7,7 @@ export default class SearchFilter extends React.Component{
   }
 
    handleFilterTextInputChange(e) {
-  //  this.props.onFilterTextInput(e.target.value);
+    this.props.onFilterTextInput(e.target.value);
   }
     render() {
         return (
