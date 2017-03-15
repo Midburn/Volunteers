@@ -3,7 +3,7 @@ var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
 module.exports = React.createClass({
     meetsFilters:function(volunteer){
-        return !this.props.filters.searchText || volunteer.firstName.indexOf(this.props.filters.searchText)!==-1;},
+        return !this.props.filters.filterText || volunteer.firstName.indexOf(this.props.filters.filterText)!==-1;},
     render: function () {
        // var that=this;
         var rows = this.props.volunteers.

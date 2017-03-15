@@ -20,7 +20,7 @@ class VolunteerList extends React.Component {
     }
 
     handleFilterTextInput(filterText){
-        this.setState({filters:{searchText:filterText}});
+        this.setState({filters:{filterText:filterText}});
     }
 
     render() {
