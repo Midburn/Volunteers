@@ -11,11 +11,10 @@ module.exports = React.createClass({
         return (
             <div className="filter-component">
                 <SearchFilter filterText={this.props.filters.filterText} onFilterTextInput={this.props.onFilterTextInput}/>
-                <DropdownFilter column="Department"/>
-                <DropdownFilter column="Volunteer Type"/>
-                <DropdownFilter column="Got Ticket"/>
-                <DropdownFilter column="Production"/>
-
+                <DropdownFilter label="Department" options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}/>
+                <DropdownFilter label="Volunteer Type" options={['All','Manager','Day Manager','Shift Manager','Production','Department Manager']}/>
+                <DropdownFilter label="Got Ticket" options={['All','Yes','No']}/>
+                <DropdownFilter label="Production" options={['All','Yes','No']}/>
              </div>
         );
     }

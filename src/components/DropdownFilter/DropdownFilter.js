@@ -2,17 +2,15 @@ var React = require('react');
 
 module.exports = React.createClass({
     render: function() {
+           var options = this.props.options.map(function(option){
+               return (<option value="{option}">{option}</option>);
+           });
         return (
+           
             <div className="filter-component form-group">
-                <label for="department">{this.props.column}</label>
+                <label for="department">{this.props.label}</label>
                 <select className="form-control" id="department">
-                    <option value="all">All</option>
-                    <option value="tech">Tech</option>
-                    <option value="navadim">Navadim</option>
-                    <option value="mapatz">Mapatz</option>
-                    <option value="mapatz">Mapatz</option>
-                    <option value="tnua">Tnua</option>
-                    <option value="merkazia">Merkazia</option>
+                {options}
                 </select>
             </div>
         );
