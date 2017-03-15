@@ -9,8 +9,8 @@ class VolunteerList extends React.Component {
         this.state = {
             filters: {
                 filterText: 'a',
-                department: '',
-                volunteerType: '',
+                department: null,
+                volunteerType: null,
                 gotTicket: null,
                 isProduction: null
             }

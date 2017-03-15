@@ -16,7 +16,16 @@ module.exports = React.createClass({
     },
 
     meetsOptionsFilters:function(volunteer){
-        return true;
+       // return true;
+       console.log(this.props.filters);
+        return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
+        this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteerType) &&
+        this.meetsCriterion(this.props.filters.gotTicket,volunteer.gotTicket) &&
+        this.meetsCriterion(this.props.filters.isProduction,volunteer.isProduction);
+    },
+
+    meetsCriterion:function(critetion,value){
+        return critetion===null || critetion===value;
     },
 
     render: function () {
