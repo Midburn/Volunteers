@@ -1,33 +1,32 @@
 var React = require('react');
+var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
 module.exports = React.createClass({
-    render: function() {
+    render: function () {
+        var rows = [];
+        this.props.volunteers.forEach(function (volunteer) {
+            rows.push(<VolunteerRow volunteer={volunteer} />);
+        });
         return (
             <div className="table-component col-xs-12">
                 <table className="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Profile ID</th>
+                            <th>Email</th>
                             <th>First Name</th>
                             <th>Last Name</th>
+                            <th>Department</th>
+                            <th>Role</th>
+                            <th>Volunteer Type</th>
+                            <th>Production</th>
+                            <th>Phone</th>
+                            <th>Got ticket</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Eyal</td>
-                            <td>Liebermann</td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Eyal</td>
-                            <td>Liebermann</td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Eyal</td>
-                            <td>Liebermann</td>
-                        </tr>
+                        {rows}
                     </tbody>
                 </table>
             </div>
