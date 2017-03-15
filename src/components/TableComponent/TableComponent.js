@@ -3,12 +3,22 @@ var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
 module.exports = React.createClass({
     meetsFilters:function(volunteer){
+        return this.meetsTextFilter(volunteer) && this.meetsOptionsFilters(volunteer);
+    },
+
+    meetsTextFilter:function(volunteer){
+
         let txt= this.props.filters.filterText.toLowerCase();
-        return !txt
-        || volunteer.firstName.toLowerCase().indexOf(txt)!==-1
-        || volunteer.lastName.toLowerCase().indexOf(txt)!==-1
-        || volunteer.email.toLowerCase().indexOf(txt)!==-1
-        ;},
+        return !txt ||
+            volunteer.firstName.toLowerCase().indexOf(txt)!==-1 ||
+            volunteer.lastName.toLowerCase().indexOf(txt)!==-1 ||
+            volunteer.email.toLowerCase().indexOf(txt)!==-1;
+    },
+
+    meetsOptionsFilters:function(volunteer){
+        return true;
+    },
+
     render: function () {
        // var that=this;
         var rows = this.props.volunteers.
