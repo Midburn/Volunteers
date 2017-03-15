@@ -6,8 +6,6 @@ import  SearchFilter  from '../SearchFilter/SearchFilter.js';
 
 module.exports = React.createClass({
     render: function() {
-        console.log('FilterComponent search import');
-        console.log(SearchFilter);
         return (
             <div className="filter-component row">
                 <SearchFilter className="col-md-12" filterText={this.props.filters.filterText} onFilterTextInput={this.props.onFilterTextInput}/>

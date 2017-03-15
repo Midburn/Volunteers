@@ -7,7 +7,9 @@ module.exports = React.createClass({
     },
 
     meetsTextFilter:function(volunteer){
-
+    console.log('TableComponent meets text filter');
+    console.log(volunteer);
+    console.log(this.props);
         let txt= this.props.filters.filterText.toLowerCase();
         return !txt ||
             volunteer.firstName.toLowerCase().indexOf(txt)!==-1 ||
@@ -16,7 +18,7 @@ module.exports = React.createClass({
     },
 
     meetsOptionsFilters:function(volunteer){
-       // return true;
+        return true;
        console.log(this.props.filters);
         return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
         this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteerType) &&
