@@ -19,9 +19,9 @@ module.exports = React.createClass({
                     <td>{volunteer.department}</td>
                     <td>{volunteer.role}</td>
                     <td>{volunteer.volunteerType}</td>
-                    <td>{volunteer.isProduction}</td>
+                    <td>{volunteer.isProduction?'Yes':'No'}</td>
                     <td>{volunteer.phone}</td>
-                    <td>{volunteer.gotTicket}</td>
+                    <td>{volunteer.gotTicket?'Yes':'No'}</td>
                     <td><a href="#">Edit</a>/<a href="#">Delete</a></td>
 
                 </tr>
