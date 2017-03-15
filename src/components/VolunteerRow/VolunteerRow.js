@@ -22,6 +22,8 @@ module.exports = React.createClass({
                     <td>{volunteer.isProduction}</td>
                     <td>{volunteer.phone}</td>
                     <td>{volunteer.gotTicket}</td>
+                    <td><a href="#">Edit</a>/<a href="#">Delete</a></td>
+
                 </tr>
             );
     }
