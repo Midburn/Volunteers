@@ -4,7 +4,7 @@ module.exports = React.createClass({
     render: function() {
         return (
             <div className="filter-component form-group">
-                <label for="department">Department</label>
+                <label for="department">{this.props.column}</label>
                 <select className="form-control" id="department">
                     <option value="all">All</option>
                     <option value="tech">Tech</option>

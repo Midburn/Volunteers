@@ -7,7 +7,11 @@ module.exports = React.createClass({
         return (
             <div className="filter-component">
                 <SearchFilter/>
-                <DropdownFilter/>
+                <DropdownFilter column="Department"/>
+                <DropdownFilter column="Volunteer Type"/>
+                <DropdownFilter column="Got Ticket"/>
+                <DropdownFilter column="Production"/>
+
              </div>
         );
     }
