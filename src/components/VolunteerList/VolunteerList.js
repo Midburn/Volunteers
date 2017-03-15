@@ -8,7 +8,7 @@ class VolunteerList extends React.Component {
         super(props);
         this.state = {
             filters: {
-                searchText: 'a',
+                filterText: 'a',
                 department: '',
                 volunteerType: '',
                 gotTicket: null,
@@ -19,13 +19,15 @@ class VolunteerList extends React.Component {
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
     }
 
-    handleFilterTextInput(){}
-    
+    handleFilterTextInput(filterText){
+        this.setState({filters:{searchText:filterText}});
+    }
+
     render() {
         return (
             <div className="volunteer-list-component">
                 <div className="container card">
-                    <FilterComponent onFilterTextInput={this.handleFilterTextInput}/>
+                    <FilterComponent filters={this.state.filters} onFilterTextInput={this.handleFilterTextInput}/>
                 </div>
                 <div className="container card">
                     <TableComponent volunteers={this.props.volunteers} filters={this.state.filters}/>

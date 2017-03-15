@@ -10,7 +10,7 @@ module.exports = React.createClass({
         console.log(SearchFilter);
         return (
             <div className="filter-component">
-                <SearchFilter filterText='a' onFilterTextInput={this.props.onFilterTextInput}/>
+                <SearchFilter filterText={this.props.filters.filterText} onFilterTextInput={this.props.onFilterTextInput}/>
                 <DropdownFilter column="Department"/>
                 <DropdownFilter column="Volunteer Type"/>
                 <DropdownFilter column="Got Ticket"/>
