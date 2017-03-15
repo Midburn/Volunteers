@@ -8,7 +8,7 @@ class VolunteerList extends React.Component {
         super(props);
         this.state = {
             filters: {
-                searchText: '',
+                searchText: 'a',
                 department: '',
                 volunteerType: '',
                 gotTicket: null,
@@ -23,7 +23,7 @@ class VolunteerList extends React.Component {
                     <FilterComponent />
                 </div>
                 <div className="container card">
-                    <TableComponent volunteers={this.props.volunteers}/>
+                    <TableComponent volunteers={this.props.volunteers} filters={this.state.filters}/>
                 </div>
 
             </div>

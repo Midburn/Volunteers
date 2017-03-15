@@ -2,7 +2,8 @@ var React = require('react');
 var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
 module.exports = React.createClass({
-    meetsFilters:function(){return true;},
+    meetsFilters:function(volunteer){
+        return !this.props.filters.searchText || volunteer.firstName.indexOf(this.props.filters.searchText)!==-1;},
     render: function () {
        // var that=this;
         var rows = this.props.volunteers.
