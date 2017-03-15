@@ -2,11 +2,12 @@ var React = require('react');
 var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
 module.exports = React.createClass({
+    meetsFilters:function(){return true;},
     render: function () {
-        var rows = [];
-        this.props.volunteers.forEach(function (volunteer) {
-            rows.push(<VolunteerRow volunteer={volunteer} />);
-        });
+       // var that=this;
+        var rows = this.props.volunteers.
+        filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
+        map(function (volunteer) { return (<VolunteerRow volunteer={volunteer} />)});
         return (
             <div className="table-component col-xs-12">
                 <table className="table table-striped table-hover">
