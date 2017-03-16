@@ -4,7 +4,7 @@ import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import SearchFilter  from '../SearchFilter/SearchFilter.js';
 import ResetButtonComponent  from '../ResetButtonComponent/ResetButtonComponent.js';
 
-module.exports = React.createClass({
+var FilterComponent = React.createClass({
     render: function() {
         return (
             <div className="filter-component row">
@@ -14,22 +14,26 @@ module.exports = React.createClass({
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Department" 
                         onFilterInput={(value)=>this.props.onFilterInput('department',this.convertFromDisplay(value))}
-                        options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}/>
+                        options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}
+                        myFilter={this.convertToDisplay(this.props.filters.department)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Volunteer Type"     
                         onFilterInput={(value)=>this.props.onFilterInput('volunteerType',this.convertFromDisplay(value))}
-                        options={['All','Manager','Day Manager','Shift Manager','Production','Department Manager']}/>
+                        options={['All','Manager','Day Manager','Shift Manager','Production','Department Manager']}
+                        myFilter={this.convertToDisplay(this.props.filters.volunteerType)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Got Ticket" 
                         onFilterInput={(value)=>this.props.onFilterInput('gotTicket',this.convertFromDisplay(value))}
-                        options={['All','Yes','No']}/>
+                        options={['All','Yes','No']}
+                        myFilter={this.convertToDisplay(this.props.filters.gotTicket)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Production" 
                         onFilterInput={(value)=>this.props.onFilterInput('isProduction',this.convertFromDisplay(value))}
-                        options={['All','Yes','No']}/>
+                        options={['All','Yes','No']}
+                        myFilter={this.convertToDisplay(this.props.filters.isProduction)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <ResetButtonComponent onFilterInput={this.onResetClick} />
@@ -46,6 +50,14 @@ module.exports = React.createClass({
             default: return displayValue;
         }
     },
+    convertToDisplay: function(displayValue){
+        switch(displayValue){   
+            case null: return 'All';
+            case true: return 'Yes';
+            case false: return 'No';
+            default: return displayValue;
+        }
+    },
     onResetClick: function(){
         this.props.onFilterInput('department',null);
         this.props.onFilterInput('volunteerType',null);
@@ -54,3 +66,5 @@ module.exports = React.createClass({
         this.props.onFilterTextInput('');
     }   
 });
+
+module.exports = FilterComponent;
