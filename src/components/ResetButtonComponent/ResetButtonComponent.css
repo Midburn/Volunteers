@@ -1,0 +1,10 @@
+.reset-button {
+    margin-top: 24px;
+    text-align: right;
+}
+
+@media screen and (max-width: 992px){
+    .reset-button {
+        text-align: center;
+    }
+}
