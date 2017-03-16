@@ -2,8 +2,6 @@ var React = require('react');
 
 module.exports = React.createClass({
     render: function () {
-        console.log('VolunteerRow');
-        console.log(this.props.volunteer);
         var volunteer = this.props.volunteer;
         if (!volunteer){
             console.log('volunteer is falsy');
