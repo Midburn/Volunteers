@@ -1,9 +1,10 @@
+import update from 'immutability-helper';
+import axios from 'axios';
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 var FilterComponent = require('../FilterComponent/FilterComponent');
 var TableComponent = require('../TableComponent/TableComponent');
-import update from 'immutability-helper';
-
 
 class VolunteerList extends React.Component {
     constructor(props) {
@@ -24,7 +25,8 @@ class VolunteerList extends React.Component {
     }
     componentDidMount(){
         console.log('component did mount------------------------------');
-        this.setState({volunteers:VOLUNTEERS});
+        axios.get('volunteer/volunteers')
+        .then((res)=>{this.setState({volunteers:res.data});});
     }
 
     handleFilterTextInput(filterText){
@@ -61,7 +63,7 @@ var VOLUNTEERS = [
       "profile_id": "123fe",
       "email": "zoo@dd.com",
       "first_name": "Roe",
-      "last_name": "Ben-Zeev",
+      "last_name": "Cod-Zeev",
       "department": "Medical",
       "role": "Manger",
       "volunteer_type": "Manager",
@@ -73,7 +75,7 @@ var VOLUNTEERS = [
       "profile_id": "WsDD",
       "email": "guy.weirpool@dd.com",
       "first_name": "Menashe",
-      "last_name": "Ben Yakar",
+      "last_name": "Cen Yakar",
       "department": "Mapatz",
       "role": "Manger",
       "volunteer_type": "Manager",
@@ -85,7 +87,7 @@ var VOLUNTEERS = [
       "profile_id": "123fe",
       "email": "zoo@segovia.com",
       "first_name": "Jonson",
-      "last_name": "Dot-Zeev",
+      "last_name": "Cot-Zeev",
       "department": "Merkazia",
       "role": "Manger",
       "volunteer_type": "Manager",
@@ -97,7 +99,7 @@ var VOLUNTEERS = [
       "profile_id": "123454ABCDe",
       "email": "zoo@google.com",
       "first_name": "Noa",
-      "last_name": "Ben-Zakak",
+      "last_name": "Chen",
       "department": "Merkazia",
       "role": "Manger",
       "volunteer_type": "Manager",
@@ -109,7 +111,7 @@ var VOLUNTEERS = [
       "profile_id": "dupdup",
       "email": "abra@kadabra.com",
       "first_name": "Hava",
-      "last_name": "Sor Joana",
+      "last_name": "Cotana",
       "department": "Mapatz",
       "role": "Manger",
       "volunteer_type": "Department Manager",
@@ -121,7 +123,7 @@ var VOLUNTEERS = [
       "profile_id": "dupdup",
       "email": "eyal.liebermann@gmail.com",
       "first_name": "Eyal Zvi",
-      "last_name": "Liebermann",
+      "last_name": "Caliberman",
       "department": "Navadim",
       "role": "Volunteer",
       "volunteer_type": "Day Manager",
@@ -133,7 +135,7 @@ var VOLUNTEERS = [
       "profile_id": "11111",
       "email": "omerpines@gmail.com",
       "first_name": "Omer",
-      "last_name": "Pines",
+      "last_name": "Cpines",
       "department": "Tech",
       "role": "Manger",
       "volunteer_type": "Production",
