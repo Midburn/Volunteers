@@ -2,6 +2,8 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var FilterComponent = require('../FilterComponent/FilterComponent');
 var TableComponent = require('../TableComponent/TableComponent');
+import update from 'immutability-helper';
+
 
 class VolunteerList extends React.Component {
     constructor(props) {
@@ -20,7 +22,7 @@ class VolunteerList extends React.Component {
     }
 
     handleFilterTextInput(filterText){
-        this.setState({filters:{filterText:filterText}});
+        this.setState((previousState)=>update(previousState,{filters:{$merge:{filterText:filterText}}}));
     }
 
     render() {
