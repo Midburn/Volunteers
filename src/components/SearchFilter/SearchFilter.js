@@ -12,7 +12,7 @@ export default class SearchFilter extends React.Component{
     render() {
         return (
             <div className="filter-component form-group">
-                <label for="search_name">Search</label>
+                <label htmlFor="search_name">Search</label>
                 <input 
                     type="text" 
                     id="search_name" 
