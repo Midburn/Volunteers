@@ -10,16 +10,16 @@ module.exports = React.createClass({
         else
             return (
                 <tr className="volunteer-row">
-                    <td>{volunteer.profileId}</td>
+                    <td>{volunteer.profile_id}</td>
                     <td>{volunteer.email}</td>
-                    <td>{volunteer.firstName}</td>
-                    <td>{volunteer.lastName}</td>
+                    <td>{volunteer.first_name}</td>
+                    <td>{volunteer.last_name}</td>
                     <td>{volunteer.department}</td>
                     <td>{volunteer.role}</td>
-                    <td>{volunteer.volunteerType}</td>
-                    <td>{volunteer.isProduction?'Yes':'No'}</td>
+                    <td>{volunteer.volunteer_type}</td>
+                    <td>{volunteer.is_production?'Yes':'No'}</td>
                     <td>{volunteer.phone}</td>
-                    <td>{volunteer.gotTicket?'Yes':'No'}</td>
+                    <td>{volunteer.got_ticket?'Yes':'No'}</td>
                     <td><a href="#">Edit</a>/<a href="#">Delete</a></td>
 
                 </tr>

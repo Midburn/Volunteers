@@ -9,16 +9,16 @@ module.exports = React.createClass({
     meetsTextFilter:function(volunteer){
         let txt= this.props.filters.filterText.toLowerCase();
         return !txt ||
-            volunteer.firstName.toLowerCase().indexOf(txt)!==-1 ||
-            volunteer.lastName.toLowerCase().indexOf(txt)!==-1 ||
+            volunteer.first_name.toLowerCase().indexOf(txt)!==-1 ||
+            volunteer.last_name.toLowerCase().indexOf(txt)!==-1 ||
             volunteer.email.toLowerCase().indexOf(txt)!==-1;
     },
 
     meetsOptionsFilters:function(volunteer){    
         return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
-        this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteerType) &&
-        this.meetsCriterion(this.props.filters.gotTicket,volunteer.gotTicket) &&
-        this.meetsCriterion(this.props.filters.isProduction,volunteer.isProduction);
+        this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteer_type) &&
+        this.meetsCriterion(this.props.filters.gotTicket,volunteer.got_ticket) &&
+        this.meetsCriterion(this.props.filters.isProduction,volunteer.is_production);
     },
 
     meetsCriterion:function(critetion,value){

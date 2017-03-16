@@ -51,56 +51,90 @@ class VolunteerList extends React.Component {
 };
 
 
-var VOLUNTEERS = [ {
-profileId: '123fe',
-email: 'zoo@dd.com',
-firstName: 'Roe',
-lastName: 'Ben-Zeev',
-department: 'Medical',
-role: 'Manger',
-volunteerType: 'Manager',
-isProduction: true,
-phone: '+67.7.777.7777',
-gotTicket: false,
-},
-
-{
-profileId: '234234',
-email: 'abra@kadabra.com',
-firstName: 'Abraham',
-lastName: 'Ben Hur',
-department: 'Mapatz',
-role: 'Manger',
-volunteerType: 'Department Manager',
-isProduction: true,
-phone: '+1-222-1222-123',
-gotTicket: true,
-},
-
-{
-profileId: '555555',
-email: 'eyal.liebermann@gmail.com',
-firstName: 'Eyal Zvi',
-lastName: 'Liebermann',
-department: 'Navadim',
-role: 'Volunteer',
-volunteerType: 'Day Manager',
-isProduction: false,
-phone: '036382020',
-gotTicket: true,
-},
-
-{
-profileId: '11111',
-email: 'omerpines@gmail.com',
-firstName: 'Omer',
-lastName: 'Pines',
-department: 'Tech',
-role: 'Manger',
-volunteerType: 'Production',
-isProduction: true,
-phone: '054-6501091',
-gotTicket: true,
-}];
-
+var VOLUNTEERS = [
+   {
+      "profile_id": "123fe",
+      "email": "zoo@dd.com",
+      "first_name": "Roe",
+      "last_name": "Ben-Zeev",
+      "department": "Medical",
+      "role": "Manger",
+      "volunteer_type": "Manager",
+      "is_production": true,
+      "phone": "+67.7.777.7777",
+      "got_ticket": false
+   },
+      {
+      "profile_id": "WsDD",
+      "email": "guy.weirpool@dd.com",
+      "first_name": "Menashe",
+      "last_name": "Ben Yakar",
+      "department": "Mapatz",
+      "role": "Manger",
+      "volunteer_type": "Manager",
+      "is_production": true,
+      "phone": "+67.7.777.7777",
+      "got_ticket": false
+   },
+      {
+      "profile_id": "123fe",
+      "email": "zoo@segovia.com",
+      "first_name": "Jonson",
+      "last_name": "Dot-Zeev",
+      "department": "Merkazia",
+      "role": "Manger",
+      "volunteer_type": "Manager",
+      "is_production": false,
+      "phone": "03=6382020",
+      "got_ticket": false
+   },
+      {
+      "profile_id": "123454ABCDe",
+      "email": "zoo@google.com",
+      "first_name": "Noa",
+      "last_name": "Ben-Zakak",
+      "department": "Merkazia",
+      "role": "Manger",
+      "volunteer_type": "Manager",
+      "is_production": false,
+      "phone": "(1) - 212 -2223-333",
+      "got_ticket": false
+   },
+   {
+      "profile_id": "dupdup",
+      "email": "abra@kadabra.com",
+      "first_name": "Hava",
+      "last_name": "Sor Joana",
+      "department": "Mapatz",
+      "role": "Manger",
+      "volunteer_type": "Department Manager",
+      "is_production": true,
+      "phone": "(0)54-5422-235",
+      "got_ticket": true
+   },
+   {
+      "profile_id": "dupdup",
+      "email": "eyal.liebermann@gmail.com",
+      "first_name": "Eyal Zvi",
+      "last_name": "Liebermann",
+      "department": "Navadim",
+      "role": "Volunteer",
+      "volunteer_type": "Day Manager",
+      "is_production": false,
+      "phone": "036382020",
+      "got_ticket": true
+   },
+   {
+      "profile_id": "11111",
+      "email": "omerpines@gmail.com",
+      "first_name": "Omer",
+      "last_name": "Pines",
+      "department": "Tech",
+      "role": "Manger",
+      "volunteer_type": "Production",
+      "is_production": true,
+      "phone": "054-6501091",
+      "got_ticket": true
+   }
+];
 ReactDOM.render(<VolunteerList volunteers={VOLUNTEERS}/>, document.getElementById('react-app'));
