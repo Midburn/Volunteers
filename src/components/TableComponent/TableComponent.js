@@ -4,7 +4,7 @@ var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 // css requires
 require('./tableComponent.css');
 
-module.exports = React.createClass({
+var TableComponent = React.createClass({
     meetsFilters:function(volunteer){
         return this.meetsTextFilter(volunteer) && this.meetsOptionsFilters(volunteer);
     },
@@ -59,3 +59,5 @@ module.exports = React.createClass({
         );
     }
 });
+
+module.exports = TableComponent;
