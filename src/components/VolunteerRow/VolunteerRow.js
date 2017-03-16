@@ -4,7 +4,7 @@ module.exports = React.createClass({
     render: function () {
         var volunteer = this.props.volunteer;
         if (!volunteer){
-            console.log('volunteer is falsy');
+            console.log('volunteer is falsy. That is a bug');
             return null;
         }
         else

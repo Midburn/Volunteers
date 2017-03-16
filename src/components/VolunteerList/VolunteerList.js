@@ -27,7 +27,6 @@ class VolunteerList extends React.Component {
     }
 
      handleFilterInput(filterName,value){
-     //    console.log('volunteerList.handlefilterinput: )
          let mergeValue={filters:{$merge:{}}};
          mergeValue.filters.$merge[filterName]=value;
         this.setState((previousState)=>update(previousState,mergeValue));

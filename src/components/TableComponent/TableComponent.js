@@ -15,10 +15,6 @@ module.exports = React.createClass({
     },
 
     meetsOptionsFilters:function(volunteer){    
-        console.log('TableComponent meetsOptions func');    
-       console.log(this.props.filters);
-        console.log(volunteer);
-
         return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
         this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteerType) &&
         this.meetsCriterion(this.props.filters.gotTicket,volunteer.gotTicket) &&
