@@ -41,7 +41,7 @@ class VolunteerList extends React.Component {
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}/>
                 </div>
-                <div className="container card">
+                <div className="container card container">
                     <TableComponent volunteers={this.props.volunteers} filters={this.state.filters}/>
                 </div>
 

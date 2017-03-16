@@ -1,6 +1,9 @@
 var React = require('react');
 var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
+// css requires
+require('./tableComponent.css');
+
 module.exports = React.createClass({
     meetsFilters:function(volunteer){
         return this.meetsTextFilter(volunteer) && this.meetsOptionsFilters(volunteer);

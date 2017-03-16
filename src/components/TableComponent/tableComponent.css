@@ -1,0 +1,8 @@
+.table {
+    table-layout:fixed;
+}
+
+.table td, .table th {
+  word-wrap:break-word;
+  word-break:break-all;
+}
