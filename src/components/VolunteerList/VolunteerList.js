@@ -24,9 +24,16 @@ class VolunteerList extends React.Component {
         this.handleFilterInput=this.handleFilterInput.bind(this);
     }
     componentDidMount(){
-        console.log('component did mount------------------------------');
-        axios.get('volunteer/volunteers')
-        .then((res)=>{this.setState({volunteers:res.data});});
+        axios.get('/volunteer/volunteers')
+        .then((res) => this.setState({volunteers:res.data}))
+        .catch( function(err){
+            if(err.response){
+                console.log('Data', err.response.data);
+                console.log('Status', err.response.status);
+                console.log('Headers', err.response.headers);
+            }
+            else console.log('Error',err.message);  
+        });
     }
 
     handleFilterTextInput(filterText){
