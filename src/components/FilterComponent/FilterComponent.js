@@ -1,7 +1,6 @@
 var React = require('react');
-//  var SearchFilter = require('../SearchFilter/SearchFilter');
-var DropdownFilter= require('../DropdownFilter/DropdownFilter');
 
+import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import  SearchFilter  from '../SearchFilter/SearchFilter.js';
 
 module.exports = React.createClass({

@@ -1,7 +1,11 @@
 var React = require('react');
 
-module.exports = React.createClass({
-    render: function() {
+export default class DropDownFilter extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    
+    render() {
            var options = this.props.options.map(function(option){
                return (<option value="{option}">{option}</option>);
            });
@@ -15,4 +19,4 @@ module.exports = React.createClass({
             </div>
         );
     }
-});
+}
