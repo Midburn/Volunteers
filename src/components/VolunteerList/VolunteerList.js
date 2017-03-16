@@ -9,6 +9,7 @@ class VolunteerList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            volunteers:[],
             filters: {
                 filterText: '',
                 department: null,
@@ -20,6 +21,10 @@ class VolunteerList extends React.Component {
             
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleFilterInput=this.handleFilterInput.bind(this);
+    }
+    componentDidMount(){
+        console.log('component did mount------------------------------');
+        this.setState({volunteers:VOLUNTEERS});
     }
 
     handleFilterTextInput(filterText){
@@ -42,7 +47,7 @@ class VolunteerList extends React.Component {
                     onFilterInput={this.handleFilterInput}/>
                 </div>
                 <div className="container card container">
-                    <TableComponent volunteers={this.props.volunteers} filters={this.state.filters}/>
+                    <TableComponent volunteers={this.state.volunteers} filters={this.state.filters}/>
                 </div>
 
             </div>
