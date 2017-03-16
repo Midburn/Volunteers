@@ -35,7 +35,7 @@ var FilterComponent = React.createClass({
                         options={['All','Yes','No']}
                         myFilter={this.convertToDisplay(this.props.filters.isProduction)}/>
                 </div>
-                <div className="col-md-4 col-xs-12">
+                <div className="col-md-4 col-md-offset-4 col-xs-12">
                     <ResetButtonComponent onFilterInput={this.onResetClick} />
                 </div>
              </div>

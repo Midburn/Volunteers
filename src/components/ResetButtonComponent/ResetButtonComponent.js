@@ -1,5 +1,8 @@
 var React = require('react');
 
+// css requires
+require('./ResetButtonComponent.css')
+
 export default class ResetButtonComponent extends React.Component{
     constructor(props){
         super(props);
@@ -13,7 +16,7 @@ export default class ResetButtonComponent extends React.Component{
     render() {
         return (
             <div className="reset-button">
-                <button className="btn btn-default" onClick={this.handleResetClick}>Clear Search</button>
+                <button className="btn btn-primary" onClick={this.handleResetClick}>Clear Filters</button>
            </div>
         );
     }

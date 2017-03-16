@@ -2,7 +2,7 @@ var React = require('react');
 var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
 
 // css requires
-require('./tableComponent.css');
+require('./TableComponent.css');
 
 var TableComponent = React.createClass({
     meetsFilters:function(volunteer){
