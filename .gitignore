@@ -1,2 +1,5 @@
+# ignore node modules
 node_modules
-public
+
+# ignore bundle.js
+public/bundle.js
