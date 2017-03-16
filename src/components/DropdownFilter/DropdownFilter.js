@@ -13,14 +13,14 @@ export default class DropDownFilter extends React.Component{
     render() {
            var options = this.props.options.map(function(option){
                return (
-                    <option value={option}>
+                    <option value={option} key={option}>
                         {option}
                     </option>);
            });
         return (
            
             <div className="filter-component form-group">
-                <label for="department">{this.props.label}</label>
+                <label htmlFor="department">{this.props.label}</label>
                 <select 
                 className="form-control" 
                 id="department"

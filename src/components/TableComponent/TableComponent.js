@@ -32,7 +32,7 @@ module.exports = React.createClass({
        // var that=this;
         var rows = this.props.volunteers.
         filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
-        map(function (volunteer) { return (<VolunteerRow volunteer={volunteer} />)});
+        map(function (volunteer) { return (<VolunteerRow volunteer={volunteer} key={volunteer.profileId}/>)});
         return (
             <div className="table-component col-xs-12">
                 <table className="table table-striped table-hover">
