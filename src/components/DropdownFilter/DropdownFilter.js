@@ -13,8 +13,8 @@ export default class DropDownFilter extends React.Component{
     render() {
            var options = this.props.options.map(function(option){
                return (
-                   <option value={option}>
-                    {option}
+                    <option value={option}>
+                        {option}
                     </option>);
            });
         return (
