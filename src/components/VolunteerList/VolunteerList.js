@@ -37,7 +37,7 @@ class VolunteerList extends React.Component {
     }
 
     handleFilterTextInput(filterText){
-        this.setState((previousState)=>update(previousState,{filters:{$merge:{filterText:filterText}}}));
+        this.handleFilterInput('filterText',filterText);
     }
 
      handleFilterInput(filterName,value){
