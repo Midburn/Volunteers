@@ -33,17 +33,17 @@ app.get('/volunteer/volunteers', function (req, res) {
    got_ticket = req.query.got_ticket
 
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json')); 
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'),res); 
 })
 
 app.get('/volunteer/departments', function (req, res) {
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json')); 
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res); 
 })
 
 app.get('/volunteer/roles', function (req, res) {
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json')); 
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res); 
 })
 
 
