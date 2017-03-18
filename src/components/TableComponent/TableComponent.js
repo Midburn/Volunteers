@@ -1,5 +1,5 @@
 var React = require('react');
-var VolunteerRow = require('../VolunteerRow/VolunteerRow.js');
+import VolunteerRow from '../VolunteerRow/VolunteerRow.js';
 
 // css requires
 require('./TableComponent.css');
