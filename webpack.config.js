@@ -1,23 +1,31 @@
+const { resolve } = require('path');
+const webpack = require('webpack');
+
 module.exports = {
-    entry: './src/components/VolunteerList/VolunteerList.js',
+    entry: [
+      './src/index.js'
+    ],
     output: {
         filename: 'bundle.js',
-        path: 'public'
+        path: resolve(__dirname, 'public'),
+        publicPath: 'http://localhost:9090/'
     },
+    devtool: 'eval-source-map',
     module: {
         loaders: [
             {
                 test: /\.js?$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['react', 'es2015']
-                }
+                loader: 'babel-loader'
             },
             {
                 test: /\.css$/,
                 loader: 'style-loader!css-loader'
             }
         ]
-    }
+    },
+    plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NamedModulesPlugin()
+    ]
 };
