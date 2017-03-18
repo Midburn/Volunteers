@@ -88,7 +88,8 @@ if (true) {
   var server = new webpackDevServer(compiler, {
     contentBase: path.resolve(__dirname, '../public'),
     publicPath: '/',
-    hot: true
+    hot: true,
+    stats: true
   });
   server.listen(9090);
 }
