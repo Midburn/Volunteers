@@ -17,7 +17,7 @@ var TableComponent = React.createClass({
             volunteer.email.toLowerCase().indexOf(txt)!==-1;
     },
 
-    meetsOptionsFilters:function(volunteer){    
+    meetsOptionsFilters:function(volunteer){
         return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
         this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteer_type) &&
         this.meetsCriterion(this.props.filters.gotTicket,volunteer.got_ticket) &&
@@ -28,11 +28,10 @@ var TableComponent = React.createClass({
         return critetion===null || critetion===value;
     },
 
-    render: function () {
-       // var that=this;
-        var rows = this.props.volunteers.
-        filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
-        map(function (volunteer) { return (<VolunteerRow volunteer={volunteer} key={volunteer.profileId}/>)});
+    render() {
+        const volunteers = this.props.volunteers;
+        const filteredVolunteers = volunteers.filter((volunteer)=> {return this.meetsFilters(volunteer);});
+
         return (
             <div className="table-component col-xs-12">
                 <table className="table table-striped table-hover">
@@ -52,7 +51,10 @@ var TableComponent = React.createClass({
                         </tr>
                     </thead>
                     <tbody>
-                        {rows}
+                        {filteredVolunteers.map((volunteer) =>
+                          <VolunteerRow key={volunteer.profile_id}
+                                        volunteer={volunteer} />
+                        )}
                     </tbody>
                 </table>
             </div>
