@@ -12,7 +12,7 @@ export default class VolunteerEditModal extends React.Component{
         this.handleSubmit=this.handleSubmit.bind(this);
         this.handleReset=this.handleReset.bind(this);
 
-        this.handleChange=this.handleChangeProduction.bind(this);
+        this.handleChangeProduction=this.handleChangeProduction.bind(this);
         this.calcValueProduction= this.calcValueProduction.bind(this);
         this.handleChage=this.handleChange.bind(this);
     }
