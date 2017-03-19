@@ -7,15 +7,15 @@ import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 export default class VolunteerEditModal extends React.Component{
     constructor(props){
         super(props);
+        this.state={};
         this.handleCancel=this.handleCancel.bind(this);
         this.handleSubmit=this.handleSubmit.bind(this);
-
     }
     handleCancel(){
-        this.props.onClose();
+        this.props.onHide();
     }
     handleSubmit(){
-        this.props.onClose();
+        this.props.onHide();
     }
     render(){
         if(!this.props.show)
