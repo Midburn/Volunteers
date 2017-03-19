@@ -31,27 +31,31 @@ export default class VolunteerEditModal extends React.Component{
 
             <form>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">First Name</label>
-                <div class="col-sm-10">
-                <p class="form-control-static">{this.props.volunteer.first_name}</p>
+                <label className="col-sm-4 col-form-label">First Name</label>
+                <div className="col-sm-8">
+                    <p className="form-control-static">{this.props.volunteer.first_name}</p>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Last Name</label>
-                <div class="col-sm-10">
-                <p class="form-control-static">{this.props.volunteer.last_name}</p>
+                <label className="col-sm-4 col-form-label">Last Name</label>
+                <div className="col-sm-8">
+                <p className="form-control-static">{this.props.volunteer.last_name}</p>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Email</label>
-                <div class="col-sm-10">
-                <p class="form-control-static">{this.props.volunteer.email}</p>
+                <label className="col-sm-4 col-form-label">Email</label>
+                <div className="col-sm-8">
+                <p className="form-control-static">{this.props.volunteer.email}</p>
                 </div>
             </div>
-            <div class="form-group row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">Role</label>
-                <div class="col-sm-10">
-                    <select>
+            <div className="form-group row">
+                <label for="Role" className="col-sm-4 col-form-label">Role</label>
+                <div className="col-sm-10">
+                    <select
+                      onChange ={()=>false}
+                value="Manager"
+                                    className="form-control" 
+                    id="Role">
                         {
                             ['All','Manager','Day Manager','Shift Manager','Production','Department Manager'].map(
                             (option)=> <option value={option} key={option}>{option}</option>
@@ -61,26 +65,6 @@ export default class VolunteerEditModal extends React.Component{
                 </div>
             </div>
             </form>
-
-            <div className="row">
-                <label class="col-sm-2 col-form-label">Role</label>
-                <div class="col-sm-10">
-                <select 
-                className="form-control" 
-                id="Role"
-                onChange ={()=>false}
-                value={this.props.volunteer.role} 
-                >
-
-                {
-                    ['All','Manager','Day Manager','Shift Manager','Production','Department Manager'].map(
-                    (option)=> <option value={option} key={option}>{option}</option>
-                    )    
-                }
-                </select>
-                </div>
-            </div>
-      
         </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.handleCancel}>Cancel</Button>
