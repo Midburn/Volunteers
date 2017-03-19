@@ -1,6 +1,8 @@
-var React = require('react');
+import React from 'react';
+import {Modal, OverlayTrigger, Button} from 'react-bootstrap';
 
-import DropdownFilter from '../DropdownFilter/DropdownFilter.js'
+import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
+import VolunteerEditModal from '../VolunteerEditModal/VolunteerEditModal.js';
 
 export default class VolunteerRow extends React.Component{
     constructor(props){
@@ -28,8 +30,12 @@ export default class VolunteerRow extends React.Component{
                         options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}
                         myFilter={()=>console.log('myFilter called')}/>
             );
-            return (
+
+           
+
+            return (          
                 <tr className="volunteer-row">
+                    <VolunteerEditModal show={this.state.edit} onHide={this.toggleEdit} volunteer={volunteer}/>
                     <td>{volunteer.profile_id}</td>
                     <td>{volunteer.email}</td>
                     <td>{volunteer.first_name}</td>

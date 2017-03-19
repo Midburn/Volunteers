@@ -19,9 +19,8 @@ export default class DropDownFilter extends React.Component{
                 </option>);
             });
         return (
-           
             <div className="filter-component form-group">
-                {this.props.editMode || (<label htmlFor="department">{this.props.label}</label>)}
+                <label htmlFor="department">{this.props.label}</label>)
                 <select 
                 className="form-control" 
                 id={this.props.label}
