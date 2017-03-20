@@ -1,4 +1,5 @@
-var React = require('react');
+import React from 'react';
+
 import VolunteerRow from '../VolunteerRow/VolunteerRow.js';
 
 // css requires

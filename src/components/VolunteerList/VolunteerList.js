@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 
 import FilterComponent from '../FilterComponent/FilterComponent.js';
 
-var TableComponent = require('../TableComponent/TableComponent');
+import TableComponent from '../TableComponent/TableComponent';
 
 class VolunteerList extends React.Component {
     constructor(props) {
