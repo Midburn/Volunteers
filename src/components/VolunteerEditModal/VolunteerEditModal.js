@@ -18,6 +18,7 @@ export default class VolunteerEditModal extends React.Component{
         this.calcValueProduction= this.calcValueProduction.bind(this);
         this.handleChangeRole=this.handleChangeRole.bind(this);
         this.handleChangeGotTicket = this.handleChangeGotTicket.bind(this);
+        this.handleChangeVolunteerType = this.handleChangeVolunteerType.bind(this);
     }
 
    
@@ -37,6 +38,12 @@ export default class VolunteerEditModal extends React.Component{
         let eventProd=e.target.value;//copy primitive so that synthtic event could be reused by react
         this.setState((state) => update(state,{volunteer:{$merge:{role:eventProd}}} ));
     }
+    
+    handleChangeVolunteerType(e){
+        let val=e.target.value;
+        this.setState((state) => update(state,{volunteer:{$merge:{volunteer_type:val}}} ));
+    }
+
 
     handleChangeProduction(e){
         let eventProd=e.target.value;
@@ -44,8 +51,6 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     handleChangeGotTicket(e){
-         console.log('handleChangeX');
-        console.log(e);
         let gotTicket=e.target.value;
         this.setState( (state) => update(state,{volunteer:{$merge:{['got_ticket']:gotTicket=='Yes'}}} ));
     }
@@ -56,8 +61,6 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     handleSubmit(){
-        console.log('Modal.handleSubmit');
-
         let newState={};
         if (this.state.volunteer.is_production!==undefined && this.state.volunteer.is_production!==this.props.volunteer.is_prodcution)
             newState.is_production= this.state.volunteer.is_production;
@@ -67,25 +70,26 @@ export default class VolunteerEditModal extends React.Component{
          if(this.state.volunteer.got_ticket!==undefined && this.state.volunteer.got_ticket!==this.props.volunteer.got_ticket)
             newState.got_ticket=this.state.volunteer.got_ticket;
         
+        if(this.state.volunteer.volunteer_type!==undefined && this.state.volunteer.volunteer_type!==this.props.volunteer.volunteer_type)
+            newState.volunteer_type = this.state.volunteer.volunteer_type;
+
+        console.log(this.state.volunteer.volunteer_type);
+        console.log(this.props.volunteer.volunteer_type);
         this.setState({volunteer:{}});
         console.log(newState);
         this.props.onSubmit(newState)
     }
     
     handleReset(){
-        console.log('VolunteerEditModal.handleReset called');
         this.setState( {volunteer:{}} );
-
     }
 
     render(){
         console.log('VolunteerEditModal.render');
         console.log('props');
-
         console.log(this.props);
         console.log('state');
         console.log(this.state);
-        console.log('role: '+ this.calcValueRole());
         console.log('effectiveVolunteer');
 
         let effectiveVolunteer = update(this.props.volunteer,{$merge:this.state.volunteer});
@@ -130,6 +134,23 @@ export default class VolunteerEditModal extends React.Component{
                                 id="Role">
                                 {
                                     ['Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader'].map(
+                                    (option)=> <option value={option} key={option}>{option}</option>
+                                    )    
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                     <div className="form-group row">
+                        <label htmlFor="Volunteer Type" className="col-sm-4 col-form-label">Volunteer Type</label>
+                        <div className="col-sm-10">
+                            <select
+                                onChange ={this.handleChangeVolunteerType}
+                                value={effectiveVolunteer.volunteer_type}
+                                className="form-control" 
+                                id="Volunteeer Type">
+                                {
+                                    ['Manager','Day Manager','Shift Manager','Production','Department Manager'].map(
                                     (option)=> <option value={option} key={option}>{option}</option>
                                     )    
                                 }
