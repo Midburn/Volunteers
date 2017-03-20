@@ -1,7 +1,7 @@
 import update from 'immutability-helper';
 import axios from 'axios';
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDOM from 'react-dom';
 
 import FilterComponent from '../FilterComponent/FilterComponent.js';
 

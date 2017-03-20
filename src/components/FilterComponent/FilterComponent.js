@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import SearchFilter  from '../SearchFilter/SearchFilter.js';
