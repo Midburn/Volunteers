@@ -5,31 +5,35 @@ import VolunteerRow from '../VolunteerRow/VolunteerRow.js';
 // css requires
 require('./TableComponent.css');
 
-var TableComponent = React.createClass({
-    meetsFilters:function(volunteer){
+export default class TableComponent extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    
+    meetsFilters(volunteer){
         return this.meetsTextFilter(volunteer) && this.meetsOptionsFilters(volunteer);
-    },
+    }
 
-    meetsTextFilter:function(volunteer){
+    meetsTextFilter(volunteer){
         let txt= this.props.filters.filterText.toLowerCase();
         return !txt ||
             volunteer.first_name.toLowerCase().indexOf(txt)!==-1 ||
             volunteer.last_name.toLowerCase().indexOf(txt)!==-1 ||
             volunteer.email.toLowerCase().indexOf(txt)!==-1;
-    },
+    }
 
-    meetsOptionsFilters:function(volunteer){    
+    meetsOptionsFilters(volunteer){    
         return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
         this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteer_type) &&
         this.meetsCriterion(this.props.filters.gotTicket,volunteer.got_ticket) &&
         this.meetsCriterion(this.props.filters.isProduction,volunteer.is_production);
-    },
+    }
 
-    meetsCriterion:function(critetion,value){
+    meetsCriterion(critetion,value){
         return critetion===null || critetion===value;
-    },
+    }
 
-    render: function () {
+    render () {
        // var that=this;
         var rows = this.props.volunteers.
         filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
@@ -59,6 +63,4 @@ var TableComponent = React.createClass({
             </div>
         );
     }
-});
-
-module.exports = TableComponent;
+}
