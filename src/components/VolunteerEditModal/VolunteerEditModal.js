@@ -1,5 +1,7 @@
 import React from 'react';
 import {Modal, OverlayTrigger, Button} from 'react-bootstrap';
+import update from 'immutability-helper';
+
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 
 
@@ -7,45 +9,69 @@ import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 export default class VolunteerEditModal extends React.Component{
     constructor(props){
         super(props);
-        this.state={};
+        this.state={volunteer:{}};
         this.handleCancel=this.handleCancel.bind(this);
         this.handleSubmit=this.handleSubmit.bind(this);
         this.handleReset=this.handleReset.bind(this);
 
         this.handleChangeProduction=this.handleChangeProduction.bind(this);
         this.calcValueProduction= this.calcValueProduction.bind(this);
-        this.handleChage=this.handleChange.bind(this);
+        this.handleChageRole=this.handleChangeRole.bind(this);
     }
 
-    handleChange(e){
-        consle.log(e);
+    handleChangeRole(e){
+        console.log(e);
+        this.setState({volunteer:{role:e.target.value}});
+    }
+
+    calcValueRole(){
+            return this.state.volunteer.role!==undefined? this.state.volunteer.role: this.props.volunteer.role;
     }
 
     calcValueProduction(){
-        return (this.state.is_production!=undefined? this.state.is_production: this.props.volunteer.is_production)?
+        return (this.state.volunteer.is_production!==undefined ? this.state.volunteer.is_production: this.props.volunteer.is_production)?
             'Yes':
             'No';
     }
 
     handleChangeProduction(e){
-        console.log('handle change production');
+        console.log('handleChangeProduction');
         console.log(e);
-        this.setState( {is_production: e.target.value} );
+        this.setState( {volunteer:{is_production: e.target.value==='Yes'}} );
+
     }
 
     
     handleCancel(){
         this.props.onHide();
     }
+
     handleSubmit(){
-        this.props.onHide();
+        console.log('Modal.handleSubmit');
+
+        let newState={};
+        if (this.state.volunteer.is_production!==undefined && this.state.volunteer.is_production!==this.props.volunteer.is_prodcution)
+            newState.is_production= this.state.volunteer.is_production;
+        if(this.state.volunteer.role!==undefined && this.state.volunteer.role!==this.props.volunteer.role)
+            newState.role=this.state.volunteer.role;
+        
+        console.log(newState);
+        this.props.onSubmit(newState)
     }
     handleReset(){
-        //TODO clear state
+        console.log('VolunteerEditModal.handleReset called');
+        this.setState( {volunteer:{}} );
+
     }
+
     render(){
-        console.log('Modal Rended');
+        console.log('VolunteerEditModal.render');
+        console.log('props');
+
         console.log(this.props);
+        console.log('state');
+        console.log(this.state);
+
 
         return (
             <Modal show={this.props.show} onHide={this.handleCancel}>
@@ -76,11 +102,11 @@ export default class VolunteerEditModal extends React.Component{
                     </div>
 
                     <div className="form-group row">
-                        <label for="Role" className="col-sm-4 col-form-label">Role</label>
+                        <label htmlFor="Role" className="col-sm-4 col-form-label">Role</label>
                         <div className="col-sm-10">
                             <select
                                 onChange ={this.handleChange}
-                                value="Manager"
+                                value={this.calcValueRole()}
                                 className="form-control" 
                                 id="Role">
                                 {
@@ -93,7 +119,7 @@ export default class VolunteerEditModal extends React.Component{
                     </div>
 
                     <div className="form-group row">
-                        <label for="Production" className="col-sm-4 col-form-label">Production</label>
+                        <label htmlFor="Production" className="col-sm-4 col-form-label">Production</label>
                         <div className="col-sm-10">
                             <select
                                 onChange ={this.handleChangeProduction}
