@@ -23,6 +23,7 @@ class VolunteerList extends React.Component {
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleFilterInput=this.handleFilterInput.bind(this);
     }
+    
     componentDidMount(){
         axios.get('/volunteer/volunteers')
         .then((res) => this.setState({volunteers:res.data}))
