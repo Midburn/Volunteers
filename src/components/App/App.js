@@ -1,5 +1,5 @@
 import React from 'react';
-import VolunteerList from '../VolunteerList/VolunteerList'
+import VolunteerList from '../VolunteerList/VolunteerList';
 
 function App() {
   const VOLUNTEERS = [
