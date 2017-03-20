@@ -1,9 +1,10 @@
 import update from 'immutability-helper';
 import axios from 'axios';
+import React from 'react';
+import ReactDom from 'react-dom';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var FilterComponent = require('../FilterComponent/FilterComponent');
+import FilterComponent from '../FilterComponent/FilterComponent.js';
+
 var TableComponent = require('../TableComponent/TableComponent');
 
 class VolunteerList extends React.Component {
