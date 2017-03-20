@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 
 export default class DropDownFilter extends React.Component{
     constructor(props){
@@ -19,12 +19,11 @@ export default class DropDownFilter extends React.Component{
                 </option>);
             });
         return (
-           
             <div className="filter-component form-group">
-                <label htmlFor="department">{this.props.label}</label>
+                <label htmlFor="department">{this.props.label}</label>)
                 <select 
                 className="form-control" 
-                id="department"
+                id={this.props.label}
                 onChange={this.handleFilterInputChange}
                 value={filter} 
                 >

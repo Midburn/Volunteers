@@ -1,12 +1,13 @@
 import update from 'immutability-helper';
 import axios from 'axios';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var FilterComponent = require('../FilterComponent/FilterComponent');
-var TableComponent = require('../TableComponent/TableComponent');
+import FilterComponent from '../FilterComponent/FilterComponent.js';
 
-class VolunteerList extends React.Component {
+import TableComponent from '../TableComponent/TableComponent';
+
+export default class VolunteerList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,6 +24,7 @@ class VolunteerList extends React.Component {
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleFilterInput=this.handleFilterInput.bind(this);
     }
+    
     componentDidMount(){
         axios.get('/volunteer/volunteers')
         .then((res) => this.setState({volunteers:res.data}))
@@ -66,6 +68,4 @@ class VolunteerList extends React.Component {
             </div>
         );
     }
-};
-
-export default VolunteerList;
+}
