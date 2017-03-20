@@ -1,9 +1,10 @@
-var express = require('express');
-var path = require('path');
-var fs = require('fs');
-var React = require('react');
-var ReactDOMServer = require('react-dom/server');
-// var VolunteerList = require('../src/components/VolunteerList.jsx');
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const webpack = require('webpack');
+const webpackDevServer = require('webpack-dev-server');
 
 var app = express();
 
@@ -12,11 +13,11 @@ var app = express();
 // WEB
 /////////////////////////////
 
-app.use('/static', express.static(path.join(__dirname, '../client/')))
+app.use('/static', express.static(path.join(__dirname, '../public/')))
 app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-   res.sendFile(path.join(__dirname, '../client/react-index.html'));
+   res.sendFile(path.join(__dirname, '../src/index.html'));
 })
 
 
@@ -33,17 +34,17 @@ app.get('/volunteer/volunteers', function (req, res) {
    got_ticket = req.query.got_ticket
 
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'),res); 
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'),res);
 })
 
 app.get('/volunteer/departments', function (req, res) {
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res); 
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res);
 })
 
 app.get('/volunteer/roles', function (req, res) {
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res); 
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res);
 })
 
 
@@ -58,9 +59,9 @@ function retrunStub(filename, res) {
          res.status(404).send('Not found');
       } else {
          res.send(data);
-      }   
+      }
       res.end();
-  }); 
+  });
 }
 
 function readJSONFile(filename, callback) {
@@ -75,6 +76,22 @@ function readJSONFile(filename, callback) {
         callback(exception);
       }
    });
+}
+
+// Set webpack-dev-server
+// TODO: Check if debug environment when environments will be supported
+if (true) {
+
+  var config = require("../webpack.config.js");
+  config.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090/', 'webpack/hot/only-dev-server');
+  var compiler = webpack(config);
+  var server = new webpackDevServer(compiler, {
+    contentBase: path.resolve(__dirname, '../public'),
+    publicPath: '/',
+    hot: true,
+    stats: true
+  });
+  server.listen(9090);
 }
 
 var server = app.listen(8080, function () {
