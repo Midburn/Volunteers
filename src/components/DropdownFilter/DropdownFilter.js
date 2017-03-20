@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 
 export default class DropDownFilter extends React.Component{
     constructor(props){
