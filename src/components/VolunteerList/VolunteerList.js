@@ -7,7 +7,7 @@ import FilterComponent from '../FilterComponent/FilterComponent.js';
 
 import TableComponent from '../TableComponent/TableComponent';
 
-class VolunteerList extends React.Component {
+export default class VolunteerList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +20,7 @@ class VolunteerList extends React.Component {
                 isProduction: null
             }
         };
-            
+
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleFilterInput=this.handleFilterInput.bind(this);
     }
@@ -34,7 +34,7 @@ class VolunteerList extends React.Component {
                 console.log('Status', err.response.status);
                 console.log('Headers', err.response.headers);
             }
-            else console.log('Error',err.message);  
+            else console.log('Error',err.message);
         });
     }
 
@@ -42,9 +42,9 @@ class VolunteerList extends React.Component {
         this.handleFilterInput('filterText',filterText);
     }
 
-     handleFilterInput(filterName,value){
+    handleFilterInput(filterName,value){
          let mergeValue= {
-             filters: { 
+             filters: {
                  $merge:{
                     [filterName]:value
              }}};
@@ -54,9 +54,10 @@ class VolunteerList extends React.Component {
     render() {
         return (
             <div className="volunteer-list-component">
+
                 <div className="container card">
-                    <FilterComponent 
-                    filters={this.state.filters} 
+                    <FilterComponent
+                    filters={this.state.filters}
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}/>
                 </div>
@@ -67,6 +68,4 @@ class VolunteerList extends React.Component {
             </div>
         );
     }
-};
-
-ReactDOM.render(<VolunteerList/>, document.getElementById('react-app'));
+}
