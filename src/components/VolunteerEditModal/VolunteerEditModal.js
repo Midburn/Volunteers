@@ -17,6 +17,7 @@ export default class VolunteerEditModal extends React.Component{
         this.handleChangeProduction=this.handleChangeProduction.bind(this);
         this.calcValueProduction= this.calcValueProduction.bind(this);
         this.handleChangeRole=this.handleChangeRole.bind(this);
+        this.handleChangeGotTicket = this.handleChangeGotTicket.bind(this);
     }
 
    
@@ -31,17 +32,22 @@ export default class VolunteerEditModal extends React.Component{
             'No';
     }
 
+
      handleChangeRole(e){
-        console.log(e);
         let eventProd=e.target.value;//copy primitive so that synthtic event could be reused by react
         this.setState((state) => update(state,{volunteer:{$merge:{role:eventProd}}} ));
     }
 
     handleChangeProduction(e){
-        console.log('handleChangeProduction');
-        console.log(e);
         let eventProd=e.target.value;
         this.setState( (state) => update(state,{volunteer:{$merge:{is_production: eventProd==='Yes'}}} ));
+    }
+
+    handleChangeGotTicket(e){
+         console.log('handleChangeX');
+        console.log(e);
+        let gotTicket=e.target.value;
+        this.setState( (state) => update(state,{volunteer:{$merge:{['got_ticket']:gotTicket=='Yes'}}} ));
     }
 
     
@@ -57,6 +63,9 @@ export default class VolunteerEditModal extends React.Component{
             newState.is_production= this.state.volunteer.is_production;
         if(this.state.volunteer.role!==undefined && this.state.volunteer.role!==this.props.volunteer.role)
             newState.role=this.state.volunteer.role;
+        
+         if(this.state.volunteer.got_ticket!==undefined && this.state.volunteer.got_ticket!==this.props.volunteer.got_ticket)
+            newState.got_ticket=this.state.volunteer.got_ticket;
         
         this.setState({volunteer:{}});
         console.log(newState);
@@ -77,6 +86,10 @@ export default class VolunteerEditModal extends React.Component{
         console.log('state');
         console.log(this.state);
         console.log('role: '+ this.calcValueRole());
+        console.log('effectiveVolunteer');
+
+        let effectiveVolunteer = update(this.props.volunteer,{$merge:this.state.volunteer});
+        console.log(effectiveVolunteer);
 
 
         return (
@@ -140,6 +153,24 @@ export default class VolunteerEditModal extends React.Component{
                             </select>
                         </div>
                     </div>
+
+                    <div className="form-group row">
+                        <label htmlFor="Got Ticket" className="col-sm-4 col-form-label">Got Ticket</label>
+                        <div className="col-sm-10">
+                            <select
+                                onChange ={this.handleChangeGotTicket}
+                                value={effectiveVolunteer.got_ticket?'Yes':'No'}
+                                className="form-control" 
+                                id="Got Ticket">
+                                {
+                                    ['Yes','No'].map(
+                                    (option)=> <option value={option} key={option}>{option}</option>
+                                    )    
+                                }
+                            </select>
+                        </div>
+                    </div>
+
                 </form>
             </Modal.Body>
           <Modal.Footer>
