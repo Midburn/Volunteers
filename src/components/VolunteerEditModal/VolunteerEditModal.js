@@ -16,13 +16,10 @@ export default class VolunteerEditModal extends React.Component{
 
         this.handleChangeProduction=this.handleChangeProduction.bind(this);
         this.calcValueProduction= this.calcValueProduction.bind(this);
-        this.handleChageRole=this.handleChangeRole.bind(this);
+        this.handleChangeRole=this.handleChangeRole.bind(this);
     }
 
-    handleChangeRole(e){
-        console.log(e);
-        this.setState({volunteer:{role:e.target.value}});
-    }
+   
 
     calcValueRole(){
             return this.state.volunteer.role!==undefined? this.state.volunteer.role: this.props.volunteer.role;
@@ -34,11 +31,17 @@ export default class VolunteerEditModal extends React.Component{
             'No';
     }
 
+     handleChangeRole(e){
+        console.log(e);
+        let eventProd=e.target.value;//copy primitive so that synthtic event could be reused by react
+        this.setState((state) => update(state,{volunteer:{$merge:{role:eventProd}}} ));
+    }
+
     handleChangeProduction(e){
         console.log('handleChangeProduction');
         console.log(e);
-        this.setState( {volunteer:{is_production: e.target.value==='Yes'}} );
-
+        let eventProd=e.target.value;
+        this.setState( (state) => update(state,{volunteer:{$merge:{is_production: eventProd==='Yes'}}} ));
     }
 
     
@@ -55,9 +58,11 @@ export default class VolunteerEditModal extends React.Component{
         if(this.state.volunteer.role!==undefined && this.state.volunteer.role!==this.props.volunteer.role)
             newState.role=this.state.volunteer.role;
         
+        this.setState({volunteer:{}});
         console.log(newState);
         this.props.onSubmit(newState)
     }
+    
     handleReset(){
         console.log('VolunteerEditModal.handleReset called');
         this.setState( {volunteer:{}} );
@@ -71,6 +76,7 @@ export default class VolunteerEditModal extends React.Component{
         console.log(this.props);
         console.log('state');
         console.log(this.state);
+        console.log('role: '+ this.calcValueRole());
 
 
         return (
@@ -105,12 +111,12 @@ export default class VolunteerEditModal extends React.Component{
                         <label htmlFor="Role" className="col-sm-4 col-form-label">Role</label>
                         <div className="col-sm-10">
                             <select
-                                onChange ={this.handleChange}
+                                onChange ={this.handleChangeRole}
                                 value={this.calcValueRole()}
                                 className="form-control" 
                                 id="Role">
                                 {
-                                    ['All','Manager','Day Manager','Shift Manager','Production','Department Manager'].map(
+                                    ['Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader'].map(
                                     (option)=> <option value={option} key={option}>{option}</option>
                                     )    
                                 }
