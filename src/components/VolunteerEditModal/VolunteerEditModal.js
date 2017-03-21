@@ -3,6 +3,7 @@ import {Modal, OverlayTrigger, Button} from 'react-bootstrap';
 import update from 'immutability-helper';
 
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
+import DropdownConverter from '../../DropdownConverter.js'
 
 
 
@@ -19,6 +20,7 @@ export default class VolunteerEditModal extends React.Component{
         this.handleChangeRole=this.handleChangeRole.bind(this);
         this.handleChangeGotTicket = this.handleChangeGotTicket.bind(this);
         this.handleChangeVolunteerType = this.handleChangeVolunteerType.bind(this);
+       // this.handleChange= this.handleChange.bind(this);
     }
 
    
@@ -33,6 +35,16 @@ export default class VolunteerEditModal extends React.Component{
             'No';
     }
 
+    calcDisplayedVolunteer(){
+        let converter = new DropdownConverter();
+        let merged = update(this.props.volunteer,{$merge:this.state.volunteer});
+        let disp = Object.keys( merged
+            ).reduce(
+                (acc,cur) => {acc[cur] = converter.convertToDisplay(merged[cur]);return acc;}
+                ,
+                {});
+        return disp;
+    }
 
      handleChangeRole(e){
         let eventProd=e.target.value;//copy primitive so that synthtic event could be reused by react
@@ -82,8 +94,11 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     render(){
-
+        console.log('VolunteerEditModal.render');
         let effectiveVolunteer = update(this.props.volunteer,{$merge:this.state.volunteer});
+        console.log(effectiveVolunteer);
+        let displayedVolunteer = this.calcDisplayedVolunteer();
+        console.log(displayedVolunteer);
 
         return (
             <Modal show={this.props.show} onHide={this.handleCancel}>

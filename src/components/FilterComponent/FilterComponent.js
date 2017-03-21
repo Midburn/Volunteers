@@ -12,7 +12,7 @@ export default class FilterComponent extends React.Component{
     }
 
     render() {
-        let Convert = DropdownConverter;
+        let Convert = new DropdownConverter();
         return (
             <div className="filter-component row">
                 <div className="filter-component col-xs-12">
