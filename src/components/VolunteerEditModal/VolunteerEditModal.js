@@ -49,20 +49,16 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     handleSubmit(){
-        let newState={};
-        if (this.state.volunteer.is_production!==undefined && this.state.volunteer.is_production!==this.props.volunteer.is_prodcution)
-            newState.is_production= this.state.volunteer.is_production;
-        if(this.state.volunteer.role!==undefined && this.state.volunteer.role!==this.props.volunteer.role)
-            newState.role=this.state.volunteer.role;
-        
-         if(this.state.volunteer.got_ticket!==undefined && this.state.volunteer.got_ticket!==this.props.volunteer.got_ticket)
-            newState.got_ticket=this.state.volunteer.got_ticket;
-        
-        if(this.state.volunteer.volunteer_type!==undefined && this.state.volunteer.volunteer_type!==this.props.volunteer.volunteer_type)
-            newState.volunteer_type = this.state.volunteer.volunteer_type;
+        console.log('VolunteerEditModal.handleSubmit');
+        let diff = Object.keys(this.state.volunteer).reduce((acc,cur)=>{
+            if (this.state.volunteer[cur]!==undefined && this.state.volunteer[cur]!==this.props.volunteer[cur])
+                acc[cur] = this.state.volunteer[cur];
+                return acc;
+        },{});
+        console.log(diff);
 
         this.handleReset();
-        this.props.onSubmit(newState)
+        this.props.onSubmit(diff)
     }
     
     handleReset(){

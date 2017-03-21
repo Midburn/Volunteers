@@ -21,11 +21,17 @@ export default class VolunteerRow extends React.Component{
     }
 
     handleSubmit(volunteerChange){
-        this.setState({volunteer:volunteerChange});
+        console.log('VolunteerRow.handleSubmit');
+        console.log(volunteerChange);
+
+        this.setState((state)=>update(state,{volunteer: {$merge: volunteerChange}} ));
         this.toggleEdit();
     }
     
     render() {
+        console.log('VolunteerRow.render');
+        console.log(this.props.volunteer);
+        console.log(this.state.volunteer);
 
         if (!this.props.volunteer){
             console.log('props.volunteer is falsy. That is a bug');
@@ -33,6 +39,7 @@ export default class VolunteerRow extends React.Component{
         }
         else {
             let effectiveVolunteer=update(this.props.volunteer,{$merge:this.state.volunteer});
+            console.log(effectiveVolunteer);
 
             return (          
                 <tr className="volunteer-row">
