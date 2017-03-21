@@ -47,15 +47,15 @@ export default class VolunteerList extends React.Component {
             }
             else console.log('Error',err.message);
     }
-    handleRowDelete(department,profile){
+    handleRowDelete(department,profile_id){
         console.log(VolunteerList.handleRowDelete);
-        axios.delete('/volunteers/department/666/volunteer/777')
+        axios.delete(`/volunteers/department/${department}}/volunteer/${profile_id}`)
         .then(this.fetchVolunteers)
         .catch( this.logNetworkError);
     }
 
     handleRowChange(department,prodile,diff){
-        axios.put('volunteers/department/888/volunteer/999')
+        axios.put(`volunteers/department/888/volunteer/999`)
         .then(this.fetchVolunteers)
         .catch(this.logNetworkError);
     }
