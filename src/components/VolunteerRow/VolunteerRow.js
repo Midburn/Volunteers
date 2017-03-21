@@ -13,18 +13,24 @@ export default class VolunteerRow extends React.Component{
             volunteer:{}
         };
         this.handleEdit= this.handleEdit.bind(this);
+        this.handleHide=this.handleHide.bind(this);
         this.handleSubmit= this.handleSubmit.bind(this);
         this.handleDelete= this.handleDelete.bind(this);
     }
 
     handleEdit(){
-        this.setState( {edit: !this.state.edit} );
+        this.setState( {edit: true} );
+    }
+
+    handleHide(){
+        this.setState({edit:false});
     }
 
     handleSubmit(diff){
         console.log('VolunteerRow.handleSubmit');
         console.log(diff);
-
+        //TODO BUG
+        //TODO either row is updated on every submit and then no need for diff merge or an additional send to server phase is added
         this.props.onRowChange(this.props.volunteer.profile_id,this.props.volunteer.department,this.state.volunteer,diff);//TODO include id in model
 
         this.setState((state)=>update(state,{ edit: false ,volunteer: {$merge: diff}} ));
@@ -32,7 +38,7 @@ export default class VolunteerRow extends React.Component{
 
     handleDelete(){
         console.log('VolunteerRow.handleDelete');
-        this.props.onRowDelete(this.props.volunteer.department,this.props.profile_id);
+        this.props.onRowDelete(this.props.volunteer.department,this.props.volunteer.profile_id);
     }
 
     
@@ -53,7 +59,7 @@ export default class VolunteerRow extends React.Component{
                 <tr className="volunteer-row">
                     <VolunteerEditModal 
                         show={!!this.state.edit} 
-                        onHide={this.toggleEdit} 
+                        onHide={this.handleHide} 
                         onSubmit={this.handleSubmit}
                         volunteer={effectiveVolunteer}/>
                     <td>{effectiveVolunteer.profile_id}</td>
