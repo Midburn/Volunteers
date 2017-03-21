@@ -17,12 +17,10 @@ export default class VolunteerRow extends React.Component{
     }
 
     toggleEdit(){
-        console.log('row.toggleEdit');
         this.setState( {edit: !this.state.edit} );
     }
 
     handleSubmit(volunteerChange){
-        console.log('row.submit');
         this.setState({volunteer:volunteerChange});
         this.toggleEdit();
     }
@@ -35,15 +33,6 @@ export default class VolunteerRow extends React.Component{
         }
         else {
             let effectiveVolunteer=update(this.props.volunteer,{$merge:this.state.volunteer});
-            
-            let departmentDropdown = (
-            <DropdownFilter label="Department" 
-                        onFilterInput={()=>console.log('onFilterInput Called')}
-                        options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}
-                        myFilter={()=>console.log('myFilter called')}/>
-            );
-
-           
 
             return (          
                 <tr className="volunteer-row">
@@ -56,7 +45,7 @@ export default class VolunteerRow extends React.Component{
                     <td>{effectiveVolunteer.email}</td>
                     <td>{effectiveVolunteer.first_name}</td>
                     <td>{effectiveVolunteer.last_name}</td>
-                    <td>{this.state.edit?departmentDropdown:effectiveVolunteer.department}</td>
+                    <td>{effectiveVolunteer.department}</td>
                     <td>{effectiveVolunteer.role}</td>
                     <td>{effectiveVolunteer.volunteer_type}</td>
                     <td>{effectiveVolunteer.is_production?'Yes':'No'}</td>

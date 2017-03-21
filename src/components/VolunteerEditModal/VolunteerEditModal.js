@@ -73,10 +73,7 @@ export default class VolunteerEditModal extends React.Component{
         if(this.state.volunteer.volunteer_type!==undefined && this.state.volunteer.volunteer_type!==this.props.volunteer.volunteer_type)
             newState.volunteer_type = this.state.volunteer.volunteer_type;
 
-        console.log(this.state.volunteer.volunteer_type);
-        console.log(this.props.volunteer.volunteer_type);
         this.setState({volunteer:{}});
-        console.log(newState);
         this.props.onSubmit(newState)
     }
     
@@ -85,16 +82,8 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     render(){
-        console.log('VolunteerEditModal.render');
-        console.log('props');
-        console.log(this.props);
-        console.log('state');
-        console.log(this.state);
-        console.log('effectiveVolunteer');
 
         let effectiveVolunteer = update(this.props.volunteer,{$merge:this.state.volunteer});
-        console.log(effectiveVolunteer);
-
 
         return (
             <Modal show={this.props.show} onHide={this.handleCancel}>
