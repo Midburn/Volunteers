@@ -11,15 +11,12 @@ export default class VolunteerEditModal extends React.Component{
     constructor(props){
         super(props);
         this.state={volunteer:{}};
+
         this.handleCancel=this.handleCancel.bind(this);
         this.handleSubmit=this.handleSubmit.bind(this);
         this.handleReset=this.handleReset.bind(this);
 
-        this.handleChangeProduction=this.handleChangeProduction.bind(this);
-        this.handleChangeRole=this.handleChangeRole.bind(this);
-        this.handleChangeGotTicket = this.handleChangeGotTicket.bind(this);
-        this.handleChangeVolunteerType = this.handleChangeVolunteerType.bind(this);
-       // this.handleChange= this.handleChange.bind(this);
+        this.handleInputChange= this.handleInputChange.bind(this);
     }
 
     calcDisplayedVolunteer(){
@@ -33,29 +30,21 @@ export default class VolunteerEditModal extends React.Component{
         return disp;
     }
 
-     handleChangeRole(e){
-        let eventProd=e.target.value;//copy primitive so that synthtic event could be reused by react
-        this.setState((state) => update(state,{volunteer:{$merge:{role:eventProd}}} ));
-    }
-    
-    handleChangeVolunteerType(e){
-        let val=e.target.value;
-        this.setState((state) => update(state,{volunteer:{$merge:{volunteer_type:val}}} ));
+    getInputChangeHandler(field){
+        return (event) => this.handleInputChange(field,event);
     }
 
+    handleInputChange(field,event){
+        console.log('VolunteerEditModal.handleInputChange');
+        let converter = new DropdownConverter();
 
-    handleChangeProduction(e){
-        let eventProd=e.target.value;
-        this.setState( (state) => update(state,{volunteer:{$merge:{is_production: eventProd==='Yes'}}} ));
+        let val= event.target.value;
+        this.setState( (state) => update(state,{volunteer:{$merge:{[field]:converter.convertFromDisplay(val)}}} ));
+     //   this.setState((state)=> {volunteer: {...(state.volunteer),[field]: converter.ConvertFromDisplay(event.target.value)}})
     }
-
-    handleChangeGotTicket(e){
-        let gotTicket=e.target.value;
-        this.setState( (state) => update(state,{volunteer:{$merge:{['got_ticket']:gotTicket=='Yes'}}} ));
-    }
-
     
     handleCancel(){
+        this.handleReset();
         this.props.onHide();
     }
 
@@ -72,7 +61,7 @@ export default class VolunteerEditModal extends React.Component{
         if(this.state.volunteer.volunteer_type!==undefined && this.state.volunteer.volunteer_type!==this.props.volunteer.volunteer_type)
             newState.volunteer_type = this.state.volunteer.volunteer_type;
 
-        this.setState({volunteer:{}});
+        this.handleReset();
         this.props.onSubmit(newState)
     }
     
@@ -117,7 +106,7 @@ export default class VolunteerEditModal extends React.Component{
                         <label htmlFor="Role" className="col-sm-4 col-form-label">Role</label>
                         <div className="col-sm-10">
                             <select
-                                onChange ={this.handleChangeRole}
+                                onChange ={this.getInputChangeHandler('role')}
                                 value={displayedVolunteer.role}
                                 className="form-control" 
                                 id="Role">
@@ -134,7 +123,7 @@ export default class VolunteerEditModal extends React.Component{
                         <label htmlFor="Volunteer Type" className="col-sm-4 col-form-label">Volunteer Type</label>
                         <div className="col-sm-10">
                             <select
-                                onChange ={this.handleChangeVolunteerType}
+                                onChange ={this.getInputChangeHandler('volunteer_type')}
                                 value={displayedVolunteer.volunteer_type}
                                 className="form-control" 
                                 id="Volunteeer Type">
@@ -151,7 +140,7 @@ export default class VolunteerEditModal extends React.Component{
                         <label htmlFor="Production" className="col-sm-4 col-form-label">Production</label>
                         <div className="col-sm-10">
                             <select
-                                onChange ={this.handleChangeProduction}
+                                onChange ={this.getInputChangeHandler('is_production')}
                                 value={displayedVolunteer.is_production}
                                 className="form-control" 
                                 id="Production">
@@ -168,7 +157,7 @@ export default class VolunteerEditModal extends React.Component{
                         <label htmlFor="Got Ticket" className="col-sm-4 col-form-label">Got Ticket</label>
                         <div className="col-sm-10">
                             <select
-                                onChange ={this.handleChangeGotTicket}
+                                onChange ={this.getInputChangeHandler('got_ticket')}
                                 value={displayedVolunteer.got_ticket}
                                 className="form-control" 
                                 id="Got Ticket">
