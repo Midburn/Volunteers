@@ -37,7 +37,13 @@ export default class TableComponent extends React.Component{
        // var that=this;
         var rows = this.props.volunteers.
         filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
-        map(function (volunteer) { return (<VolunteerRow volunteer={volunteer} key={volunteer.profileId}/>)});
+        map( (volunteer) =>{ return (
+            <VolunteerRow 
+            volunteer={volunteer} 
+            key={volunteer.profileId}
+            onRowDelete= {this.props.onRowDelete}
+            onRowChange= {this.props.onRowChange}/>)});
+
         return (
             <div className="table-component col-xs-12">
                 <table className="table table-striped table-hover">
