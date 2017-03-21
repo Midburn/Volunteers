@@ -19,4 +19,4 @@ export default class Converter{
             default: return logicValue;
         }
     }
-)
+}

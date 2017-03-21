@@ -3,7 +3,7 @@ import React from 'react';
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import SearchFilter  from '../SearchFilter/SearchFilter.js';
 import ResetButtonComponent  from '../ResetButtonComponent/ResetButtonComponent.js';
-import DropdownConverter from '../../DropdownConverters.js'
+import DropdownConverter from '../../DropdownConverter.js'
 
 export default class FilterComponent extends React.Component{
     constructor(props){ 
