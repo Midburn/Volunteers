@@ -16,23 +16,10 @@ export default class VolunteerEditModal extends React.Component{
         this.handleReset=this.handleReset.bind(this);
 
         this.handleChangeProduction=this.handleChangeProduction.bind(this);
-        this.calcValueProduction= this.calcValueProduction.bind(this);
         this.handleChangeRole=this.handleChangeRole.bind(this);
         this.handleChangeGotTicket = this.handleChangeGotTicket.bind(this);
         this.handleChangeVolunteerType = this.handleChangeVolunteerType.bind(this);
        // this.handleChange= this.handleChange.bind(this);
-    }
-
-   
-
-    calcValueRole(){
-            return this.state.volunteer.role!==undefined? this.state.volunteer.role: this.props.volunteer.role;
-    }
-
-    calcValueProduction(){
-        return (this.state.volunteer.is_production!==undefined ? this.state.volunteer.is_production: this.props.volunteer.is_production)?
-            'Yes':
-            'No';
     }
 
     calcDisplayedVolunteer(){
@@ -95,8 +82,6 @@ export default class VolunteerEditModal extends React.Component{
 
     render(){
         console.log('VolunteerEditModal.render');
-        let effectiveVolunteer = update(this.props.volunteer,{$merge:this.state.volunteer});
-        console.log(effectiveVolunteer);
         let displayedVolunteer = this.calcDisplayedVolunteer();
         console.log(displayedVolunteer);
 
@@ -133,7 +118,7 @@ export default class VolunteerEditModal extends React.Component{
                         <div className="col-sm-10">
                             <select
                                 onChange ={this.handleChangeRole}
-                                value={this.calcValueRole()}
+                                value={displayedVolunteer.role}
                                 className="form-control" 
                                 id="Role">
                                 {
@@ -150,7 +135,7 @@ export default class VolunteerEditModal extends React.Component{
                         <div className="col-sm-10">
                             <select
                                 onChange ={this.handleChangeVolunteerType}
-                                value={effectiveVolunteer.volunteer_type}
+                                value={displayedVolunteer.volunteer_type}
                                 className="form-control" 
                                 id="Volunteeer Type">
                                 {
@@ -167,7 +152,7 @@ export default class VolunteerEditModal extends React.Component{
                         <div className="col-sm-10">
                             <select
                                 onChange ={this.handleChangeProduction}
-                                value={this.calcValueProduction()}
+                                value={displayedVolunteer.is_production}
                                 className="form-control" 
                                 id="Production">
                                 {
@@ -184,7 +169,7 @@ export default class VolunteerEditModal extends React.Component{
                         <div className="col-sm-10">
                             <select
                                 onChange ={this.handleChangeGotTicket}
-                                value={effectiveVolunteer.got_ticket?'Yes':'No'}
+                                value={displayedVolunteer.got_ticket}
                                 className="form-control" 
                                 id="Got Ticket">
                                 {
