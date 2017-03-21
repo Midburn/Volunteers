@@ -23,6 +23,8 @@ export default class VolunteerList extends React.Component {
 
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleFilterInput=this.handleFilterInput.bind(this);
+        this.handleRowDelete=this.handleRowDelete.bind(this);
+        this.handleRowChange=this.handleRowChange.bind(this);
     }
     
     componentDidMount(){
@@ -51,6 +53,14 @@ export default class VolunteerList extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
+    handleRowDelete(department,profile){
+        axios.delete('/volunteers/department/666/volunteer/777');
+    }
+
+    handleRowChange(department,prodile,diff){
+        axios.put('volunteers/department/888/volunteer/999');
+    }
+
     render() {
         return (
             <div className="volunteer-list-component">
@@ -62,7 +72,11 @@ export default class VolunteerList extends React.Component {
                     onFilterInput={this.handleFilterInput}/>
                 </div>
                 <div className="container card container">
-                    <TableComponent volunteers={this.state.volunteers} filters={this.state.filters}/>
+                    <TableComponent 
+                    volunteers= {this.state.volunteers} 
+                    filters= {this.state.filters}
+                    onRowDelete= {this.handleRowDelete}
+                    onRowChange= {this.handleRowChange}/>
                 </div>
 
             </div>

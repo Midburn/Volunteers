@@ -16,17 +16,23 @@ export default class VolunteerRow extends React.Component{
         this.handleSubmit=this.handleSubmit.bind(this);
     }
 
-    toggleEdit(){
+    handleEdit(){
         this.setState( {edit: !this.state.edit} );
     }
 
-    handleSubmit(volunteerChange){
+    handleSubmit(diff){
         console.log('VolunteerRow.handleSubmit');
-        console.log(volunteerChange);
+        console.log(diff);
 
-        this.setState((state)=>update(state,{volunteer: {$merge: volunteerChange}} ));
-        this.toggleEdit();
+        this.props.onRowChange(this.props.volunteer.profile_id,this.props.volunteer.department,this.state.volunteer,diff);//TODO include id in model
+
+        this.setState((state)=>update(state,{ edit: false ,volunteer: {$merge: diff}} ));
     }
+
+    handleDelete(){
+        this.props.onRowDelete(this.props.volunteer.department,this.props.profile_id);
+    }
+
     
     render() {
         console.log('VolunteerRow.render');
@@ -58,7 +64,7 @@ export default class VolunteerRow extends React.Component{
                     <td>{effectiveVolunteer.is_production?'Yes':'No'}</td>
                     <td>{effectiveVolunteer.phone}</td>
                     <td>{effectiveVolunteer.got_ticket?'Yes':'No'}</td>
-                    <td><a href="#" onClick={this.toggleEdit}>{this.state.edit?'Cancel':'Edit'}</a>/<a href="#" onClick={()=>alert('delete clicked')}>Delete</a></td>
+                    <td><a href="#" onClick={this.toggleEdit}>{this.state.edit?'Cancel':'Edit'}</a>/<a href="#" onClick={this.handleDelete)}>Delete</a></td>
                 </tr>
             );
         }
