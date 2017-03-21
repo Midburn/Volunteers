@@ -12,8 +12,9 @@ export default class VolunteerRow extends React.Component{
             edit:false,
             volunteer:{}
         };
-        this.toggleEdit=this.toggleEdit.bind(this);
-        this.handleSubmit=this.handleSubmit.bind(this);
+        this.handleEdit= this.handleEdit.bind(this);
+        this.handleSubmit= this.handleSubmit.bind(this);
+        this.handleDelete= this.handleDelete.bind(this);
     }
 
     handleEdit(){
@@ -30,6 +31,7 @@ export default class VolunteerRow extends React.Component{
     }
 
     handleDelete(){
+        console.log('VolunteerRow.handleDelete');
         this.props.onRowDelete(this.props.volunteer.department,this.props.profile_id);
     }
 
@@ -64,7 +66,7 @@ export default class VolunteerRow extends React.Component{
                     <td>{effectiveVolunteer.is_production?'Yes':'No'}</td>
                     <td>{effectiveVolunteer.phone}</td>
                     <td>{effectiveVolunteer.got_ticket?'Yes':'No'}</td>
-                    <td><a href="#" onClick={this.toggleEdit}>{this.state.edit?'Cancel':'Edit'}</a>/<a href="#" onClick={this.handleDelete)}>Delete</a></td>
+                    <td><a href="#" onClick={this.handleEdit}>Edit</a>/<a href="#" onClick={this.handleDelete}>Delete</a></td>
                 </tr>
             );
         }

@@ -25,19 +25,39 @@ export default class VolunteerList extends React.Component {
         this.handleFilterInput=this.handleFilterInput.bind(this);
         this.handleRowDelete=this.handleRowDelete.bind(this);
         this.handleRowChange=this.handleRowChange.bind(this);
+        this.fetchVolunteers = this.fetchVolunteers.bind(this);
+        this.logNetworkError = this.logNetworkError.bind(this);
     }
     
     componentDidMount(){
-        axios.get('/volunteer/volunteers')
+       this.fetchVolunteers();
+    }
+
+    fetchVolunteers(){
+         axios.get('/volunteer/volunteers')
         .then((res) => this.setState({volunteers:res.data}))
-        .catch( function(err){
+        .catch( this.logNetworkError);
+    }
+
+    logNetworkError(err){
             if(err.response){
                 console.log('Data', err.response.data);
                 console.log('Status', err.response.status);
                 console.log('Headers', err.response.headers);
             }
             else console.log('Error',err.message);
-        });
+    }
+    handleRowDelete(department,profile){
+        console.log(VolunteerList.handleRowDelete);
+        axios.delete('/volunteers/department/666/volunteer/777')
+        .then(this.fetchVolunteers)
+        .catch( this.logNetworkError);
+    }
+
+    handleRowChange(department,prodile,diff){
+        axios.put('volunteers/department/888/volunteer/999')
+        .then(this.fetchVolunteers)
+        .catch(this.logNetworkError);
     }
 
     handleFilterTextInput(filterText){
@@ -53,13 +73,7 @@ export default class VolunteerList extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
-    handleRowDelete(department,profile){
-        axios.delete('/volunteers/department/666/volunteer/777');
-    }
-
-    handleRowChange(department,prodile,diff){
-        axios.put('volunteers/department/888/volunteer/999');
-    }
+    
 
     render() {
         return (
