@@ -54,7 +54,7 @@ export default class VolunteerList extends React.Component {
         .catch( this.logNetworkError);
     }
 
-    handleRowChange(department,prodile,diff){
+    handleRowChange(department,profile_id,diff){
         let query=Object.keys(diff).reduce((acc,cur) => acc+`&${cur}=${diff[cur]}`,'').replace('&','?');
         axios.put(`volunteers/department/${department}/volunteer/${profile_id}`+ query)
         .then(this.fetchVolunteers)
