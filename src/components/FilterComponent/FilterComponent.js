@@ -1,11 +1,18 @@
-var React = require('react');
+import React from 'react';
 
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import SearchFilter  from '../SearchFilter/SearchFilter.js';
 import ResetButtonComponent  from '../ResetButtonComponent/ResetButtonComponent.js';
+import DropdownConverter from '../../DropdownConverter.js'
 
-var FilterComponent = React.createClass({
-    render: function() {
+export default class FilterComponent extends React.Component{
+    constructor(props){ 
+        super(props);
+        this.onResetClick = this.onResetClick.bind(this);
+    }
+
+    render() {
+        let Convert = new DropdownConverter();
         return (
             <div className="filter-component row">
                 <div className="filter-component col-xs-12">
@@ -13,58 +20,43 @@ var FilterComponent = React.createClass({
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Department" 
-                        onFilterInput={(value)=>this.props.onFilterInput('department',this.convertFromDisplay(value))}
+                        onFilterInput={(value)=>this.props.onFilterInput('department',Convert.convertFromDisplay(value))}
                         options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}
-                        myFilter={this.convertToDisplay(this.props.filters.department)}/>
+                        myFilter={Convert.convertToDisplay(this.props.filters.department)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Volunteer Type"     
-                        onFilterInput={(value)=>this.props.onFilterInput('volunteerType',this.convertFromDisplay(value))}
+                        onFilterInput={(value)=>this.props.onFilterInput('volunteerType',Convert.convertFromDisplay(value))}
                         options={['All','Manager','Day Manager','Shift Manager','Production','Department Manager']}
-                        myFilter={this.convertToDisplay(this.props.filters.volunteerType)}/>
+                        myFilter={Convert.convertToDisplay(this.props.filters.volunteerType)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Got Ticket" 
-                        onFilterInput={(value)=>this.props.onFilterInput('gotTicket',this.convertFromDisplay(value))}
+                        onFilterInput={(value)=>this.props.onFilterInput('gotTicket',Convert.convertFromDisplay(value))}
                         options={['All','Yes','No']}
-                        myFilter={this.convertToDisplay(this.props.filters.gotTicket)}/>
+                        myFilter={Convert.convertToDisplay(this.props.filters.gotTicket)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Production" 
-                        onFilterInput={(value)=>this.props.onFilterInput('isProduction',this.convertFromDisplay(value))}
+                        onFilterInput={(value)=>this.props.onFilterInput('isProduction',Convert.convertFromDisplay(value))}
                         options={['All','Yes','No']}
-                        myFilter={this.convertToDisplay(this.props.filters.isProduction)}/>
+                        myFilter={Convert.convertToDisplay(this.props.filters.isProduction)}/>
                 </div>
                 <div className="col-md-4 col-md-offset-4 col-xs-12">
                     <ResetButtonComponent onFilterInput={this.onResetClick} />
                 </div>
              </div>
         );
-    },
+    }
 
-    convertFromDisplay: function(displayValue){
-        switch(displayValue){   
-            case 'All': return null;
-            case 'Yes': return true;
-            case 'No': return false;
-            default: return displayValue;
-        }
-    },
-    convertToDisplay: function(displayValue){
-        switch(displayValue){   
-            case null: return 'All';
-            case true: return 'Yes';
-            case false: return 'No';
-            default: return displayValue;
-        }
-    },
-    onResetClick: function(){
+   
+
+    onResetClick(){
         this.props.onFilterInput('department',null);
         this.props.onFilterInput('volunteerType',null);
         this.props.onFilterInput('gotTicket', null);
         this.props.onFilterInput('isProduction',null);
         this.props.onFilterTextInput('');
     }   
-});
+}
 
-module.exports = FilterComponent;

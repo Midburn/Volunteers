@@ -1,14 +1,17 @@
 import update from 'immutability-helper';
+import axios from 'axios';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var FilterComponent = require('../FilterComponent/FilterComponent');
-var TableComponent = require('../TableComponent/TableComponent');
+import FilterComponent from '../FilterComponent/FilterComponent.js';
 
-class VolunteerList extends React.Component {
+import TableComponent from '../TableComponent/TableComponent';
+
+export default class VolunteerList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            volunteers:[],
             filters: {
                 filterText: '',
                 department: null,
@@ -20,6 +23,31 @@ class VolunteerList extends React.Component {
 
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleFilterInput=this.handleFilterInput.bind(this);
+        this.handleRowDelete=this.handleRowDelete.bind(this);
+        this.handleRowChange=this.handleRowChange.bind(this);
+        this.logNetworkError = this.logNetworkError.bind(this);
+    }
+
+    logNetworkError(err){
+            if(err.response){
+                console.log('Data', err.response.data);
+                console.log('Status', err.response.status);
+                console.log('Headers', err.response.headers);
+            }
+            else console.log('Error',err.message);
+    }
+    handleRowDelete(department,profile_id){
+        console.log(VolunteerList.handleRowDelete);
+        axios.delete(`/volunteers/department/${department}/volunteer/${profile_id}`)
+        .then(this.fetchVolunteers)
+        .catch( this.logNetworkError);
+    }
+
+    handleRowChange(department,profile_id,diff){
+        let query=Object.keys(diff).reduce((acc,cur) => acc+`&${cur}=${diff[cur]}`,'').replace('&','?');
+        axios.put(`volunteers/department/${department}/volunteer/${profile_id}`+ query)
+        .then(this.fetchVolunteers)
+        .catch(this.logNetworkError);
     }
 
     handleFilterTextInput(filterText){
@@ -35,6 +63,8 @@ class VolunteerList extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
+    
+
     render() {
         return (
             <div className="volunteer-list-component">
@@ -46,12 +76,14 @@ class VolunteerList extends React.Component {
                     onFilterInput={this.handleFilterInput}/>
                 </div>
                 <div className="container card container">
-                    <TableComponent volunteers={this.props.volunteers} filters={this.state.filters}/>
+                    <TableComponent 
+                    volunteers= {this.props.volunteers} 
+                    filters= {this.state.filters}
+                    onRowDelete= {this.handleRowDelete}
+                    onRowChange= {this.handleRowChange}/>
                 </div>
 
             </div>
         );
     }
-};
-
-export default VolunteerList;
+}
