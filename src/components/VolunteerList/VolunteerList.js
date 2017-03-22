@@ -25,18 +25,7 @@ export default class VolunteerList extends React.Component {
         this.handleFilterInput=this.handleFilterInput.bind(this);
         this.handleRowDelete=this.handleRowDelete.bind(this);
         this.handleRowChange=this.handleRowChange.bind(this);
-        this.fetchVolunteers = this.fetchVolunteers.bind(this);
         this.logNetworkError = this.logNetworkError.bind(this);
-    }
-    
-    componentDidMount(){
-       this.fetchVolunteers();
-    }
-
-    fetchVolunteers(){
-         axios.get('/volunteer/volunteers')
-        .then((res) => this.setState({volunteers:res.data}))
-        .catch( this.logNetworkError);
     }
 
     logNetworkError(err){
@@ -88,7 +77,7 @@ export default class VolunteerList extends React.Component {
                 </div>
                 <div className="container card container">
                     <TableComponent 
-                    volunteers= {this.state.volunteers} 
+                    volunteers= {this.props.volunteers} 
                     filters= {this.state.filters}
                     onRowDelete= {this.handleRowDelete}
                     onRowChange= {this.handleRowChange}/>
