@@ -15,7 +15,7 @@ export default class SearchFilter extends React.Component{
                 <label htmlFor="search_name">Search</label>
                 <input 
                     type="text" 
-                    id="search_name" 
+                    id="search-name" 
                     value={this.props.filterText}
                     onChange={this.handleFilterTextInputChange}
                     className="form-control" 
