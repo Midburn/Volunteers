@@ -26,7 +26,7 @@ app.get('/', function (req, res) {
 // SPARK APIS
 /////////////////////////////
 
-app.get('/volunteer/volunteers', function (req, res) {
+app.get('/api/v1/volunteer/volunteers', function (req, res) {
 
    search_string = req.query.search_string
    departments = req.query.departments
@@ -37,12 +37,12 @@ app.get('/volunteer/volunteers', function (req, res) {
    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'),res);
 })
 
-app.get('/volunteer/departments', function (req, res) {
+app.get('/api/v1/volunteer/departments', function (req, res) {
    console.log(req.path)
    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res);
 })
 
-app.get('/volunteer/roles', function (req, res) {
+app.get('/api/v1/volunteer/roles', function (req, res) {
    console.log(req.path)
    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res);
 })

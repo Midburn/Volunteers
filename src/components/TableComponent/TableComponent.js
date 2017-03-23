@@ -34,7 +34,8 @@ export default class TableComponent extends React.Component{
     }
 
     render () {
-       // var that=this;
+        console.log('TableComponent.render');
+        console.log(this.props);
         var rows = this.props.volunteers.
         filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
         map( (volunteer) =>{ return (
