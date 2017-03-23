@@ -3,12 +3,37 @@ import React from 'react';
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import SearchFilter  from '../SearchFilter/SearchFilter.js';
 import ResetButtonComponent  from '../ResetButtonComponent/ResetButtonComponent.js';
-import DropdownConverter from '../../DropdownConverter.js'
+import DropdownConverter from '../../DropdownConverter.js';
+import VolunteerAddModal from '../VolunteerAddModal/VolunteerAddModal.js';
+
+import { Button } from 'react-bootstrap';
 
 export default class FilterComponent extends React.Component{
     constructor(props){ 
         super(props);
+        this.state={
+            add:false,
+            volunteer:{}
+        };
         this.onResetClick = this.onResetClick.bind(this);
+        this.handleAdddModal= this.handleAdddModal.bind(this);
+        this.handleHide=this.handleHide.bind(this);
+    }
+
+    handleAdddModal(){
+        this.setState({add:true});
+    }
+
+    handleHide(){
+        this.setState({add:false});
+    }
+
+    onResetClick(){
+        this.props.onFilterInput('department',null);
+        this.props.onFilterInput('volunteerType',null);
+        this.props.onFilterInput('gotTicket', null);
+        this.props.onFilterInput('isProduction',null);
+        this.props.onFilterTextInput('');
     }
 
     render() {
@@ -42,21 +67,18 @@ export default class FilterComponent extends React.Component{
                         options={['All','Yes','No']}
                         myFilter={Convert.convertToDisplay(this.props.filters.isProduction)}/>
                 </div>
-                <div className="col-md-4 col-md-offset-4 col-xs-12">
+                <div className="col-md-4 col-xs-12">
+                    <Button onClick={this.handleAdddModal}> Add Volunteer </Button>
+                </div>
+                <div className="col-md-4 col-xs-12">
                     <ResetButtonComponent onFilterInput={this.onResetClick} />
                 </div>
+                <VolunteerAddModal 
+                    show={!!this.state.add} 
+                    onHide={this.handleHide} 
+                    onSubmit={this.handleSubmit} />
              </div>
         );
-    }
-
-   
-
-    onResetClick(){
-        this.props.onFilterInput('department',null);
-        this.props.onFilterInput('volunteerType',null);
-        this.props.onFilterInput('gotTicket', null);
-        this.props.onFilterInput('isProduction',null);
-        this.props.onFilterTextInput('');
     }   
 }
 
