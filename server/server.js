@@ -1,26 +1,60 @@
 const express = require('express');
+// const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
+const authHelper = require('./authHelper.js');
 
 var app = express();
 
 
 /////////////////////////////
-// WEB
+// WEB Api's
 /////////////////////////////
 
 app.use('/static', express.static(path.join(__dirname, '../public/')))
 app.use(express.static('public'));
 
-app.get('/', function (req, res) {
-   res.sendFile(path.join(__dirname, '../src/index.html'));
-})
+app.get('/:token?', function (req, res) {
+  const token = req.query.token
+  // const session = req.session;
+  authHelper.GetUserAuth(token, res, () => {
+    // const userDetails = {token: token};
+    // userDetails.push(res.data);
+    // req.session.userDetails = userDetails;
+
+    res.sendFile(path.join(__dirname, '../src/index.html'));
+  });
+});
 
 
+/////////////////////////////
+// WEB middleware
+/////////////////////////////
+// function getUserFromSession(req, res, next) {
+//   const session = req.session;
+//   if (!session || !session.userDetails) {
+//     res.status(400).json({error: 'Unauthorized'});
+//   }
+//   else {
+//     req.user = session.userDetails;
+//     next();
+//   }
+// }
+//
+// app.use('/api', function(req, res, next) {
+//   const session = req.session;
+//   if (!session || !session.userDetails) {
+//     res.status(400).json({error: 'Unauthorized'});
+//   }
+//   else {
+//     req.user = session.userDetails;
+//     next();
+//   }
+// });
 
 /////////////////////////////
 // SPARK APIS
@@ -53,9 +87,8 @@ app.get('/api/v1/volunteer/roles', function (req, res) {
 /////////////////////////////
 
 function retrunStub(filename, res) {
-   readJSONFile(filename, function(err, data) {
-      if(err) {
-         console.log(err)
+  console.log(res);
+   readJSONFile(filename, function(
          res.status(404).send('Not found');
       } else {
          res.send(data);
@@ -77,6 +110,16 @@ function readJSONFile(filename, callback) {
       }
    });
 }
+
+// Session
+// TODO: set cookie options, set other storage
+// const session = {
+//   secret: 'secret',
+//   cookie: {}
+// };
+//
+// app.use(session(session));
+
 
 // Set webpack-dev-server
 // TODO: Check if debug environment when environments will be supported
