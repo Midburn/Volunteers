@@ -14,7 +14,6 @@ var app = express();
 /////////////////////////////
 
 app.use('/static', express.static(path.join(__dirname, '../public/')))
-app.use(express.static('public'));
 
 app.get('/', function (req, res) {
    res.sendFile(path.join(__dirname, '../src/index.html'));
@@ -80,10 +79,11 @@ function readJSONFile(filename, callback) {
 
 // Set webpack-dev-server
 // TODO: Check if debug environment when environments will be supported
-if (true) {
+const devMode = (process.env.NODE_ENV !== 'production');
 
+if (devMode) {
   var config = require("../webpack.config.js");
-  config.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090/', 'webpack/hot/only-dev-server');
+  config.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
   var compiler = webpack(config);
   var server = new webpackDevServer(compiler, {
     contentBase: path.resolve(__dirname, '../public'),
@@ -92,7 +92,10 @@ if (true) {
     stats: true
   });
   server.listen(9090);
+  app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
+
+app.use(express.static('public'));
 
 var server = app.listen(8080, function () {
    var host = server.address().address
