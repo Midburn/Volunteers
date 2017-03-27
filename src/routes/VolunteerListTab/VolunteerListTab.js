@@ -1,13 +1,13 @@
-import update from 'immutability-helper';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import axios from 'axios';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import update from 'immutability-helper';
 
-import FilterComponent from '../FilterComponent/FilterComponent.js';
+import FilterComponent from '../../components/FilterComponent/FilterComponent.js';
 
-import TableComponent from '../TableComponent/TableComponent';
+import TableComponent from '../../components/TableComponent/TableComponent';
 
-export default class VolunteerList extends React.Component {
+export default class VolunteerListTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,8 +25,20 @@ export default class VolunteerList extends React.Component {
         this.handleFilterInput=this.handleFilterInput.bind(this);
         this.handleRowDelete=this.handleRowDelete.bind(this);
         this.handleRowChange=this.handleRowChange.bind(this);
+        this.fetchVolunteers=this.fetchVolunteers.bind(this);
         this.logNetworkError = this.logNetworkError.bind(this);
     }
+
+
+  componentDidMount(){
+    this.fetchVolunteers();
+  }
+
+  fetchVolunteers(){
+      axios.get('api/v1/volunteer/volunteers')
+      .then((res) => this.setState({volunteers:res.data}))
+      .catch(logNetworkError);
+  }
 
     logNetworkError(err){
             if(err.response){
@@ -36,8 +48,10 @@ export default class VolunteerList extends React.Component {
             }
             else console.log('Error',err.message);
     }
+
     handleRowDelete(department,profile_id){
-        console.log(VolunteerList.handleRowDelete);
+        console.log(VolunteerTab
+    .handleRowDelete);
         axios.delete(`/volunteers/department/${department}/volunteer/${profile_id}`)
         .then(this.fetchVolunteers)
         .catch( this.logNetworkError);
@@ -68,7 +82,6 @@ export default class VolunteerList extends React.Component {
     render() {
         return (
             <div className="volunteer-list-component">
-
                 <div className="container card">
                     <FilterComponent
                     filters={this.state.filters}
@@ -77,12 +90,11 @@ export default class VolunteerList extends React.Component {
                 </div>
                 <div className="container card container">
                     <TableComponent 
-                    volunteers= {this.props.volunteers} 
+                    volunteers= {this.state.volunteers} 
                     filters= {this.state.filters}
                     onRowDelete= {this.handleRowDelete}
                     onRowChange= {this.handleRowChange}/>
                 </div>
-
             </div>
         );
     }
