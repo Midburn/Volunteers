@@ -28,4 +28,4 @@ In this manner we will be able to separate development from production (`master`
 
 ## License
 
-TBD
+MIT
