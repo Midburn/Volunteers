@@ -3,8 +3,7 @@ import {Modal, OverlayTrigger, Button, FormControl, FormGroup, ControlLabel, Che
 import update from 'immutability-helper';
 
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
-import DropdownConverter from '../../DropdownConverter.js'
-
+import DropdownConverter from '../../DropdownConverter.js';
 
 export default class VolunteerEditModal extends React.Component{
     constructor(props){
@@ -25,7 +24,6 @@ export default class VolunteerEditModal extends React.Component{
     handleChange(field, event){
         console.log('VolunteerAddModal.handleInputChange');
         let converter = new DropdownConverter();
-
         let val = event.target.value;
         this.setState( (state) => update(state,{$merge:{[field]:converter.convertFromDisplay(val)}} ));
     }
@@ -33,17 +31,23 @@ export default class VolunteerEditModal extends React.Component{
     handleSubmit(){
         console.log('VolunteerAddModal.handleSubmit');
         console.log(this.state);
-        // this.handleReset();
         // this.props.onSubmit(diff)
+        this.handleClose();
     }
     
     handleClose(){
-        // this.setState( {volunteer:{}} );
+        // Clear current state
+        var newState = Object.keys(this.state).reduce(function(previous, current) {
+            previous[current] = '';
+            return previous;
+        }, {});
+        this.setState(newState);
+        // Close modal
         this.props.onHide();
-
     }
 
     render(){
+        let converter = new DropdownConverter();
         return (
             <Modal show={this.props.show} onHide={this.handleClose}>
                 <Modal.Header closeButton>
@@ -92,7 +96,7 @@ export default class VolunteerEditModal extends React.Component{
                     <FormGroup controlId="Production">
                         <ControlLabel>Production</ControlLabel>
                         <FormControl componentClass="select" onChange ={this.getInputChangeHandler('production')}
-                            value={this.state.production}
+                            value={converter.convertToDisplay(this.state.production)}
                             className="form-control" >
                                 {
                                     ['Production Volunteer', 'Yes', 'No'].map(
