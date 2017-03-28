@@ -9,7 +9,10 @@ export default class VolunteerAddModal extends React.Component{
     constructor(props){
         super(props);
 
-        this.state = {};
+        this.state = {
+            email: '',
+            department: ''
+        };
 
         this.handleSubmit=this.handleSubmit.bind(this);
         this.handleClose = this.handleClose.bind(this);

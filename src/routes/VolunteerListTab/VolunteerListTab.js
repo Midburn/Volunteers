@@ -35,24 +35,23 @@ export default class VolunteerListTab extends React.Component {
     this.fetchVolunteers();
   }
 
-  fetchVolunteers(){
-      axios.get('api/v1/volunteer/volunteers')
-      .then((res) => this.setState({volunteers:res.data}))
-      .catch(logNetworkError);
-  }
-
     logNetworkError(err){
-            if(err.response){
-                console.log('Data', err.response.data);
-                console.log('Status', err.response.status);
-                console.log('Headers', err.response.headers);
-            }
-            else console.log('Error',err.message);
+        if(err.response){
+            console.log('Data', err.response.data);
+            console.log('Status', err.response.status);
+            console.log('Headers', err.response.headers);
+        }
+        else console.log('Error',err.message);
+    }
+
+    fetchVolunteers(){
+        axios.get('api/v1/volunteer/volunteers')
+        .then((res) => this.setState({volunteers:res.data}))
+        .catch(this.logNetworkError);
     }
 
     handleRowDelete(department,profile_id){
-        console.log(VolunteerTab
-    .handleRowDelete);
+        console.log(VolunteerTab.handleRowDelete);
         axios.delete(`/volunteers/department/${department}/volunteer/${profile_id}`)
         .then(this.fetchVolunteers)
         .catch( this.logNetworkError);
