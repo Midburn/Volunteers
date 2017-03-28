@@ -5,7 +5,7 @@ import update from 'immutability-helper';
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import DropdownConverter from '../../DropdownConverter.js';
 
-export default class VolunteerEditModal extends React.Component{
+export default class VolunteerAddModal extends React.Component{
     constructor(props){
         super(props);
 
@@ -31,7 +31,7 @@ export default class VolunteerEditModal extends React.Component{
     handleSubmit(){
         console.log('VolunteerAddModal.handleSubmit');
         console.log(this.state);
-        // this.props.onSubmit(diff)
+        this.props.onSubmit(this.state.email, this.state.department, this.state);
         this.handleClose();
     }
     
@@ -54,6 +54,14 @@ export default class VolunteerEditModal extends React.Component{
                     <Modal.Title>Add new volunteer</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+
+                    <FormGroup controlId="email">
+                        <ControlLabel>User Email</ControlLabel>
+                        <FormControl type="text" onChange={this.getInputChangeHandler('email')}
+                            value={this.state.email}
+                            className="form-control" autoFocus placeholder="New Volunteer Email"></FormControl>
+                    </FormGroup>
+
                     <FormGroup controlId="Department">
                         <ControlLabel>Department</ControlLabel>
                         <FormControl componentClass="select" onChange={this.getInputChangeHandler('department')}

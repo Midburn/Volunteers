@@ -76,7 +76,7 @@ export default class FilterComponent extends React.Component{
                 <VolunteerAddModal 
                     show={!!this.state.add} 
                     onHide={this.handleHide} 
-                    onSubmit={this.handleSubmit} />
+                    onSubmit={this.props.onVolunteerSubmit} />
              </div>
         );
     }   
