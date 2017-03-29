@@ -15,10 +15,14 @@ var app = express();
 
 app.use('/static', express.static(path.join(__dirname, '../public/')))
 
-app.get('/', function (req, res) {
+function servePage(req, res) {
    res.sendFile(path.join(__dirname, '../src/index.html'));
-})
+}
 
+app.get('/', servePage);
+app.get('/volunteers-list', servePage);
+app.get('/bulk-add', servePage);
+app.get('/shift-manager', servePage);
 
 
 /////////////////////////////
@@ -44,6 +48,16 @@ app.get('/api/v1/volunteer/departments', function (req, res) {
 app.get('/api/v1/volunteer/roles', function (req, res) {
    console.log(req.path)
    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res);
+})
+
+app.get('/api/v1/volunteer/department/:dept/volunteer_types', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_department_volunteer_types.json'),res);
+})
+
+app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'),res);
 })
 
 
@@ -101,5 +115,4 @@ var server = app.listen(8080, function () {
    var host = server.address().address
    var port = server.address().port
    console.log("Listening at http://%s:%s", host, port)
-
 })
