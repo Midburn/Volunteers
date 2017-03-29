@@ -6,7 +6,7 @@ class Navigation extends React.Component{
     return (
       <div>
         <ul className="nav nav-tabs">
-          <li><Link to="/volunteers-list">Volunteers List</Link></li>
+          <li><Link to="/volunteers-list-tab">Volunteers List</Link></li>
           <li><Link to="/bulk-add">Bulk Add</Link></li>
         </ul>
       </div>
