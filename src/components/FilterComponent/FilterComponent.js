@@ -12,8 +12,7 @@ export default class FilterComponent extends React.Component{
     constructor(props){ 
         super(props);
         this.state={
-            add:false,
-            volunteer:{}
+            add:false
         };
         this.onResetClick = this.onResetClick.bind(this);
         this.handleAdddModal= this.handleAdddModal.bind(this);
