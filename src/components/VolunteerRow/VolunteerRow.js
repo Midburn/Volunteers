@@ -38,7 +38,7 @@ export default class VolunteerRow extends React.Component{
 
     handleDelete(){
         console.log('VolunteerRow.handleDelete');
-        this.props.onRowDelete(this.props.volunteer.department,this.props.volunteer.profile_id);
+        this.props.onRowDelete(this.props.volunteer.department_id,this.props.volunteer.profile_id);
     }
 
     
