@@ -13,11 +13,11 @@ var app = express();
 // WEB
 /////////////////////////////
 
-app.use('/static', express.static(path.join(__dirname, '../public/')))
+app.use('/static', express.static(path.join(__dirname, '../public/')));
 
 app.get('/', function (req, res) {
    res.sendFile(path.join(__dirname, '../src/index.html'));
-})
+});
 
 
 
@@ -25,26 +25,46 @@ app.get('/', function (req, res) {
 // SPARK APIS
 /////////////////////////////
 
-app.get('/api/v1/volunteer/volunteers', function (req, res) {
+app.get('/api/v1/volunteers/volunteers', function (req, res) {
 
-   search_string = req.query.search_string
-   departments = req.query.departments
-   role = req.query.role
-   got_ticket = req.query.got_ticket
+  //  search_string = req.query.search_string
+  //  departments = req.query.departments
+  //  role = req.query.role
+  //  got_ticket = req.query.got_ticket
 
    console.log(req.path)
    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'),res);
-})
+});
 
-app.get('/api/v1/volunteer/departments', function (req, res) {
-   console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res);
-})
 
-app.get('/api/v1/volunteer/roles', function (req, res) {
-   console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res);
-})
+app.delete('/api/v1/departments/:d/volunteers/:v',function(req,res){
+  console.log(req.path)
+
+  console.log(d);
+  console.log(v);
+
+  console.log(`DELETE ASSOCIATION path:{req.path}, department:{req.params.d}, volunteer:{req.params.v}`);
+  res.statusCode= 200;
+  return res.send('deletion suceeded');
+});
+
+app.put('/api/v1/departments/:d/volunteers/:v',function(req,res){
+  console.log(req.path);
+  console.log(`EDIT ASSOCIATION path:{req.path}, department:{req.params.d}, volunteer:{req.params.v}`);    res.statusCode= 200;
+  return res.send('editing suceeded');
+});
+
+
+// app.get('/api/v1/volunteer/departments', function (req, res) {
+//    console.log(req.path)
+//    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res);
+// })
+
+// app.get('/api/v1/volunteer/roles', function (req, res) {
+//    console.log(req.path)
+//    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res);
+// })
+
 
 
 /////////////////////////////

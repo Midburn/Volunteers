@@ -35,7 +35,7 @@ export default class VolunteerListTab extends React.Component {
   }
 
   fetchVolunteers(){
-      axios.get('api/v1/volunteer/volunteers')
+      axios.get('api/v1/volunteers/volunteers')
       .then((res) => this.setState({volunteers:res.data}))
       .catch(logNetworkError);
   }
@@ -50,16 +50,16 @@ export default class VolunteerListTab extends React.Component {
     }
 
     handleRowDelete(department,profile_id){
-        console.log(VolunteerTab
-    .handleRowDelete);
-        axios.delete(`/volunteers/department/${department}/volunteer/${profile_id}`)
+        console.log('VolunteerListTab.handleRowDelete');
+
+        axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
         .then(this.fetchVolunteers)
         .catch( this.logNetworkError);
     }
 
     handleRowChange(department,profile_id,diff){
         let query=Object.keys(diff).reduce((acc,cur) => acc+`&${cur}=${diff[cur]}`,'').replace('&','?');
-        axios.put(`volunteers/department/${department}/volunteer/${profile_id}`+ query)
+        axios.put(`api/v1/departments/${department}/volunteers/${profile_id}`+ query)
         .then(this.fetchVolunteers)
         .catch(this.logNetworkError);
     }
