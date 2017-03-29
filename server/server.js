@@ -32,8 +32,9 @@ app.get('/api/v1/volunteers/volunteers', function (req, res) {
   //  role = req.query.role
   //  got_ticket = req.query.got_ticket
 
-   console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'),res);
+   console.log(req.path);
+   let volunteers = null;
+   retrunStub('get_volunteer_volunteers',res);
 });
 
 
@@ -50,20 +51,20 @@ app.delete('/api/v1/departments/:d/volunteers/:v',function(req,res){
 
 app.put('/api/v1/departments/:d/volunteers/:v',function(req,res){
   console.log(req.path);
-  console.log(`EDIT ASSOCIATION path:{req.path}, department:{req.params.d}, volunteer:{req.params.v}`);    res.statusCode= 200;
+  console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);    res.statusCode= 200;
   return res.send('editing suceeded');
 });
 
 
-// app.get('/api/v1/volunteer/departments', function (req, res) {
-//    console.log(req.path)
-//    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_departments.json'),res);
-// })
+app.get('/api/v1/departments', function (req, res) {
+   console.log(req.path)
+   retrunStub('get_volunteer_departments.json',res);
+})
 
-// app.get('/api/v1/volunteer/roles', function (req, res) {
-//    console.log(req.path)
-//    retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_roles.json'),res);
-// })
+app.get('/api/v1/roles', function (req, res) {
+   console.log(req.path)
+   retrunStub('json_stubs/get_volunteer_roles',res);
+})
 
 
 
@@ -72,7 +73,8 @@ app.put('/api/v1/departments/:d/volunteers/:v',function(req,res){
 /////////////////////////////
 
 function retrunStub(filename, res) {
-   readJSONFile(filename, function(err, data) {
+     let fullPath = path.join(__dirname, `/json_stubs/${filename}.json`);
+    readJSONFile(fullPath, function(err, data) {
       if(err) {
          console.log(err)
          res.status(404).send('Not found');
