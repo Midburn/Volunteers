@@ -72,17 +72,16 @@ app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   console.log(req.path);
   console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);
-  res.statusCode = 200;
   loadVolunteers(function (err, volunteers) {
     let found = false;
     let modifiedVolunteers = volunteers.map((volunteer) => {
-      if (isMatch(volunteer, d, v)) {
+      if (isMatch(volunteer, req.params.d, req.params.v)) {
         found = true;
         let modified = volunteer;
-        if (req.params.role_id) {
-          modified = req.params.role_id;
+        if (req.query.role) {
+          modified = req.params.role;
         }
-        if (req.params.is_production) {
+        if (req.query.is_production) {
           modified.is_production = req.params.is_production === 'true';
         }
         return modified;
