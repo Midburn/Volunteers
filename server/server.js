@@ -15,10 +15,14 @@ var app = express();
 
 app.use('/static', express.static(path.join(__dirname, '../public/')));
 
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, '../src/index.html'));
-});
+function servePage(req, res) {
+   res.sendFile(path.join(__dirname, '../src/index.html'));
+}
 
+app.get('/', servePage);
+app.get('/volunteers-list', servePage);
+app.get('/bulk-add', servePage);
+app.get('/shift-manager', servePage);
 
 
 /////////////////////////////
@@ -115,6 +119,16 @@ app.get('/api/v1/roles', function (req, res) {
 })
 
 
+app.get('/api/v1/volunteer/department/:dept/volunteer_types', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_department_volunteer_types.json'),res);
+})
+
+app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'),res);
+})
+
 
 /////////////////////////////
 // STUBS
@@ -187,8 +201,7 @@ if (devMode) {
 app.use(express.static('public'));
 
 var server = app.listen(8080, function () {
-  var host = server.address().address
-  var port = server.address().port
-  console.log("Listening at http://%s:%s", host, port)
-
-});
+   var host = server.address().address
+   var port = server.address().port
+   console.log("Listening at http://%s:%s", host, port)
+})
