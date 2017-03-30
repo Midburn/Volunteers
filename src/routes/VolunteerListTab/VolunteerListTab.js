@@ -27,7 +27,7 @@ export default class VolunteerListTab extends React.Component {
         this.handleRowChange=this.handleRowChange.bind(this);
         this.fetchVolunteers=this.fetchVolunteers.bind(this);
         this.logNetworkError = this.logNetworkError.bind(this);
-        this.handleAddSingleVolunteer = this.handleAddSingleVolunteer.bind(this);
+        this.handleAddVolunteers = this.handleAddVolunteers.bind(this);
     }
 
 
@@ -77,24 +77,32 @@ export default class VolunteerListTab extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
-    handleAddSingleVolunteer(profile_email, department, diff) {
-        let profile_id;
-        // TODO - create get request to test user validity
-        // axios.get('spark/user/' + profile_email)
-        // .then((res) => profile_id = res.data.id)
-        // .catch(this.logNetworkError);
-        console.log('got user info');
-        // add new volunteer
-        let query = Object.keys(diff).reduce((acc,cur) => 
-            acc + `&${cur}=${diff[cur]}`, '').replace('&','?');
+    handleAddVolunteers(profile_email, department, diff) {
         // TODO - convert department to department id
+        // TODO - create a request to test emails validity
+        let query = profile_email.map((email) => {
+            return {
+                'email': email,
+                'department': department,
+                'type': diff.type,
+                'role': diff.role,
+                'production': diff.production
+            }
+        });
+        console.log('query:');
+        console.log(query);
+
+        // add volunteers
         console.log('made post request to url: ');
-        console.log(`volunteers/addVolunteer/department/${department}/volunteer/${profile_id}`+ query);
+        console.log(`volunteers/addVolunteer/department/${department}`);
         // axios.post(`volunteers/addVolunteer/department/${department}/volunteer/${profile_id}`+ query)
         // .then(this.fetchVolunteers)
         // .catch(this.logNetworkError);
     }
 
+    createVolunteer(volunteers) {
+        return 
+    }
     
 
     render() {
@@ -105,7 +113,7 @@ export default class VolunteerListTab extends React.Component {
                     filters={this.state.filters}
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
-                    onVolunteerSubmit = { this.handleAddSingleVolunteer }/>
+                    onVolunteerSubmit = { this.handleAddVolunteers }/>
                 </div>
                 <div className="container card container">
                     <TableComponent 

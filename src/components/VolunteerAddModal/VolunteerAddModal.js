@@ -18,6 +18,8 @@ export default class VolunteerAddModal extends React.Component{
         this.handleClose = this.handleClose.bind(this);
         this.handlechange = this.handleChange.bind(this);
         this.getInputChangeHandler = this.getInputChangeHandler.bind(this);
+        this.splitEmailString = this.splitEmailString.bind(this);
+        this.validateEmail = this.validateEmail.bind(this);
     }
     
     getInputChangeHandler(field){
@@ -34,7 +36,8 @@ export default class VolunteerAddModal extends React.Component{
     handleSubmit(){
         console.log('VolunteerAddModal.handleSubmit');
         console.log(this.state);
-        this.props.onSubmit(this.state.email, this.state.department, this.state);
+        let emailArr = this.splitEmailString(this.state.email);
+        this.props.onSubmit(emailArr, this.state.department, this.state);
         this.handleClose();
     }
     
@@ -49,6 +52,21 @@ export default class VolunteerAddModal extends React.Component{
         this.props.onHide();
     }
 
+    validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    splitEmailString(emailStr){
+        let emailArr = emailStr.split(',');
+        let counter = emailArr.length;
+        emailArr.filter(this.validateEmail);
+
+        console.log('Volunteers added successfully');
+        console.log((counter - emailArr.length) + ' emails were incorrect');
+        return emailArr;
+    }
+
     render(){
         let converter = new DropdownConverter();
         return (
@@ -57,13 +75,6 @@ export default class VolunteerAddModal extends React.Component{
                     <Modal.Title>Add new volunteer</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
-                    <FormGroup controlId="email">
-                        <ControlLabel>User Email</ControlLabel>
-                        <FormControl type="text" onChange={this.getInputChangeHandler('email')}
-                            value={this.state.email}
-                            className="form-control" autoFocus placeholder="New Volunteer Email"></FormControl>
-                    </FormGroup>
 
                     <FormGroup controlId="Department">
                         <ControlLabel>Department</ControlLabel>
@@ -115,6 +126,13 @@ export default class VolunteerAddModal extends React.Component{
                                     )    
                                 }
                         </FormControl>
+                    </FormGroup>
+
+                    <FormGroup controlId="email">
+                        <ControlLabel>User Email</ControlLabel>
+                        <FormControl componentClass="textarea" onChange={this.getInputChangeHandler('email')}
+                            value={this.state.email}
+                            className="form-control" placeholder="Please enter all volunteer emails separated by commas"></FormControl>
                     </FormGroup>
 
                 </Modal.Body>
