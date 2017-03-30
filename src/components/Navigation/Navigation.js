@@ -8,6 +8,7 @@ class Navigation extends React.Component{
         <ul className="nav nav-tabs">
           <li><Link to="/volunteers-list-tab">Volunteers List</Link></li>
           <li><Link to="/bulk-add">Bulk Add</Link></li>
+          <li><Link to="/shift-manager">Shift Management</Link></li>
         </ul>
       </div>
     );
