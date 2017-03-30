@@ -5,13 +5,16 @@ import update from 'immutability-helper';
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import DropdownConverter from '../../DropdownConverter.js';
 
+require('./VolunteerAddModal.css')
+
 export default class VolunteerAddModal extends React.Component{
     constructor(props){
         super(props);
 
         this.state = {
             email: '',
-            department: ''
+            department: '',
+            emailError: false
         };
 
         this.handleSubmit=this.handleSubmit.bind(this);
@@ -20,6 +23,8 @@ export default class VolunteerAddModal extends React.Component{
         this.getInputChangeHandler = this.getInputChangeHandler.bind(this);
         this.splitEmailString = this.splitEmailString.bind(this);
         this.validateEmail = this.validateEmail.bind(this);
+        this.testLastEmail = this.testLastEmail.bind(this);
+        this.displayEmailError = this.displayEmailError.bind(this);
     }
     
     getInputChangeHandler(field){
@@ -30,6 +35,13 @@ export default class VolunteerAddModal extends React.Component{
         console.log('VolunteerAddModal.handleInputChange');
         let converter = new DropdownConverter();
         let val = event.target.value;
+        if(field === 'email' && val[val.length -1] === ',') {
+            if(this.testLastEmail(val)){
+                this.displayEmailError(false);
+            } else {
+                this.displayEmailError(true);
+            }
+        }
         this.setState( (state) => update(state,{$merge:{[field]:converter.convertFromDisplay(val)}} ));
     }
 
@@ -66,8 +78,21 @@ export default class VolunteerAddModal extends React.Component{
         return filteredArr;
     }
 
+    testLastEmail(email) {
+        let emailArr = email.split(',');
+        return this.validateEmail(emailArr[emailArr.length - 2]);
+    }
+
+    displayEmailError(curr) {
+        this.setState({emailError: curr});
+    }
+
     render(){
         let converter = new DropdownConverter();
+        let errorDiv;
+        if(this.state.emailError) {
+            errorDiv = <div className="error-div">Invalid email</div>
+        }
         return (
             <Modal show={this.props.show} onHide={this.handleClose}>
                 <Modal.Header closeButton>
@@ -131,13 +156,13 @@ export default class VolunteerAddModal extends React.Component{
                         <ControlLabel>User Email</ControlLabel>
                         <FormControl componentClass="textarea" onChange={this.getInputChangeHandler('email')}
                             value={this.state.email}
-                            className="form-control" placeholder="Please enter all volunteer emails separated by commas"></FormControl>
+                            className={"form-control" + (this.state.emailError ? ' error' : '')} placeholder="Please enter all volunteer emails separated by commas"></FormControl>
                     </FormGroup>
-
+                    {errorDiv}
                 </Modal.Body>
             <Modal.Footer>
                 <Button onClick={this.handleClose}>Close</Button>
-                <Button bsStyle="primary" onClick={this.handleSubmit}>Add Volunteer</Button>
+                <Button bsStyle="primary" onClick={this.handleSubmit} disabled={this.state.emailError}>Add Volunteer</Button>
             </Modal.Footer>
             </Modal>
         )
