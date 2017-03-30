@@ -59,12 +59,11 @@ export default class VolunteerAddModal extends React.Component{
 
     splitEmailString(emailStr){
         let emailArr = emailStr.split(',');
-        let counter = emailArr.length;
-        emailArr.filter(this.validateEmail);
+        let filteredArr = emailArr.filter(this.validateEmail);
 
         console.log('Volunteers added successfully');
-        console.log((counter - emailArr.length) + ' emails were incorrect');
-        return emailArr;
+        console.log((emailArr.length - filteredArr.length) + ' emails were incorrect');
+        return filteredArr;
     }
 
     render(){

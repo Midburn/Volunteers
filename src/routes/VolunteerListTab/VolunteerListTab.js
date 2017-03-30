@@ -80,6 +80,10 @@ export default class VolunteerListTab extends React.Component {
     handleAddVolunteers(profile_email, department, diff) {
         // TODO - convert department to department id
         // TODO - create a request to test emails validity
+        if(profile_email.length < 1) {
+            console.log('no volunteers to add');
+            return;
+        }
         let query = profile_email.map((email) => {
             return {
                 'email': email,
