@@ -31,7 +31,7 @@ export default class VolunteerRow extends React.Component{
         console.log(diff);
         //TODO BUG
         //TODO either row is updated on every submit and then no need for diff merge or an additional send to server phase is added
-        this.props.onRowChange(this.props.volunteer.profile_id,this.props.volunteer.department,diff);//TODO include department id in model
+        this.props.onRowChange(this.props.volunteer.department, this.props.volunteer.profile_id, diff);//TODO include department id in model
 
         this.setState((state)=>update(state,{ edit:{$set:false} ,volunteer: {$merge: diff}} ));
     }

@@ -16,7 +16,7 @@ var app = express();
 app.use('/static', express.static(path.join(__dirname, '../public/')));
 
 function servePage(req, res) {
-   res.sendFile(path.join(__dirname, '../src/index.html'));
+  res.sendFile(path.join(__dirname, '../src/index.html'));
 }
 
 app.get('/', servePage);
@@ -83,10 +83,10 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
         found = true;
         let modified = volunteer;
         if (req.query.role) {
-          modified = req.params.role;
+          modified.role = req.query.role;
         }
         if (req.query.is_production) {
-          modified.is_production = req.params.is_production === 'true';
+          modified.is_production = req.query.is_production === 'true';
         }
         return modified;
       } else return volunteer;
@@ -120,13 +120,13 @@ app.get('/api/v1/roles', function (req, res) {
 
 
 app.get('/api/v1/volunteer/department/:dept/volunteer_types', function (req, res) {
-   console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_department_volunteer_types.json'),res);
+  console.log(req.path)
+  retrunStub(path.join(__dirname, '/json_stubs/get_department_volunteer_types.json'), res);
 })
 
 app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
-   console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'),res);
+  console.log(req.path)
+  retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'), res);
 })
 
 
@@ -143,7 +143,9 @@ function loadVolunteers(callback) {
     function (err, data) {
       if (err) {
         readJSONFile(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'), callback);
-      } else callback(null, data);
+      } else {
+        callback(null, data);
+      }
     });
 }
 
@@ -201,7 +203,7 @@ if (devMode) {
 app.use(express.static('public'));
 
 var server = app.listen(8080, function () {
-   var host = server.address().address
-   var port = server.address().port
-   console.log("Listening at http://%s:%s", host, port)
+  var host = server.address().address
+  var port = server.address().port
+  console.log("Listening at http://%s:%s", host, port)
 })
