@@ -46,7 +46,7 @@ ShiftManagerModel.prototype.reset = function() {
 }
 
 ShiftManagerModel.prototype.initDepartments = async function() {
-    const resp = await fetch('/api/v1/volunteer/departments')
+    const resp = await fetch('/api/v1/departments')
     this.departments = await resp.json();
     console.log(JSON.stringify(this.departments));
     // Go to the database, retrieve teams, statuses and volunteer types for department

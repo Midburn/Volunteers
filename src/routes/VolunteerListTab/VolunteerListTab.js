@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import update from 'immutability-helper';
 
@@ -45,7 +45,7 @@ export default class VolunteerListTab extends React.Component {
     }
 
     fetchVolunteers(){
-        axios.get('api/v1/volunteer/volunteers')
+        axios.get('api/v1/volunteers/volunteers')
         .then((res) => this.setState({volunteers:res.data}))
         .catch(this.logNetworkError);
     }

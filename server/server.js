@@ -110,7 +110,7 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 
 app.get('/api/v1/departments', function (req, res) {
   console.log(req.path)
-  retrunStub('get_volunteer_departments.json', res);
+  retrunStub('get_volunteer_departments', res);
 })
 
 app.get('/api/v1/roles', function (req, res) {
