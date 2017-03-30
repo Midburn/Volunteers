@@ -84,22 +84,24 @@ export default class VolunteerListTab extends React.Component {
             console.log('no volunteers to add');
             return;
         }
-        let query = profile_email.map((email) => {
-            return {
-                'email': email,
-                'department': department,
-                'type': diff.type,
-                'role': diff.role,
-                'production': diff.production
-            }
+        const params = new URLSearchParams();
+        const query = profile_email.map((email) => {
+            params.append('email', email);
+            params.append('department', department);
+            params.append('type', diff.type);
+            params.append('role', diff.role);
+            params.append('production', diff.production);
         });
         console.log('query:');
         console.log(query);
 
+        console.log('params:');
+        console.log(params.toString());
+    
         // add volunteers
         console.log('made post request to url: ');
         console.log(`volunteers/addVolunteer/department/${department}`);
-        // axios.post(`volunteers/addVolunteer/department/${department}/volunteer/${profile_id}`+ query)
+        axios.post(`volunteers/addVolunteer/department/${department}?${params.toString()}`);
         // .then(this.fetchVolunteers)
         // .catch(this.logNetworkError);
     }
@@ -107,7 +109,6 @@ export default class VolunteerListTab extends React.Component {
     createVolunteer(volunteers) {
         return 
     }
-    
 
     render() {
         return (
