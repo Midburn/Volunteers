@@ -115,7 +115,7 @@ export default class VolunteerListTab extends React.Component {
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
                     onVolunteerSubmit = { this.handleAddVolunteers }
-                    roles = {['roleA','B role','Role C']}/>
+                    roles = { ['Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader']}/>
                 </div>
                 <div className="container card container">
                     <TableComponent 

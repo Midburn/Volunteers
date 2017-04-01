@@ -49,7 +49,7 @@ export default class FilterComponent extends React.Component{
                         myFilter={Convert.convertToDisplay(this.props.filters.department)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
-                    <DropdownFilter label="Volunteer Role"     
+                    <DropdownFilter label="Role"     
                         onFilterInput={(value)=>this.props.onFilterInput('role',Convert.convertFromDisplay(value))}
                         options={this.props.roles}
                         myFilter={Convert.convertToDisplay(this.props.filters.role)}/>
