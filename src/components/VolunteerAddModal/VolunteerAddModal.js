@@ -42,14 +42,17 @@ export default class VolunteerAddModal extends React.Component{
                 this.displayEmailError(true);
             }
         }
+        //TODO convert department to deparmentId either here or on submition
         this.setState( (state) => update(state,{$merge:{[field]:converter.convertFromDisplay(val)}} ));
+
     }
 
     handleSubmit(){
         console.log('VolunteerAddModal.handleSubmit');
         console.log(this.state);
-        let emailArr = this.splitEmailString(this.state.email);
-        this.props.onSubmit(emailArr, this.state.department, this.state);
+        let emails = this.splitEmailString(this.state.email);
+        //TODO convert department to deparmentId either here or on change or on upper class
+        this.props.onSubmit(this.state.department,this.state.role,emails);
         this.handleClose();
     }
     
@@ -84,7 +87,7 @@ export default class VolunteerAddModal extends React.Component{
     }
 
     displayEmailError(curr) {
-        this.setState({emailError: curr});
+        this.setState({emailError: !!curr});//TODO When not converted to bool the button get a string. Verify why and remove this etra safety
     }
 
     render(){

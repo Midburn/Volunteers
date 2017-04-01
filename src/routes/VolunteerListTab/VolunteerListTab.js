@@ -78,33 +78,25 @@ export default class VolunteerListTab extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
-    handleAddVolunteers(profile_email, department, diff) {
+    handleAddVolunteers(department,role,production,emails) {
         // TODO - convert department to department id
         // TODO - create a request to test emails validity
         if(profile_email.length < 1) {
             console.log('no volunteers to add');
             return;
         }
-        const params = new URLSearchParams();
-        const query = profile_email.map((email) => {
-            params.append('email', email);
-            params.append('department', department);
-            params.append('type', diff.type);
-            params.append('role', diff.role);
-            params.append('production', diff.production);
-        });
-        console.log('query:');
-        console.log(query);
-
-        console.log('params:');
-        console.log(params.toString());
-    
+        
         // add volunteers
         console.log('made post request to url: ');
         console.log(`volunteers/addVolunteer/department/${department}`);
-        axios.post(`volunteers/addVolunteer/department/${department}?${params.toString()}`);
-        // .then(this.fetchVolunteers)
-        // .catch(this.logNetworkError);
+        axios.post(`api/v1/departments/${departmentId}/volunteers`,
+        {
+            role:role,
+            is_production:production,
+            emails:emails
+        })
+        .then(console.log('request to server succeeded'))
+        .catch(console.log('error communicating with server'));
     }
 
     createVolunteer(volunteers) {
