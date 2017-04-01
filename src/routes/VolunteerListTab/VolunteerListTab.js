@@ -27,7 +27,7 @@ export default class VolunteerListTab extends React.Component {
         this.handleRowChange=this.handleRowChange.bind(this);
         this.fetchVolunteers=this.fetchVolunteers.bind(this);
         this.logNetworkError = this.logNetworkError.bind(this);
-        this.handleAddSingleVolunteer = this.handleAddSingleVolunteer.bind(this);
+        this.handleAddVolunteers = this.handleAddVolunteers.bind(this);
     }
 
 
@@ -78,25 +78,38 @@ export default class VolunteerListTab extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
-    handleAddSingleVolunteer(profile_email, department, diff) {
-        let profile_id;
-        // TODO - create get request to test user validity
-        // axios.get('spark/user/' + profile_email)
-        // .then((res) => profile_id = res.data.id)
-        // .catch(this.logNetworkError);
-        console.log('got user info');
-        // add new volunteer
-        let query = Object.keys(diff).reduce((acc,cur) => 
-            acc + `&${cur}=${diff[cur]}`, '').replace('&','?');
+    handleAddVolunteers(profile_email, department, diff) {
         // TODO - convert department to department id
+        // TODO - create a request to test emails validity
+        if(profile_email.length < 1) {
+            console.log('no volunteers to add');
+            return;
+        }
+        const params = new URLSearchParams();
+        const query = profile_email.map((email) => {
+            params.append('email', email);
+            params.append('department', department);
+            params.append('type', diff.type);
+            params.append('role', diff.role);
+            params.append('production', diff.production);
+        });
+        console.log('query:');
+        console.log(query);
+
+        console.log('params:');
+        console.log(params.toString());
+    
+        // add volunteers
         console.log('made post request to url: ');
-        console.log(`volunteers/addVolunteer/department/${department}/volunteer/${profile_id}`+ query);
-        // axios.post(`volunteers/addVolunteer/department/${department}/volunteer/${profile_id}`+ query)
+        console.log(`volunteers/addVolunteer/department/${department}`);
+        axios.post(`volunteers/addVolunteer/department/${department}?${params.toString()}`);
         // .then(this.fetchVolunteers)
         // .catch(this.logNetworkError);
     }
 
-    
+    createVolunteer(volunteers) {
+        return 
+    }
 
     render() {
         return (
@@ -106,7 +119,7 @@ export default class VolunteerListTab extends React.Component {
                     filters={this.state.filters}
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
-                    onVolunteerSubmit = { this.handleAddSingleVolunteer }/>
+                    onVolunteerSubmit = { this.handleAddVolunteers }/>
                 </div>
                 <div className="container card container">
                     <TableComponent 

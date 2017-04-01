@@ -41,7 +41,7 @@ export default class TableComponent extends React.Component{
         map( (volunteer) =>{ return (
             <VolunteerRow 
             volunteer={volunteer} 
-            key={volunteer.profileId}
+            key={volunteer.profile_id}
             onRowDelete= {this.props.onRowDelete}
             onRowChange= {this.props.onRowChange}/>)});
 
