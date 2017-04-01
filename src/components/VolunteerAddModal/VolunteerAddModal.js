@@ -116,19 +116,6 @@ export default class VolunteerAddModal extends React.Component{
                         </FormControl>
                     </FormGroup>
 
-                    <FormGroup controlId="Type">
-                        <ControlLabel>Type</ControlLabel>
-                        <FormControl componentClass="select" onChange={this.getInputChangeHandler('type')}
-                            value={this.state.type}
-                            className="form-control" >
-                                {
-                                    ['Choose Volunteer Type', 'Manager','Day Manager','Shift Manager','Production','Department Manager'].map(
-                                    (option)=> <option value={option} key={option}>{option}</option>
-                                    )    
-                                }
-                        </FormControl>
-                    </FormGroup>
-
                     <FormGroup controlId="Role">
                         <ControlLabel>Role</ControlLabel>
                         <FormControl componentClass="select" onChange ={this.getInputChangeHandler('role')}

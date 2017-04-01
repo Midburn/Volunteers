@@ -148,12 +148,6 @@ app.get('/api/v1/roles', function (req, res) {
   retrunStub('json_stubs/get_volunteer_roles', res);
 })
 
-
-app.get('/api/v1/volunteer/department/:dept/volunteer_types', function (req, res) {
-  console.log(req.path)
-  retrunStub(path.join(__dirname, '/json_stubs/get_department_volunteer_types.json'), res);
-})
-
 app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
   console.log(req.path)
   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'), res);

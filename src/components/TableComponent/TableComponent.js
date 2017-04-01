@@ -24,7 +24,7 @@ export default class TableComponent extends React.Component{
 
     meetsOptionsFilters(volunteer){    
         return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
-        this.meetsCriterion(this.props.filters.volunteerType,volunteer.volunteer_type) &&
+        this.meetsCriterion(this.props.filters.volunteerType,volunteer.role) &&
         this.meetsCriterion(this.props.filters.gotTicket,volunteer.got_ticket) &&
         this.meetsCriterion(this.props.filters.isProduction,volunteer.is_production);
     }

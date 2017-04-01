@@ -5,9 +5,7 @@
         "last_name": "Sebastian",
         "department": "Medical",
         "department_id": "Medical",
-
         "role": "Manger",
-        "volunteer_type": "Manager",
         "is_production": true,
         "phone": "+67.7.777.7777",
         "got_ticket": false
@@ -20,7 +18,6 @@
         "department": "Mapatz",
         "department_id": "Mapatz",
         "role": "Department Manager",
-        "volunteer_type": "Manager",
         "is_production": true,
         "phone": "+67.7.777.7777",
         "got_ticket": false
@@ -33,7 +30,6 @@
         "department": "Merkazia",
         "department_id": "Merkazia",
         "role": "Team Leader",
-        "volunteer_type": "Manager",
         "is_production": false,
         "phone": "03=6382020",
         "got_ticket": false
@@ -46,7 +42,6 @@
         "department": "Merkazia",
         "department_id": "Merkazia",
         "role": "Volunteer",
-        "volunteer_type": "Manager",
         "is_production": false,
         "phone": "(1) - 212 -2223-333",
         "got_ticket": false
@@ -59,7 +54,6 @@
         "department": "Mapatz",
         "department_id": "Mapatz",
         "role": "Manger",
-        "volunteer_type": "Department Manager",
         "is_production": true,
         "phone": "(0)54-5422-235",
         "got_ticket": true
@@ -72,7 +66,6 @@
         "department": "Navadim",
         "department_id": "Navadim",
         "role": "Volunteer",
-        "volunteer_type": "Day Manager",
         "is_production": false,
         "phone": "036382020",
         "got_ticket": true
@@ -85,7 +78,6 @@
         "department": "Tech",
         "department_id": "Tech",
         "role": "Manger",
-        "volunteer_type": "Production",
         "is_production": true,
         "phone": "054-6501091",
         "got_ticket": true
