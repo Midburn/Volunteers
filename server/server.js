@@ -29,6 +29,11 @@ app.get('/shift-manager', servePage);
 // SPARK APIS
 /////////////////////////////
 
+app.get('/api/v1/volunteer/me', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_me.json'),res);
+})
+
 app.get('/api/v1/volunteer/volunteers', function (req, res) {
 
    search_string = req.query.search_string
