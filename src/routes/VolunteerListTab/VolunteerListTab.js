@@ -105,6 +105,7 @@ export default class VolunteerListTab extends React.Component {
         return 
     }
 
+//TODO get roles stucture from server side
     render() {
         return (
             <div className="volunteer-list-component">
@@ -113,7 +114,8 @@ export default class VolunteerListTab extends React.Component {
                     filters={this.state.filters}
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
-                    onVolunteerSubmit = { this.handleAddVolunteers }/>
+                    onVolunteerSubmit = { this.handleAddVolunteers }
+                    roles = {['roleA','B role','Role C']}/>
                 </div>
                 <div className="container card container">
                     <TableComponent 

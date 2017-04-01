@@ -68,7 +68,6 @@ export default class VolunteerRow extends React.Component{
                     <td>{effectiveVolunteer.last_name}</td>
                     <td>{effectiveVolunteer.department}</td>
                     <td>{effectiveVolunteer.role}</td>
-                    <td>{effectiveVolunteer.volunteer_type}</td>
                     <td>{effectiveVolunteer.is_production?'Yes':'No'}</td>
                     <td>{effectiveVolunteer.phone}</td>
                     <td>{effectiveVolunteer.got_ticket?'Yes':'No'}</td>
