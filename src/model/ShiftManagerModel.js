@@ -25,9 +25,15 @@ function ShiftManagerModel() {
         get volunteerTypeName() {
             return getNameById(this.volunteerTypes, this.volunteerTypeID);            
         },
-        startDate: moment("20170528", "YYYYMMDD"),
-        endDate: moment("20170602", "YYYYMMDD"),
+        date: new Date(),
+        weekView: true,
         shifts: [],
+        specialDates: [
+            {name: "Midburn 2017", date: moment("20170528", "YYYYMMDD")}
+        ],
+        get dateRange() {
+            return ((t, d) => [moment(d).startOf(t), moment(d).endOf(t)])(this.weekView ? 'week' : 'day', this.date);
+        },
         searchText: ''
     });
 
