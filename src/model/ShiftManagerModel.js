@@ -23,11 +23,12 @@ function ShiftManagerModel() {
         volunteerTypeID: null,
         volunteerTypes: [],
         get volunteerTypeName() {
-            return getNameById(this.teams, this.teamID);            
+            return getNameById(this.volunteerTypes, this.volunteerTypeID);            
         },
         startDate: moment("20170528", "YYYYMMDD"),
         endDate: moment("20170602", "YYYYMMDD"),
-        shifts: []  
+        shifts: [],
+        searchText: ''
     });
 
     this.initDepartments();
@@ -52,10 +53,10 @@ ShiftManagerModel.prototype.initDepartments = async function() {
     // Go to the database, retrieve teams, statuses and volunteer types for department
 };
 
-ShiftManagerModel.prototype.search = async function(name) {
+ShiftManagerModel.prototype.search = async function() {
     const optionalParam = (a) => a[1] ? [`${a[0]}=${a[1]}`] : []
     const params = [
-        ['name', name],
+        ['text', this.searchText],
         ['dept', this.departmentID], 
     ['type', this.volunteerTypeID],
     ['status', this.shiftStatusID],

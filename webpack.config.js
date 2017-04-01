@@ -10,7 +10,7 @@ module.exports = {
         path: resolve(__dirname, 'public'),
         publicPath: 'http://localhost:9090/'
     },
-    devtool: 'eval-source-map',
+    devtool: 'source-map',
     module: {
         loaders: [
             {
@@ -21,9 +21,19 @@ module.exports = {
             {
                 test: /\.css$/,
                 loader: 'style-loader!css-loader'
-            }
+            },
+            {
+                    test: /\.scss$/,
+                    use: [{
+                        loader: "style-loader" // creates style nodes from JS strings
+                    }, {
+                        loader: "css-loader" // translates CSS into CommonJS
+                    }, {
+                        loader: "sass-loader" // compiles Sass to CSS
+                    }]
+        }
         ]
-    },
+        },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin()
