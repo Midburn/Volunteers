@@ -34,16 +34,10 @@ app.get('/shift-manager', servePage);
 
 app.get('/api/v1/volunteers/me', function (req, res) {
    console.log(req.path)
-   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_me.json'),res);
+   retrunStub('get_volunteer_me',res);//TODO rename stub to get_volunteers_me
 })
 
 app.get('/api/v1/volunteers', function (req, res) {
-
-  //  search_string = req.query.search_string
-  //  departments = req.query.departments
-  //  role = req.query.role
-  //  got_ticket = req.query.got_ticket
-
   console.log(req.path);
   let volunteers = null;
   loadVolunteers((err, data) => {
@@ -153,10 +147,10 @@ app.get('/api/v1/roles', function (req, res) {
   retrunStub('json_stubs/get_volunteer_roles', res);
 })
 
-app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
-  console.log(req.path)
-  retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'), res);
-})
+// app.get('/api/v1/departments/:department/teams', function (req, res) {
+//   console.log(req.path)
+//   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'), res);
+// })
 
 
 function addVolunteers(role, is_production, emails, callback) {

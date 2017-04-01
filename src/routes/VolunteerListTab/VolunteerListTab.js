@@ -45,7 +45,7 @@ export default class VolunteerListTab extends React.Component {
     }
 
     fetchVolunteers(){
-        axios.get('api/v1/volunteers/volunteers')
+        axios.get('/api/v1/volunteers/')
         .then((res) => this.setState({volunteers:res.data}))
         .catch(this.logNetworkError);
     }
@@ -60,7 +60,7 @@ export default class VolunteerListTab extends React.Component {
 
     handleRowChange(department,profile_id,diff){
         let query=Object.keys(diff).reduce((acc,cur) => acc+`&${cur}=${diff[cur]}`,'').replace('&','?');
-        axios.put(`api/v1/departments/${department}/volunteers/${profile_id}`+ query)
+        axios.put(`/api/v1/departments/${department}/volunteers/${profile_id}`+ query)
         .then(this.fetchVolunteers)
         .catch(this.logNetworkError);
     }
@@ -89,9 +89,8 @@ export default class VolunteerListTab extends React.Component {
         }
 
         // add volunteers
-        console.log('made post request to url: ');
-        console.log(`volunteers/addVolunteer/department/${department}`);
-        axios.post(`api/v1/departments/${departmentId}/volunteers`,
+        console.log(`posting to api/v1/departments/${departmentId}/volunteers`);
+        axios.post(`/api/v1/departments/${departmentId}/volunteers`,
             {
                 role: role,
                 is_production: production,
@@ -115,7 +114,7 @@ export default class VolunteerListTab extends React.Component {
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
                     onVolunteerSubmit = { this.handleAddVolunteers }
-                    roles = { ['Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader']}/>
+                    roles = { ['All','Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader']}/>
                 </div>
                 <div className="container card container">
                     <TableComponent 

@@ -131,24 +131,6 @@ export default class VolunteerEditModal extends React.Component{
                             </select>
                         </div>
                     </div>
-
-                    <div className="form-group row">
-                        <label htmlFor="Got Ticket" className="col-sm-4 col-form-label">Got Ticket</label>
-                        <div className="col-sm-10">
-                            <select
-                                onChange ={this.getInputChangeHandler('got_ticket')}
-                                value={displayedVolunteer.got_ticket}
-                                className="form-control" 
-                                id="Got Ticket">
-                                {
-                                    ['Yes','No'].map(
-                                    (option)=> <option value={option} key={option}>{option}</option>
-                                    )    
-                                }
-                            </select>
-                        </div>
-                    </div>
-
                 </form>
             </Modal.Body>
           <Modal.Footer>
