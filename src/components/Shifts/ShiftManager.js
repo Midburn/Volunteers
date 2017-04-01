@@ -1,67 +1,52 @@
-import React from 'react';
+import DynamicDropdown from '../DynamicDropdown'
 import {observer} from "mobx-react";
-
-const Dropdown = observer(({label, shiftManagerModel, collection, current, placeholder = "All"}) => {
-    const model = shiftManagerModel[collection] || [];
-    return <div className="filter-component form-group">
-        <label htmlFor={`select_${collection}`}>{label}:</label>
-        <select 
-            id={`select_${collection}`}
-            value={shiftManagerModel[current] || ''}
-            onChange={e => shiftManagerModel[current] = e.target.value}>
-
-            <option key="">{model.length ? placeholder : ''}</option>
-
-            {model.map(
-                entry => <option key={entry.id} value={entry.id}>{entry.name}</option>
-            )}
-        </select>            
-    </div>
-})
+import React from 'react';
+require ('./ShiftManager.scss');
 
 const ShiftManagerComponent = observer(({shiftManagerModel}) =>(
     <div className="shift-manager">
-        <Dropdown 
+        <div className="shift-manager-header">
+        <DynamicDropdown 
             key="dept"
             label="Department"
             placeholder="Select department..."
-            shiftManagerModel={shiftManagerModel}
-            collection="departments"
+            onSelect={() => shiftManagerModel.selectDepartment()}
+            model={shiftManagerModel}
+            title="departmentName"
+            collectionName="departments"
             current="departmentID" />
         
-        <a href="#" onClick={e => shiftManagerModel.selectDepartment()}>Go</a>
-        <label htmlFor="volunteer_input">Search for volunteer's shift</label>
-        <input type="text" id="volunteer_input"  onChange={e => this.freeText = e.target.value} />
-
-        {shiftManagerModel.teams.length && (<div>
-            <Dropdown 
+        {shiftManagerModel.teams.length ? (<div className="shift-manager-header">
+        <input className="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text" />
+        <DynamicDropdown 
                 key="status"
                 label="Shift Status"
-                shiftManagerModel={shiftManagerModel}
-                collection="shiftStatuses"
+                model={shiftManagerModel}
+                title="shiftStatusName"
+                collectionName="shiftStatuses"
                 current="shiftStatusID" 
                 />
 
-            <Dropdown 
+            <DynamicDropdown 
                 key="team"
                 label="Team"
-                shiftManagerModel={shiftManagerModel}
-                collection="teams"
+                model={shiftManagerModel}
+                title="teamName"
+                collectionName="teams"
                 current="teamID"
                 />
 
-            <Dropdown 
+            <DynamicDropdown 
                 key="volunteerType"
                 label="Volunteer Type"
-                shiftManagerModel={shiftManagerModel}
-                collection="volunteerTypes"
+                title="volunteerTypeName"
+                model={shiftManagerModel}
+                collectionName="volunteerTypes"
                 current="volunteerTypeID"
                 />
-
-            <a href="#" onClick={() => shiftManagerModel.search(this.freeText)}>Search</a>
-            <a href="#" onClick={() => shiftManagerModel.reset()}>Reset</a>
-        </div>)
+        </div>) : ''
     }
+    </div>
     </div>
 ))
 
