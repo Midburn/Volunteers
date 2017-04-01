@@ -1,10 +1,17 @@
 [{
+    "id": 0,
+    "name": "Admin",
+    "description": "Can edit all the data of all the departments."
+}, {
     "id": 1,
-    "name": "Volunteer"
+    "name": "Department Manager",
+    "description": "Can edit all the data of the department."
 }, {
     "id": 3,
-    "name": "Shift Manager"
+    "name": "Shifts Manager",
+    "description": "Can view the volunteer list and edit the shifts data of the department."
 }, {
     "id": 4,
-    "name": "Department Manager"
+    "name": "Volunteer",
+    "description": "Can view the department data."
 }]

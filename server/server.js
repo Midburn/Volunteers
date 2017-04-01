@@ -23,7 +23,7 @@ function servePage(req, res) {
 }
 
 app.get('/', servePage);
-app.get('/volunteer-list', servePage);
+app.get('/volunteer-list-tab', servePage);
 app.get('/bulk-add', servePage);
 app.get('/shift-manager', servePage);
 
@@ -32,7 +32,12 @@ app.get('/shift-manager', servePage);
 // SPARK APIS
 /////////////////////////////
 
-app.get('/api/v1/volunteers/volunteers', function (req, res) {
+app.get('/api/v1/volunteers/me', function (req, res) {
+   console.log(req.path)
+   retrunStub(path.join(__dirname, '/json_stubs/get_volunteer_me.json'),res);
+})
+
+app.get('/api/v1/volunteers', function (req, res) {
 
   //  search_string = req.query.search_string
   //  departments = req.query.departments

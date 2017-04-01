@@ -108,7 +108,7 @@ export default class VolunteerListTab extends React.Component {
 //TODO get roles stucture from server side
     render() {
         return (
-            <div className="volunteer-list-component">
+            <div className="volunteer-list-tab-component">
                 <div className="container card">
                     <FilterComponent
                     filters={this.state.filters}
