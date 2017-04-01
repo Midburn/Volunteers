@@ -13,7 +13,7 @@ function App() {
       <div>
         <Header />
         <Route exact path="/" component={VolunteerListTab}/>
-        <Route path="/volunteer-list-tab" component={VolunteerListTab}/>
+        <Route path="/volunteers-list-tab" component={VolunteerListTab}/>
         <Route path="/bulk-add" component={BulkAdd}/>
         <Route path="/shift-manager" component={ShiftManager}/>
       </div>
