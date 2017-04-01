@@ -116,13 +116,25 @@ app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
   console.log(req.path);
   console.log(`isarray:${req.body.isArray}`);
   console.log(req.body);
-  let dId= req.params.dId;
+  let dId = req.params.dId;
   let role = req.body.role;
   let production = req.body.is_production === true;
   let emails = req.body.emails;
 
-  addVolunteers(role,production,emails,function(err,results){
-  res.status(err?404:200).send(results);
+  res.status(200).send(req.body.emails.map(
+    (email) => {
+      return {
+        daprtment: dId,
+        email: email,
+        profile_id: Math.floor(Math.random() * 1000000),
+        success: true,
+        comment: "That's a fake response honey. We're working on it"
+      };
+    }
+  ));
+
+  addVolunteers(role, production, emails, function (err, results) {
+    res.status(err ? 404 : 200).send(results);
   })
 });
 
@@ -148,9 +160,44 @@ app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
 })
 
 
-function addVolunteers(role,is_production,emails,callback){
-  callback(null,emails.map((email)=>{return {added:true,email:email,comment:'new email'};}));
+function addVolunteers(role, is_production, emails, callback) {
+  FilterMalformedEmails(emails, (formatChecked) =>
+    FilterExistingAssociation(departmentId, formatChecked, (associationChecked) =>
+      callback(associationChecked)
+      //FilterNonExistingEmails(associationChecked, (associations) =>
+      //saveRelevantAssociations(association, callback)
+      //)
+      //)
+    ));
 }
+
+function FilterMalformedEmails(emails, callback) {
+  callback(null, emails.map((email) => {
+    return {
+      email: email
+    };
+  }));
+}
+
+function FilterExistingAssociation(departmentId, structuredEmails, callback) {
+  loadAssociations((associations) => {
+    callback(
+      structuredEmails.map((stucturedEmail) => {
+        if (structuredEmail.failure) return structuredEmail;
+        else {
+          let dupAssociation = associations.find((singleAssociation) => singleAssociation.department_id === departmentId && singleAssociation.email === structuredEmail.email);
+          if (dupAssociation) {
+            dupAssociation.failure = true;
+            dupAssociation.comment = "A user with this email already associated with this department";
+            return dupAssociation;
+          } else return sturcturedEmail;
+        }
+      })
+    );
+  });
+}
+
+
 
 /////////////////////////////
 // STUBS
@@ -158,6 +205,19 @@ function addVolunteers(role,is_production,emails,callback){
 
 function isMatch(volunteer, department_id, profile_id) {
   return volunteer.department_id === department_id && volunteer.profile_id === profile_id;
+}
+
+//the folowwing should be used since in a few cycles associations would be kept apart from the volunteer cache which dependss on the spark service
+function loadAssociations(callback) {
+  loadVolunteers((volunteers) => callback(volunteers.map((loaded) => {
+    return {
+      profile_id: loaded.profile_id,
+      role: loaded.role,
+      email: loaded.email,
+      is_production: loaded.is_production,
+      department_id: loaded.department_id
+    };
+  })));
 }
 
 function loadVolunteers(callback) {
