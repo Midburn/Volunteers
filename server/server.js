@@ -111,12 +111,19 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 });
 
 
-app.post('/api/v1/departments/:d/volunteers/', function (req, res) {
+app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
   console.log('POST');
   console.log(req.path);
   console.log(`isarray:${req.body.isArray}`);
   console.log(req.body);
-  res.status(200).send('cool');
+  let dId= req.params.dId;
+  let role = req.body.role;
+  let production = req.body.is_production === true;
+  let emails = req.body.emails;
+
+  addVolunteers(role,production,emails,function(err,results){
+  res.status(err?404:200).send(results);
+  })
 });
 
 app.get('/api/v1/departments', function (req, res) {
@@ -140,6 +147,10 @@ app.get('/api/v1/volunteer/department/:department/teams', function (req, res) {
   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'), res);
 })
 
+
+function addVolunteers(role,is_production,emails,callback){
+  callback(null,emails.map((email)=>{return {added:true,email:email,comment:'new email'};}));
+}
 
 /////////////////////////////
 // STUBS
