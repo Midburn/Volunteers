@@ -32,7 +32,7 @@ export default class VolunteerAddModal extends React.Component{
     }
 
     handleChange(field, event){
-        console.log('VolunteerAddModal.handleInputChange');
+        console.log(`VolunteerAddModal.handleInputChange. field ${field}`);
         let converter = new DropdownConverter();
         let val = event.target.value;
         if(field === 'email' && val[val.length -1] === ',') {
@@ -48,11 +48,12 @@ export default class VolunteerAddModal extends React.Component{
     }
 
     handleSubmit(){
-        console.log('VolunteerAddModal.handleSubmit');
-        console.log(this.state);
+        console.log(`VolunteerAddModal.handleSubmit: state:${this.state}`);
+       
         let emails = this.splitEmailString(this.state.email);
+        console.log(`VolunteerAddModal.handleSubmit: role:${this.state.role}, department:${this.state.department}, emails:${emails}`);
         //TODO convert department to deparmentId either here or on change or on upper class
-        this.props.onSubmit(this.state.department,this.state.role,emails);
+        this.props.onSubmit(this.state.department,this.state.role,this.state.production,emails);
         this.handleClose();
     }
     
@@ -73,10 +74,9 @@ export default class VolunteerAddModal extends React.Component{
     }
 
     splitEmailString(emailStr){
+        console.log(`emails string:${emailStr}`)
         let emailArr = emailStr.split(',');
         let filteredArr = emailArr.filter(this.validateEmail);
-
-        console.log('Volunteers added successfully');
         console.log((emailArr.length - filteredArr.length) + ' emails were incorrect');
         return filteredArr;
     }
@@ -87,7 +87,7 @@ export default class VolunteerAddModal extends React.Component{
     }
 
     displayEmailError(curr) {
-        this.setState({emailError: !!curr});//TODO When not converted to bool the button get a string. Verify why and remove this etra safety
+        this.setState({emailError: curr});//TODO When not converted to bool the button get a string. Verify why and remove this etra safety
     }
 
     render(){
@@ -165,7 +165,7 @@ export default class VolunteerAddModal extends React.Component{
                 </Modal.Body>
             <Modal.Footer>
                 <Button onClick={this.handleClose}>Close</Button>
-                <Button bsStyle="primary" onClick={this.handleSubmit} disabled={this.state.emailError}>Add Volunteer</Button>
+                <Button bsStyle="primary" onClick={this.handleSubmit} disabled={!!this.state.emailError}>Add Volunteer</Button>
             </Modal.Footer>
             </Modal>
         )
