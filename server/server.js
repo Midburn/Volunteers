@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const React = require('react');
@@ -7,6 +8,8 @@ const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 
 var app = express();
+app.use(bodyParser.json()); // for parsing application/json
+
 
 
 /////////////////////////////
@@ -20,7 +23,7 @@ function servePage(req, res) {
 }
 
 app.get('/', servePage);
-app.get('/volunteers-list', servePage);
+app.get('/volunteer-list', servePage);
 app.get('/bulk-add', servePage);
 app.get('/shift-manager', servePage);
 
@@ -107,6 +110,14 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   });
 });
 
+
+app.post('/api/v1/departments/:d/volunteers/', function (req, res) {
+  console.log('POST');
+  console.log(req.path);
+  console.log(`isarray:${req.body.isArray}`);
+  console.log(req.body);
+  res.status(200).send('cool');
+});
 
 app.get('/api/v1/departments', function (req, res) {
   console.log(req.path)
