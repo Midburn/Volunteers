@@ -15,7 +15,7 @@ export default class VolunteerListTab extends React.Component {
             filters: {
                 filterText: '',
                 department: null,
-                volunteerType: null,
+                role: null,
                 gotTicket: null,
                 isProduction: null
             }
