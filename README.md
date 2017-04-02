@@ -9,10 +9,6 @@ clone repo
 
 run `npm install`
 
-install webpack globally `webpack install -g`
-
-install nodemon globally `nodemon install -g`
-
 run `npm start`
 
 
@@ -28,4 +24,4 @@ In this manner we will be able to separate development from production (`master`
 
 ## License
 
-TBD
+MIT
