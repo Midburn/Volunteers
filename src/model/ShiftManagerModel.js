@@ -15,16 +15,6 @@ function ShiftManagerModel() {
         get shiftStatusName() {
             return getNameById(this.shiftStatuses, this.shiftStatusID);
         },
-        teamID: null,
-        teams: [],
-        get teamName() {
-            return getNameById(this.teams, this.teamID);
-        },
-        volunteerTypeID: null,
-        volunteerTypes: [],
-        get volunteerTypeName() {
-            return getNameById(this.volunteerTypes, this.volunteerTypeID);            
-        },
         date: new Date(),
         weekView: true,
         shifts: [],
@@ -40,23 +30,9 @@ function ShiftManagerModel() {
     this.initDepartments();
 }
 
-ShiftManagerModel.prototype.selectDepartment = async function() {
-    const id = this.departmentID;
-    const typesResp = await fetch(`/api/v1/volunteer/department/${id}/volunteer_types`);
-    this.volunteerTypes = await typesResp.json();
-    const teamsResp = await fetch(`/api/v1/volunteer/department/${id}/teams`)
-    this.teams = await teamsResp.json();
-};
-
-ShiftManagerModel.prototype.reset = function() {
-    this.shiftStatusID = this.teamID = this.volunteerTypeID = null;
-}
-
 ShiftManagerModel.prototype.initDepartments = async function() {
     const resp = await fetch('/api/v1/volunteer/departments')
     this.departments = await resp.json();
-    console.log(JSON.stringify(this.departments));
-    // Go to the database, retrieve teams, statuses and volunteer types for department
 };
 
 ShiftManagerModel.prototype.search = async function() {
@@ -64,9 +40,7 @@ ShiftManagerModel.prototype.search = async function() {
     const params = [
         ['text', this.searchText],
         ['dept', this.departmentID], 
-    ['type', this.volunteerTypeID],
-    ['status', this.shiftStatusID],
-    ['team', this.teamID]].map(optionalParam).reduce((acc, val) => acc.concat(val), []).join('&');
+    ['status', this.shiftStatusID]].map(optionalParam).reduce((acc, val) => acc.concat(val), []).join('&');
     const typesResp = await fetch(`/api/v1/volunteer/shifts?${params}`);
 };
 
