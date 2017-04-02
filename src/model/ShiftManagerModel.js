@@ -31,7 +31,7 @@ function ShiftManagerModel() {
 }
 
 ShiftManagerModel.prototype.initDepartments = async function() {
-    const resp = await fetch('/api/v1/volunteer/departments')
+    const resp = await fetch('/api/v1/volunteer/departments', {credentials: 'include'})
     this.departments = await resp.json();
 };
 
@@ -39,9 +39,9 @@ ShiftManagerModel.prototype.search = async function() {
     const optionalParam = (a) => a[1] ? [`${a[0]}=${a[1]}`] : []
     const params = [
         ['text', this.searchText],
-        ['dept', this.departmentID], 
+        ['dept', this.departmentID],
     ['status', this.shiftStatusID]].map(optionalParam).reduce((acc, val) => acc.concat(val), []).join('&');
-    const typesResp = await fetch(`/api/v1/volunteer/shifts?${params}`);
+    const typesResp = await fetch(`/api/v1/volunteer/shifts?${params}`, {credentials: 'include'});
 };
 
 export default ShiftManagerModel;
