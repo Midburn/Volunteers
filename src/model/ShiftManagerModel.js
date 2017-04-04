@@ -30,27 +30,8 @@ function ShiftManagerModel() {
     this.initDepartments();
 }
 
-<<<<<<< HEAD
-ShiftManagerModel.prototype.selectDepartment = async function() {
-    const id = this.departmentID;
-    //TODO introduce roles instead of types and teams.
-    //We aint gonna do teams and types at this stage
-    const typesResp = await fetch(`/api/v1/department/${id}/volunteer_types`);
-    this.volunteerTypes = await typesResp.json();
-    const teamsResp = await fetch(`/api/v1/department/${id}/teams`)
-    this.teams = await teamsResp.json();
-};
-
-ShiftManagerModel.prototype.reset = function() {
-    this.shiftStatusID = this.teamID = this.volunteerTypeID = null;
-}
-
-ShiftManagerModel.prototype.initDepartments = async function() {
-    const resp = await fetch('/api/v1/departments')
-=======
 ShiftManagerModel.prototype.initDepartments = async function() {
     const resp = await fetch('/api/v1/volunteer/departments', {credentials: 'include'})
->>>>>>> develop
     this.departments = await resp.json();
 };
 
