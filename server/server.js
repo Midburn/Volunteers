@@ -1,9 +1,6 @@
 const express = require('express');
-<<<<<<< HEAD
 const bodyParser = require('body-parser');
-=======
 const session = require('express-session');
->>>>>>> develop
 const path = require('path');
 const fs = require('fs');
 const React = require('react');
