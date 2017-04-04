@@ -7,7 +7,7 @@ import App from './routes/App'
 import ComingSoon from './components/ComingSoon/ComingSoon'
 
 const fetchUserData = async function() {
-    const resp = await fetch('/api/v1/volunteers/me');
+    const resp = await fetch('/api/v1/volunteers/me', {credentials: 'include'});
     const me = await resp.json();
     console.log(JSON.stringify(me));
     if (me.length > 0) {

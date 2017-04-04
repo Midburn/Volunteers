@@ -1,16 +1,51 @@
 const express = require('express');
+<<<<<<< HEAD
 const bodyParser = require('body-parser');
+=======
+const session = require('express-session');
+>>>>>>> develop
 const path = require('path');
 const fs = require('fs');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
+const webpackConfig = require("../webpack.config.js");
+const authHelper = require('./authHelper.js');
+const config = require('../config.js')
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 
+const devMode = (config.environment != 'production');
+
+// ///////////////////////////
+// Session
+// ///////////////////////////
+const sess = {
+  secret: 'secret',
+  cookie: {}
+};
+
+app.use(session(sess));
+
+// ///////////////////////////
+// WEB middleware
+// ///////////////////////////
+
+function getUserFromSession(req, res, next) {
+  const session = req.session;
+  if (!session || !session.userDetails) {
+    res.status(400).json({error: 'Unauthorized'});
+  }
+  else {
+    req.user = session.userDetails;
+    next();
+  }
+}
+
+app.use('/api', getUserFromSession);
 
 /////////////////////////////
 // WEB
@@ -19,14 +54,26 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use('/static', express.static(path.join(__dirname, '../public/')));
 
 function servePage(req, res) {
+  const token = req.query.token;
+
+  // TODO: when spark auth api will be deployed, check if production
+  req.session.token = token;
+  req.session.userDetails = {firstName: 'user'};
   res.sendFile(path.join(__dirname, '../src/index.html'));
+  return;
+
+  authHelper.GetUserAuth(token, res, (userDetails) => {
+
+    req.session.token = token;
+    req.session.userDetails = userDetails;
+    res.sendFile(path.join(__dirname, '../src/index.html'));
+  });
 }
 
 app.get('/', servePage);
 app.get('/volunteer-list-tab', servePage);
 app.get('/bulk-add', servePage);
 app.get('/shift-manager', servePage);
-
 
 /////////////////////////////
 // SPARK APIS
@@ -257,15 +304,13 @@ function readJSONFile(filename, callback) {
   });
 }
 
-// Set webpack-dev-server
-// TODO: Check if debug environment when environments will be supported
-const devMode = (process.env.NODE_ENV !== 'production');
-
+/////////////////////////////
+// webpack-dev-server
+/////////////////////////////
 if (devMode) {
-  var config = require("../webpack.config.js");
-  config.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
-  var compiler = webpack(config);
-  var server = new webpackDevServer(compiler, {
+  webpackConfig.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
+  const compiler = webpack(webpackConfig);
+  const server = new webpackDevServer(compiler, {
     contentBase: path.resolve(__dirname, '../public'),
     publicPath: '/',
     hot: true,
@@ -277,8 +322,9 @@ if (devMode) {
 
 app.use(express.static('public'));
 
-var server = app.listen(8080, function () {
-  var host = server.address().address
-  var port = server.address().port
-  console.log("Listening at http://%s:%s", host, port)
+
+const server = app.listen(config.port, function () {
+   const host = server.address().address
+   const port = server.address().port
+   console.log("Listening at http://%s:%s", host, port)
 })
