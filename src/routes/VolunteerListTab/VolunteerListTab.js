@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import update from 'immutability-helper';
 
@@ -15,7 +15,7 @@ export default class VolunteerListTab extends React.Component {
             filters: {
                 filterText: '',
                 department: null,
-                volunteerType: null,
+                role: null,
                 gotTicket: null,
                 isProduction: null
             }
@@ -45,21 +45,22 @@ export default class VolunteerListTab extends React.Component {
     }
 
     fetchVolunteers(){
-        axios.get('api/v1/volunteer/volunteers')
+        axios.get('/api/v1/volunteers/')
         .then((res) => this.setState({volunteers:res.data}))
         .catch(this.logNetworkError);
     }
 
     handleRowDelete(department,profile_id){
-        console.log(VolunteerTab.handleRowDelete);
-        axios.delete(`/volunteers/department/${department}/volunteer/${profile_id}`)
+        console.log('VolunteerListTab.handleRowDelete');
+
+        axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
         .then(this.fetchVolunteers)
         .catch( this.logNetworkError);
     }
 
     handleRowChange(department,profile_id,diff){
         let query=Object.keys(diff).reduce((acc,cur) => acc+`&${cur}=${diff[cur]}`,'').replace('&','?');
-        axios.put(`volunteers/department/${department}/volunteer/${profile_id}`+ query)
+        axios.put(`/api/v1/departments/${department}/volunteers/${profile_id}`+ query)
         .then(this.fetchVolunteers)
         .catch(this.logNetworkError);
     }
@@ -77,48 +78,43 @@ export default class VolunteerListTab extends React.Component {
         this.setState((previousState)=>update(previousState,mergeValue));
     }
 
-    handleAddVolunteers(profile_email, department, diff) {
+    handleAddVolunteers(department, role, production, emails) {
+        console.log(`VolunteerListTab.handleAddVolunteeers: department:${department}, role:${role}, emails:${emails}`);
         // TODO - convert department to department id
+        let departmentId = department;
         // TODO - create a request to test emails validity
-        if(profile_email.length < 1) {
+        if (emails.length < 1) {
             console.log('no volunteers to add');
             return;
         }
-        const params = new URLSearchParams();
-        const query = profile_email.map((email) => {
-            params.append('email', email);
-            params.append('department', department);
-            params.append('type', diff.type);
-            params.append('role', diff.role);
-            params.append('production', diff.production);
-        });
-        console.log('query:');
-        console.log(query);
 
-        console.log('params:');
-        console.log(params.toString());
-    
         // add volunteers
-        console.log('made post request to url: ');
-        console.log(`volunteers/addVolunteer/department/${department}`);
-        axios.post(`volunteers/addVolunteer/department/${department}?${params.toString()}`);
-        // .then(this.fetchVolunteers)
-        // .catch(this.logNetworkError);
+        console.log(`posting to api/v1/departments/${departmentId}/volunteers`);
+        axios.post(`/api/v1/departments/${departmentId}/volunteers`,
+            {
+                role: role,
+                is_production: production,
+                emails: emails
+            })
+            .then(console.log('request to server succeeded'))
+            .catch(console.log('error communicating with server'));
     }
 
     createVolunteer(volunteers) {
         return 
     }
 
+//TODO get roles stucture from server side
     render() {
         return (
-            <div className="volunteer-list-component">
+            <div className="volunteer-list-tab-component">
                 <div className="container card">
                     <FilterComponent
                     filters={this.state.filters}
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
-                    onVolunteerSubmit = { this.handleAddVolunteers }/>
+                    onVolunteerSubmit = { this.handleAddVolunteers }
+                    roles = { ['All','Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader']}/>
                 </div>
                 <div className="container card container">
                     <TableComponent 

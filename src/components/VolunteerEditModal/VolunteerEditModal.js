@@ -115,23 +115,6 @@ export default class VolunteerEditModal extends React.Component{
                         </div>
                     </div>
 
-                     <div className="form-group row">
-                        <label htmlFor="Volunteer Type" className="col-sm-4 col-form-label">Volunteer Type</label>
-                        <div className="col-sm-10">
-                            <select
-                                onChange ={this.getInputChangeHandler('volunteer_type')}
-                                value={displayedVolunteer.volunteer_type}
-                                className="form-control" 
-                                id="Volunteeer Type">
-                                {
-                                    ['Manager','Day Manager','Shift Manager','Production','Department Manager'].map(
-                                    (option)=> <option value={option} key={option}>{option}</option>
-                                    )    
-                                }
-                            </select>
-                        </div>
-                    </div>
-
                     <div className="form-group row">
                         <label htmlFor="Production" className="col-sm-4 col-form-label">Production</label>
                         <div className="col-sm-10">
@@ -148,24 +131,6 @@ export default class VolunteerEditModal extends React.Component{
                             </select>
                         </div>
                     </div>
-
-                    <div className="form-group row">
-                        <label htmlFor="Got Ticket" className="col-sm-4 col-form-label">Got Ticket</label>
-                        <div className="col-sm-10">
-                            <select
-                                onChange ={this.getInputChangeHandler('got_ticket')}
-                                value={displayedVolunteer.got_ticket}
-                                className="form-control" 
-                                id="Got Ticket">
-                                {
-                                    ['Yes','No'].map(
-                                    (option)=> <option value={option} key={option}>{option}</option>
-                                    )    
-                                }
-                            </select>
-                        </div>
-                    </div>
-
                 </form>
             </Modal.Body>
           <Modal.Footer>

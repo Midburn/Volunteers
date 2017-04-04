@@ -20,7 +20,7 @@ export default class DropDownFilter extends React.Component{
             });
         return (
             <div className="filter-component form-group">
-                <label htmlFor="department">{this.props.label}</label>)
+                <label htmlFor={this.props.label}>{this.props.label}</label>
                 <select 
                 className="form-control" 
                 id={this.props.label}

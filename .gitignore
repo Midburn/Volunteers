@@ -3,3 +3,10 @@ node_modules
 
 # ignore bundle.js
 public/bundle.js
+public/bundle.js.map
+
+#ignore runtime datastore directory contents
+/server/json_modified/**
+
+# npm log et al
+*.log

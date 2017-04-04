@@ -29,7 +29,7 @@ export default class FilterComponent extends React.Component{
 
     onResetClick(){
         this.props.onFilterInput('department',null);
-        this.props.onFilterInput('volunteerType',null);
+        this.props.onFilterInput('role',null);
         this.props.onFilterInput('gotTicket', null);
         this.props.onFilterInput('isProduction',null);
         this.props.onFilterTextInput('');
@@ -49,10 +49,10 @@ export default class FilterComponent extends React.Component{
                         myFilter={Convert.convertToDisplay(this.props.filters.department)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
-                    <DropdownFilter label="Volunteer Type"     
-                        onFilterInput={(value)=>this.props.onFilterInput('volunteerType',Convert.convertFromDisplay(value))}
-                        options={['All','Manager','Day Manager','Shift Manager','Production','Department Manager']}
-                        myFilter={Convert.convertToDisplay(this.props.filters.volunteerType)}/>
+                    <DropdownFilter label="Role"     
+                        onFilterInput={(value)=>this.props.onFilterInput('role',Convert.convertFromDisplay(value))}
+                        options={this.props.roles}
+                        myFilter={Convert.convertToDisplay(this.props.filters.role)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Got Ticket" 
