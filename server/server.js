@@ -71,6 +71,11 @@ function servePage(req, res) {
   });
 }
 
+app.get('/', servePage);
+app.get('/volunteer-list-tab', servePage);
+app.get('/bulk-add', servePage);
+app.get('/shift-manager', servePage);
+
 /////////////////////////////
 // SPARK APIS
 /////////////////////////////
@@ -378,8 +383,6 @@ if (devMode) {
   app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
 
-
-app.get('*', servePage);
 
 
 const server = app.listen(config.port, function () {
