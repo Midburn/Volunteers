@@ -167,18 +167,15 @@ app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
   res.status(200).send(req.body.emails.map(
     (email) => {
       return {
-        daprtment: dId,
         email: email,
-        profile_id: Math.floor(Math.random() * 1000000),
-        success: true,
-        comment: "That's a fake response honey. We're working on it"
+        status: "Success"
       };
     }
   ));
 
-  addVolunteers(role, production, emails, function (err, results) {
-    res.status(err ? 404 : 200).send(results);
-  })
+  // addVolunteers(role, production, emails, function (err, results) {
+  //   res.status(err ? 404 : 200).send(results);
+  // })
 });
 
 app.get('/api/v1/departments', function (req, res) {

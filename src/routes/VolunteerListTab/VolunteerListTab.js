@@ -1,47 +1,33 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import update from 'immutability-helper';
 
-import FilterComponent from '../../components/FilterComponent/FilterComponent.js';
+import FilterComponent from '../../components/FilterComponent/FilterComponent';
 
 import TableComponent from '../../components/TableComponent/TableComponent';
 
-export default class VolunteerListTab extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            volunteers:[],
-            roles:[],
-            departments:[],
-            filters: {
-                filterText: '',
-                department: null,
-                role: null,
-                gotTicket: null,
-                isProduction: null
-            }
-        };
-
-        this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
-        this.handleFilterInput=this.handleFilterInput.bind(this);
-        this.handleRowDelete=this.handleRowDelete.bind(this);
-        this.handleRowChange=this.handleRowChange.bind(this);
-        this.fetchVolunteers=this.fetchVolunteers.bind(this);
-        this.fetchRoles=this.fetchRoles.bind(this);
-        this.fetchDepartments=this.fetchDepartments.bind(this);
-        this.logNetworkError = this.logNetworkError.bind(this);
-        this.handleAddVolunteers = this.handleAddVolunteers.bind(this);
+export default class VolunteerListTab extends Component {
+    state = {
+        volunteers:[],
+        roles:[],
+        departments:[],
+        filters: {
+            filterText: '',
+            department: null,
+            role: null,
+            gotTicket: null,
+            isProduction: null
+        }
     }
 
+    componentDidMount(){
+        this.fetchRoles();
+        this.fetchDepartments();
+        this.fetchVolunteers();
+    }
 
-  componentDidMount(){
-    this.fetchRoles();
-    this.fetchDepartments();
-    this.fetchVolunteers();
-  }
-
-    logNetworkError(err){
+    logNetworkError = (err) => {
         if(err.response){
             console.log('Data', err.response.data);
             console.log('Status', err.response.status);
@@ -50,73 +36,76 @@ export default class VolunteerListTab extends React.Component {
         else console.log('Error',err.message);
     }
 
-    fetchVolunteers(){
+    fetchVolunteers = () => {
         axios.get('/api/v1/volunteers/')
         .then((res) => this.setState({volunteers:res.data}))
         .catch(this.logNetworkError);
     }
 
-    fetchRoles() {
+    fetchRoles = () => {
          axios.get('/api/v1/roles')
         .then((res) => this.setState({roles:res.data}))
         .catch(this.logNetworkError);
     }
 
-    fetchDepartments() {
+    fetchDepartments = () => {
          axios.get('/api/v1/departments')
         .then((res) => this.setState({departments:res.data}))
         .catch(this.logNetworkError);
     }
 
-    handleRowDelete(department,profile_id){
+    handleRowDelete = (department,profile_id) => {
         console.log('VolunteerListTab.handleRowDelete');
 
         axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
         .then(this.fetchVolunteers)
-        .catch( this.logNetworkError);
-    }
-
-    handleRowChange(department,profile_id,diff){
-        let query=Object.keys(diff).reduce((acc,cur) => acc+`&${cur}=${diff[cur]}`,'').replace('&','?');
-        axios.put(`/api/v1/departments/${department}/volunteers/${profile_id}`+ query)
-        .then(this.fetchVolunteers)
         .catch(this.logNetworkError);
     }
 
-    handleFilterTextInput(filterText){
-        this.handleFilterInput('filterText',filterText);
+    handleRowChange = (department, profile_id, diff) => {
+        let query = Object.keys(diff).reduce((acc, cur) => `${acc}&${cur}=${diff[cur]}`, '?');
+        axios
+            .put(`/api/v1/departments/${department}/volunteers/${profile_id}${query}`)
+            .then(this.fetchVolunteers)
+            .catch(this.logNetworkError);
     }
 
-    handleFilterInput(filterName,value){
-         let mergeValue= {
+    handleFilterTextInput = (filterText) => {
+        this.handleFilterInput('filterText', filterText);
+    }
+
+    handleFilterInput = (filterName, value) => {
+         const mergeValue = {
              filters: {
-                 $merge:{
+                $merge:{
                     [filterName]:value
-             }}};
-        this.setState((previousState)=>update(previousState,mergeValue));
+                }
+            }
+        };
+        this.setState((previousState) => update(previousState, mergeValue));
     }
 
-    createVolunteer(volunteers) {
-        return 
+    createVolunteer = (volunteers) => {
+        console.error('not implemented');
     }
 
-//TODO get roles stucture from server side
     render() {
+        const { filters, volunteers, roles, departments } = this.state;
         return (
             <div className="volunteer-list-tab-component">
                 <div className="container card">
                     <FilterComponent
-                    filters={this.state.filters}
+                    filters={filters}
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
-                    roles={this.state.roles}
-                    departments={this.state.departments}/>
+                    roles={roles}
+                    departments={departments}/>
                 </div>
                 <div className="container card container">
                     <TableComponent 
-                    volunteers= {this.state.volunteers} 
-                    filters= {this.state.filters}
-                    roles={this.state.roles}
+                    volunteers= {volunteers} 
+                    filters={filters}
+                    roles={roles}
                     onRowDelete= {this.handleRowDelete}
                     onRowChange= {this.handleRowChange}/>
                 </div>

@@ -14,8 +14,8 @@ export default class VolunteerAddModal extends Component{
         department: 0,
         role: 4,
         production: false,
-        emailError: false,
-        errorText: ''
+        errorTexts: [],
+        isButtonEnabled: true
     }
     
     getInputChangeHandler = (field) => {
@@ -26,16 +26,9 @@ export default class VolunteerAddModal extends Component{
         console.log(`VolunteerAddModal.handleInputChange. field ${field}`);
         let converter = new DropdownConverter();
         let val = event.target.value;
-        if(field === 'email' && val[val.length -1] === ',') {
-            if(this.testLastEmail(val)){
-                this.displayEmailError(false);
-            } else {
-                this.displayEmailError(true);
-            }
-        }
-        //TODO convert department to deparmentId either here or on submition
+
+        this.state.errorTexts = []
         this.setState( (state) => update(state, {$merge:{[field]: converter.convertFromDisplay(val)}} ));
-        this.state.errorText = ''
     }
 
     handleSubmit = () => {
@@ -43,14 +36,33 @@ export default class VolunteerAddModal extends Component{
         
         let emails = this.splitEmailString(this.state.email);
         if (emails.length == 0) {
-            this.state.errorText = 'Please enter emails'
+            this.state.errorTexts = ['Please enter an email address']
             this.setState(this.state)
+            return;
+        }
+
+        var invalidEmails = []
+        emails.forEach((email) => {
+            if (!this.validateEmail(email)) {
+                invalidEmails.push(email)
+            }  
+        })
+
+        if (invalidEmails.length > 0) {
+            this.state.errorTexts = invalidEmails.map((email) => {return `Error: ${email} - Invalid email`})
+            this.setState(this.state)
+            return;
         }
 
         // add volunteers
         let department = this.state.department
         let role = this.state.role
         let production = this.state.production
+
+        this.state.errorTexts = ['Adding... ']
+        this.state.isButtonEnabled = false
+        this.setState(this.state)
+
 
         axios.post(`/api/v1/departments/${department}/volunteers`,
             {
@@ -59,17 +71,44 @@ export default class VolunteerAddModal extends Component{
                 emails: emails
             })
             .then(response => {
-               // this.state.errorText = 'Success'
-                this.setState({errorText: 'Success'})
+                this.state.isButtonEnabled = true
+                this.setState(this.state)
+                this.handleServerResponse(response)
             })
             .catch(error => {
-                this.state.errorText = 'Server Error'
+                this.state.errorTexts = ['Server Error']
+                this.state.isButtonEnabled = true
                 this.setState(this.state)
             });
         // let emails = this.splitEmailString(this.state.email);
         // console.log(`VolunteerAddModal.handleSubmit: role:${this.state.role}, department:${this.state.department}, emails:${emails}`);
         // this.props.onSubmit(this.state.department,this.state.role,this.state.production,emails);
         // this.handleClose();
+    }
+
+    handleServerResponse = (response) => {
+        console.log(response)
+        var errors = []
+        var successCounter = 0
+
+        response.data.forEach(({email, status}) => {
+            if (status != 'Success') {
+                errors.push(`Error: ${email} - ${status}`)
+            } else {
+                successCounter += 1
+            }
+        })
+
+        var text = []
+        if (successCounter > 1) {
+            text.push(`${successCounter} volunteers were added successfully`)
+        } else if (successCounter == 1) {
+            text.push(`1 volunteer was added successfully`)
+        }
+        text = text.concat(errors)
+
+        this.state.errorTexts = text
+        this.setState(this.state)
     }
     
     handleClose = () => {
@@ -84,19 +123,18 @@ export default class VolunteerAddModal extends Component{
 
     splitEmailString = (emailStr) => {
         console.log(`emails string:${emailStr}`)
-        let emailArr = emailStr.split(',');
-        let filteredArr = emailArr.filter(this.validateEmail);
-        console.log((emailArr.length - filteredArr.length) + ' emails were incorrect');
-        return filteredArr;
+        var emailArr = emailStr.split(/\r|\n/).map((email) => {return email.trim()})
+        emailArr = emailArr.filter((email) => { return email != '' }); 
+
+        return emailArr
+        // let filteredArr = emailArr.filter(this.validateEmail);
+        // console.log((emailArr.length - filteredArr.length) + ' emails were incorrect');
+        // return filteredArr;
     }
 
     testLastEmail = (email) => {
         let emailArr = email.split(',');
         return this.validateEmail(emailArr[emailArr.length - 2]);
-    }
-
-    displayEmailError = (curr) => {
-        this.setState({emailError: curr});//TODO When not converted to bool the button get a string. Verify why and remove this etra safety
     }
 
     getRolesOptions = () => {
@@ -107,7 +145,6 @@ export default class VolunteerAddModal extends Component{
         return this.props.roles.map(({name, id}) => 
             <option value={id} key={name}>{name}</option>
         )
-
     }
 
     getDepartmentOptions = () => {
@@ -120,12 +157,12 @@ export default class VolunteerAddModal extends Component{
         )
     }
 
+    getErrorText = () => (
+        <ul>{this.state.errorTexts.map((text, index) => <li key={`li-${index}`}>{text}</li>)}</ul>
+    )
+
     render(){
         let converter = new DropdownConverter();
-        let errorDiv;
-        if(this.state.emailError) {
-            errorDiv = <div className="error-div">Invalid email</div>
-        }
         return (
             <Modal show={this.props.show} onHide={this.handleClose}>
                 <Modal.Header closeButton>
@@ -168,14 +205,13 @@ export default class VolunteerAddModal extends Component{
                         <ControlLabel>User Email</ControlLabel>
                         <FormControl componentClass="textarea" onChange={this.getInputChangeHandler('email')}
                             value={this.state.email}
-                            className={"form-control" + (this.state.emailError ? ' error' : '')} placeholder="Please enter all volunteer emails separated by commas"></FormControl>
+                            className="form-control" placeholder="Please enter all volunteer emails - one in each line"></FormControl>
                     </FormGroup>
-                    {errorDiv}
-                    <HelpBlock>{this.state.errorText}</HelpBlock>
+                    {this.getErrorText()}
                 </Modal.Body>
             <Modal.Footer>
                 <Button onClick={this.handleClose}>Close</Button>
-                <Button bsStyle="primary" onClick={this.handleSubmit} disabled={!!this.state.emailError}>Add Volunteer</Button>
+                <Button bsStyle="primary" onClick={this.handleSubmit} disabled={!this.state.isButtonEnabled}>Add Volunteer</Button>
             </Modal.Footer>
             </Modal>
         )
