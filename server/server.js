@@ -103,7 +103,7 @@ app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
   var options = {
     host: 'localhost',
     port: 3000,
-    path: `/volunteers/department/${req.params.departmentId}/volunteers`
+    path: `/volunteers/departments/${req.params.departmentId}/volunteers/`
   };
 
   http.get(options, function (fromSpark) {
