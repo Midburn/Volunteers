@@ -87,14 +87,48 @@ app.get('/api/v1/volunteers/me', function (req, res) {
 
 app.get('/api/v1/volunteers', function (req, res) {
   console.log(req.path);
-  let volunteers = null;
-  loadVolunteers((err, data) => {
-    if (err) {
-      res.status(404).send('Not found');
+
+  const options = {
+    host: 'localhost',
+    port: 3000,
+    path: '/volunteers/volunteers'
+  };
+
+  http.get(options, (httpResponse) => {
+    if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
+      console.log('Intenral server error calling to spark backend server');
+      console.log(`statusCode:${httpResponse.statusCode}, content-type:${httpResponse.headers['content-type']}`);
+      responseFromSpark.resume();
+      res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
+
     } else {
-      res.status(200).send(data);
+      httpResponse.setEncoding('utf8');
+      let raw = '';
+      httpResponse.on('data', (chunk) => raw += chunk);
+      httpResponse.on('end', () => {
+        const json = JSON.parse(raw); //TODO error handling
+        const sanitized = json.map((item) => {
+          return {
+            //TODO new ecma2017 {} operator
+            department_id: item.department_id,
+            department: `TODO DEP ID${item.department_id}`,
+            profile_id: item.user_id,
+            email: item.email,
+            first_name: item.first_name,
+            last_name: item.last_name,
+            phone: item.phone_number,
+            got_ticket: item.got_ticket,
+            is_production: item.is_production,
+            role_id: item.role_id,
+            role: `TODO ROLE NAME ${item.role_id}`
+          };
+          //TODO more error handling and optimized role and department name conversion
+        });
+        res.status(200).send(sanitized);
+      });
+
     }
-  });
+  }).on('error', (e) => console.log(e));
 });
 
 
