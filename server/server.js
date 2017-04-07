@@ -238,7 +238,12 @@ app.get('/api/v1/departments', function (req, res) {
     responseFromSpark.on('data', (chunk) => raw += chunk);
     responseFromSpark.on('end', () => {
       const sparkResponse = JSON.parse(raw);
-      res.status(200).send(sparkResponse);
+      const enrichedSparkResponse = sparkResponse.map((d)=>{
+        let dd =d;
+        dd.name =d.name_en;
+        return dd;
+      });
+      res.status(200).send(enrichedSparkResponse);
     }).on('error', (error) => {
       console.log(error);
       res.status(500).send(`Internal Server Error 2352. ${error.message}`);
