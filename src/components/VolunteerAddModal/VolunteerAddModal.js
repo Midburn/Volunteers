@@ -25,6 +25,8 @@ export default class VolunteerAddModal extends React.Component{
         this.validateEmail = this.validateEmail.bind(this);
         this.testLastEmail = this.testLastEmail.bind(this);
         this.displayEmailError = this.displayEmailError.bind(this);
+        this.getRolesOptions = this.getRolesOptions.bind(this);
+        this.getDepartmentOptions = this.getDepartmentOptions.bind(this);
     }
     
     getInputChangeHandler(field){
@@ -90,6 +92,18 @@ export default class VolunteerAddModal extends React.Component{
         this.setState({emailError: curr});//TODO When not converted to bool the button get a string. Verify why and remove this etra safety
     }
 
+    getRolesOptions(){
+        var roles =  this.props.roles.map(function(role) {return role['name']})
+        roles = ["Choose Volunteer Role"].concat(roles)
+        return roles
+    }
+
+    getDepartmentOptions(){
+        var departments =  this.props.departments.map(function(role) {return role['name']})
+        departments = ["Choose Department"].concat(departments)
+        return departments
+    }
+
     render(){
         let converter = new DropdownConverter();
         let errorDiv;
@@ -109,7 +123,7 @@ export default class VolunteerAddModal extends React.Component{
                             value={this.state.department}
                             className="form-control" >
                                 {
-                                    ['Choose Department', 'Tech','Navadim','Mapatz','Tnua','Merkazia'].map(
+                                    this.getDepartmentOptions().map(
                                     (option)=> <option value={option} key={option}>{option}</option>
                                     )    
                                 }
@@ -122,7 +136,7 @@ export default class VolunteerAddModal extends React.Component{
                             value={this.state.role}
                             className="form-control" >
                                 {
-                                    ['Choose Volunteer Role', 'Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader'].map(
+                                    this.getRolesOptions().map(
                                     (option)=> <option value={option} key={option}>{option}</option>
                                     )    
                                 }
