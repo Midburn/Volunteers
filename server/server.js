@@ -124,6 +124,7 @@ app.get('/api/v1/volunteers', function (req, res) {
           };
           //TODO more error handling and optimized role and department name conversion
         });
+        console.log(`json.length:${json.length}, sanitized.length:${sanitized.length}`);
         res.status(200).send(sanitized);
       });
 
