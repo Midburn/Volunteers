@@ -311,7 +311,6 @@ if (devMode) {
     stats: true
   });
   server.listen(9090);
-  app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
 
 app.use(express.static('public'));

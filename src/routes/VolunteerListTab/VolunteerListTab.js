@@ -85,10 +85,29 @@ export default class VolunteerListTab extends Component {
         this.setState((previousState) => update(previousState, mergeValue));
     }
 
-    createVolunteer = (volunteers) => {
+    handleAddVolunteers = (department, role, is_production, emails) => {
+        console.log(`VolunteerListTab.handleAddVolunteeers: department:${department}, role:${role}, emails:${emails}`);
+        // TODO - convert department to department id
+        let departmentId = department;
+        // TODO - create a request to test emails validity
+        if (emails.length < 1) {
+            console.log('no volunteers to add');
+            return;
+        }
+
+        // add volunteers
+        console.log(`posting to api/v1/departments/${departmentId}/volunteers`);
+        axios
+            .post(`/api/v1/departments/${departmentId}/volunteers`, { role, is_production, emails })
+            .then(() => console.log('request to server succeeded'))
+            .catch(() => console.log('error communicating with server'));
+    }
+
+    createVolunteer(volunteers) {
         console.error('not implemented');
     }
 
+//TODO get roles stucture from server side
     render() {
         const { filters, volunteers, roles, departments } = this.state;
         return (

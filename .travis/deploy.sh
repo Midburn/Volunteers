@@ -5,7 +5,7 @@ if [ "$TRAVIS_REPO_SLUG" = "Midburn/volunteers" ] &&
 	if [ -n "$STAGE_SSH_KEY" ]; then
 		echo -e $STAGE_SSH_KEY | base64 -d > stage_machine.key
 		chmod 400 stage_machine.key
-		ssh -o StrictHostKeyChecking=no -i stage_machine.key "${STAGE_SERVER}" "cd volunteers; git pull -r; npm install; npm run build; pm2 restart all" 2>/dev/null
+		ssh -o StrictHostKeyChecking=no -i stage_machine.key "${STAGE_SERVER}" "cd volunteers && git pull -r && npm install && npm run build && pm2 restart all" 2>/dev/null
 		RC=$?
 		rm -f stage_machine.key
 		exit $RC
