@@ -99,13 +99,7 @@ app.get('/api/v1/volunteers', function (req, res) {
 
 
 app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
-  console.log('going to spark to get volunteers of department');
-
-
-
-
-
-  //res.status(200).send('heelo vols');
+  console.log(req.path);
   var options = {
     host: 'localhost',
     port: 3000,
@@ -121,17 +115,6 @@ app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
   }).on('error', (e) => {
     console.log(`Got error: ${e.message}`);
   });
-
-
-
-
-  // const url = "http://localhost:3000";
-  // axios.get(`{url}/volunteers/department/{departmentId}/volunteers`) //TODO sanitize and verify departmentId 
-  //   .then((res) => res.status(200).send('cool eyal'))
-  //   .catch((res) => console.log(res));
-
-  // res.status(200).send('heelo vols');
-
 });
 
 app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
@@ -212,10 +195,6 @@ app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
       };
     }
   ));
-
-  // addVolunteers(role, production, emails, function (err, results) {
-  //   res.status(err ? 404 : 200).send(results);
-  // })
 });
 
 app.get('/api/v1/departments', function (req, res) {
@@ -238,9 +217,9 @@ app.get('/api/v1/departments', function (req, res) {
     responseFromSpark.on('data', (chunk) => raw += chunk);
     responseFromSpark.on('end', () => {
       const sparkResponse = JSON.parse(raw);
-      const enrichedSparkResponse = sparkResponse.map((d)=>{
-        let dd =d;
-        dd.name =d.name_en;
+      const enrichedSparkResponse = sparkResponse.map((d) => {
+        let dd = d;
+        dd.name = d.name_en;
         return dd;
       });
       res.status(200).send(enrichedSparkResponse);
@@ -250,57 +229,37 @@ app.get('/api/v1/departments', function (req, res) {
 
     });
   });
-  // console.log(req.path)
-  // retrunStub('get_volunteer_departments', res);
 })
 
 app.get('/api/v1/roles', function (req, res) {
   console.log(req.path)
-  retrunStub('get_volunteer_roles', res);
-})
 
-// app.get('/api/v1/departments/:department/teams', function (req, res) {
-//   console.log(req.path)
-//   retrunStub(path.join(__dirname, '/json_stubs/get_department_teams.json'), res);
-// })
+  const options = {
+    host: 'localhost',
+    port: 3000,
+    path: '/volunteers/roles/'
+  };
 
+  http.get(options, (httpResponse) => {
+    if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
+      console.log('error calling to spark');
+      console.log(`statusCode:${httpResponse.statusCode}, content-type:${ httpResponse.headers['content-type'] }`);
 
-function addVolunteers(role, is_production, emails, callback) {
-  FilterMalformedEmails(emails, (formatChecked) =>
-    FilterExistingAssociation(departmentId, formatChecked, (associationChecked) =>
-      callback(associationChecked)
-      //FilterNonExistingEmails(associationChecked, (associations) =>
-      //saveRelevantAssociations(association, callback)
-      //)
-      //)
-    ));
-}
+      res.status(500).send('Inrernal Server Error. Unexpected response calling to spark.');
+      return;
+    } else {
+      httpResponse.setEncoding('utf8');
+      let raw = '';
+      httpResponse.on('data', (chunk) => raw += chunk);
 
-function FilterMalformedEmails(emails, callback) {
-  callback(null, emails.map((email) => {
-    return {
-      email: email
-    };
-  }));
-}
-
-function FilterExistingAssociation(departmentId, structuredEmails, callback) {
-  loadAssociations((associations) => {
-    callback(
-      structuredEmails.map((stucturedEmail) => {
-        if (structuredEmail.failure) return structuredEmail;
-        else {
-          let dupAssociation = associations.find((singleAssociation) => singleAssociation.department_id === departmentId && singleAssociation.email === structuredEmail.email);
-          if (dupAssociation) {
-            dupAssociation.failure = true;
-            dupAssociation.comment = "A user with this email already associated with this department";
-            return dupAssociation;
-          } else return sturcturedEmail;
-        }
-      })
-    );
+      //TODO error handling and internal server sanitation
+      httpResponse.on('end', () => {
+        json = JSON.parse(raw);
+        res.status(200).send(json);
+      }).on('error', (err) => console.log(err));
+    }
   });
-}
+});
 
 
 
