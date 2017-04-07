@@ -17,6 +17,7 @@ export default class VolunteerEditModal extends React.Component{
         this.handleReset=this.handleReset.bind(this);
 
         this.handleInputChange= this.handleInputChange.bind(this);
+        this.getRolesOptions=this.getRolesOptions.bind(this)
     }
 
     calcDisplayedVolunteer(){
@@ -65,6 +66,14 @@ export default class VolunteerEditModal extends React.Component{
         this.setState( {volunteer:{}} );
     }
 
+    getRolesOptions(){
+        if (this.props.roles == undefined || this.props.roles.length == 0) {
+            return ["All"]
+        }
+        var roles =  this.props.roles.map(function(role) {return role['name']})
+        return roles
+    }
+
     render(){
         console.log('VolunteerEditModal.render');
         let displayedVolunteer = this.calcDisplayedVolunteer();
@@ -107,7 +116,7 @@ export default class VolunteerEditModal extends React.Component{
                                 className="form-control" 
                                 id="Role">
                                 {
-                                    ['Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader'].map(
+                                    this.getRolesOptions().map(
                                     (option)=> <option value={option} key={option}>{option}</option>
                                     )    
                                 }

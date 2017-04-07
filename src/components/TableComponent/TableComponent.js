@@ -40,7 +40,8 @@ export default class TableComponent extends React.Component{
         filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
         map( (volunteer) =>{ return (
             <VolunteerRow 
-            volunteer={volunteer} 
+            volunteer={volunteer}
+            roles={this.props.roles}
             key={volunteer.profile_id}
             onRowDelete= {this.props.onRowDelete}
             onRowChange= {this.props.onRowChange}/>)});
