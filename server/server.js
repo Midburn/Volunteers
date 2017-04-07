@@ -9,7 +9,8 @@ const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 const webpackConfig = require("../webpack.config.js");
 const authHelper = require('./authHelper.js');
-const config = require('../config.js')
+const config = require('../config.js');
+const http = require('http');
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
@@ -34,9 +35,10 @@ app.use(session(sess));
 function getUserFromSession(req, res, next) {
   const session = req.session;
   if (!session || !session.userDetails) {
-    res.status(400).json({error: 'Unauthorized'});
-  }
-  else {
+    res.status(400).json({
+      error: 'Unauthorized'
+    });
+  } else {
     req.user = session.userDetails;
     next();
   }
@@ -55,7 +57,9 @@ function servePage(req, res) {
 
   // TODO: when spark auth api will be deployed, check if production
   req.session.token = token;
-  req.session.userDetails = {firstName: 'user'};
+  req.session.userDetails = {
+    firstName: 'user'
+  };
   res.sendFile(path.join(__dirname, '../src/index.html'));
   return;
 
@@ -77,8 +81,8 @@ app.get('/shift-manager', servePage);
 /////////////////////////////
 
 app.get('/api/v1/volunteers/me', function (req, res) {
-   console.log(req.path)
-   retrunStub('get_volunteer_me',res);//TODO rename stub to get_volunteers_me
+  console.log(req.path)
+  retrunStub('get_volunteer_me', res); //TODO rename stub to get_volunteers_me
 })
 
 app.get('/api/v1/volunteers', function (req, res) {
@@ -93,6 +97,42 @@ app.get('/api/v1/volunteers', function (req, res) {
   });
 });
 
+
+app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
+  console.log('going to spark to get volunteers of department');
+
+
+
+
+
+  //res.status(200).send('heelo vols');
+  var options = {
+    host: 'localhost',
+    port: 3000,
+    path: `/volunteers/department/${req.params.departmentId}/volunteers`
+  };
+
+  http.get(options, function (fromSpark) {
+    console.log(fromSpark);
+    fromSpark.setEncoding('utf8');
+    let raw = '';
+    fromSpark.on('data', (chunk) => raw += chunk);
+    fromSpark.on('end', () => res.status(200).send(JSON.parse(raw)));
+  }).on('error', (e) => {
+    console.log(`Got error: ${e.message}`);
+  });
+
+
+
+
+  // const url = "http://localhost:3000";
+  // axios.get(`{url}/volunteers/department/{departmentId}/volunteers`) //TODO sanitize and verify departmentId 
+  //   .then((res) => res.status(200).send('cool eyal'))
+  //   .catch((res) => console.log(res));
+
+  // res.status(200).send('heelo vols');
+
+});
 
 app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   console.log(req.path)
@@ -182,8 +222,34 @@ app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
 });
 
 app.get('/api/v1/departments', function (req, res) {
-  console.log(req.path)
-  retrunStub('get_volunteer_departments', res);
+  console.log(req.path);
+  const host = 'localhost';
+
+  http.get({
+    host: host,
+    path: '/volunteers/departments/',
+    port: 3000
+  }, function (responseFromSpark) {
+    if (responseFromSpark.statusCode !== 200 || !/^application\/json/.test(responseFromSpark.headers['content-type'])) {
+      responseFromSpark.resume();
+      res.status(500).send('Internal Server Error. Connection to internal spark service has failed.');
+      return;
+    }
+
+    responseFromSpark.setEncoding('utf8');
+    let raw = '';
+    responseFromSpark.on('data', (chunk) => raw += chunk);
+    responseFromSpark.on('end', () => {
+      const sparkResponse = JSON.parse(raw);
+      res.status(200).send(sparkResponse);
+    }).on('error', (error) => {
+      console.log(error);
+      res.status(500).send(`Internal Server Error 2352. ${error.message}`);
+
+    });
+  });
+  // console.log(req.path)
+  // retrunStub('get_volunteer_departments', res);
 })
 
 app.get('/api/v1/roles', function (req, res) {
@@ -321,7 +387,7 @@ app.use(express.static('public'));
 
 
 const server = app.listen(config.port, function () {
-   const host = server.address().address
-   const port = server.address().port
-   console.log("Listening at http://%s:%s", host, port)
+  const host = server.address().address
+  const port = server.address().port
+  console.log("Listening at http://%s:%s", host, port)
 })
