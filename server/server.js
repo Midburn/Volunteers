@@ -188,7 +188,7 @@ app.get('/api/v1/departments', function (req, res) {
 
 app.get('/api/v1/roles', function (req, res) {
   console.log(req.path)
-  retrunStub('json_stubs/get_volunteer_roles', res);
+  retrunStub('get_volunteer_roles', res);
 })
 
 // app.get('/api/v1/departments/:department/teams', function (req, res) {

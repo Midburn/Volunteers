@@ -12,6 +12,8 @@ export default class VolunteerListTab extends React.Component {
         super(props);
         this.state = {
             volunteers:[],
+            roles:[],
+            departments:[],
             filters: {
                 filterText: '',
                 department: null,
@@ -26,12 +28,16 @@ export default class VolunteerListTab extends React.Component {
         this.handleRowDelete=this.handleRowDelete.bind(this);
         this.handleRowChange=this.handleRowChange.bind(this);
         this.fetchVolunteers=this.fetchVolunteers.bind(this);
+        this.fetchRoles=this.fetchRoles.bind(this);
+        this.fetchDepartments=this.fetchDepartments.bind(this);
         this.logNetworkError = this.logNetworkError.bind(this);
         this.handleAddVolunteers = this.handleAddVolunteers.bind(this);
     }
 
 
   componentDidMount(){
+    this.fetchRoles();
+    this.fetchDepartments();
     this.fetchVolunteers();
   }
 
@@ -47,6 +53,18 @@ export default class VolunteerListTab extends React.Component {
     fetchVolunteers(){
         axios.get('/api/v1/volunteers/')
         .then((res) => this.setState({volunteers:res.data}))
+        .catch(this.logNetworkError);
+    }
+
+    fetchRoles() {
+         axios.get('/api/v1/roles')
+        .then((res) => this.setState({roles:res.data}))
+        .catch(this.logNetworkError);
+    }
+
+    fetchDepartments() {
+         axios.get('/api/v1/departments')
+        .then((res) => this.setState({departments:res.data}))
         .catch(this.logNetworkError);
     }
 
@@ -114,7 +132,8 @@ export default class VolunteerListTab extends React.Component {
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
                     onVolunteerSubmit = { this.handleAddVolunteers }
-                    roles = { ['All','Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader']}/>
+                    roles={this.state.roles}
+                    departments={this.state.departments}/>
                 </div>
                 <div className="container card container">
                     <TableComponent 
