@@ -17,6 +17,8 @@ export default class FilterComponent extends React.Component{
         this.onResetClick = this.onResetClick.bind(this);
         this.handleAdddModal= this.handleAdddModal.bind(this);
         this.handleHide=this.handleHide.bind(this);
+        this.getRolesOptions=this.getRolesOptions.bind(this);
+        this.getDepartmentOptions=this.getDepartmentOptions.bind(this);
     }
 
     handleAdddModal(){
@@ -35,6 +37,18 @@ export default class FilterComponent extends React.Component{
         this.props.onFilterTextInput('');
     }
 
+    getRolesOptions(){
+        var roles =  this.props.roles.map(function(role) {return role['name']})
+        roles = ["All"].concat(roles)
+        return roles
+    }
+
+    getDepartmentOptions(){
+        var departments =  this.props.departments.map(function(role) {return role['name']})
+        departments = ["All"].concat(departments)
+        return departments
+    }
+
     render() {
         let Convert = new DropdownConverter();
         return (
@@ -45,13 +59,13 @@ export default class FilterComponent extends React.Component{
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Department" 
                         onFilterInput={(value)=>this.props.onFilterInput('department',Convert.convertFromDisplay(value))}
-                        options={['All','Tech','Navadim','Mapatz','Tnua','Merkazia']}
+                        options={this.getDepartmentOptions()}
                         myFilter={Convert.convertToDisplay(this.props.filters.department)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
                     <DropdownFilter label="Role"     
                         onFilterInput={(value)=>this.props.onFilterInput('role',Convert.convertFromDisplay(value))}
-                        options={this.props.roles}
+                        options={this.getRolesOptions()}
                         myFilter={Convert.convertToDisplay(this.props.filters.role)}/>
                 </div>
                 <div className="col-md-4 col-xs-12">
@@ -75,7 +89,8 @@ export default class FilterComponent extends React.Component{
                 <VolunteerAddModal 
                     show={!!this.state.add} 
                     onHide={this.handleHide} 
-                    onSubmit={this.props.onVolunteerSubmit} />
+                    roles={this.props.roles}
+                    departments={this.props.departments} />
              </div>
         );
     }   

@@ -61,7 +61,8 @@ export default class VolunteerRow extends React.Component{
                         show={!!this.state.edit} 
                         onHide={this.handleHide} 
                         onSubmit={this.handleSubmit}
-                        volunteer={effectiveVolunteer}/>
+                        volunteer={effectiveVolunteer}
+                        roles={this.props.roles}/>
                     <td>{effectiveVolunteer.profile_id}</td>
                     <td>{effectiveVolunteer.email}</td>
                     <td>{effectiveVolunteer.first_name}</td>

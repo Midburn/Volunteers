@@ -207,18 +207,15 @@ app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
   res.status(200).send(req.body.emails.map(
     (email) => {
       return {
-        daprtment: dId,
         email: email,
-        profile_id: Math.floor(Math.random() * 1000000),
-        success: true,
-        comment: "That's a fake response honey. We're working on it"
+        status: "Success"
       };
     }
   ));
 
-  addVolunteers(role, production, emails, function (err, results) {
-    res.status(err ? 404 : 200).send(results);
-  })
+  // addVolunteers(role, production, emails, function (err, results) {
+  //   res.status(err ? 404 : 200).send(results);
+  // })
 });
 
 app.get('/api/v1/departments', function (req, res) {
@@ -254,7 +251,7 @@ app.get('/api/v1/departments', function (req, res) {
 
 app.get('/api/v1/roles', function (req, res) {
   console.log(req.path)
-  retrunStub('json_stubs/get_volunteer_roles', res);
+  retrunStub('get_volunteer_roles', res);
 })
 
 // app.get('/api/v1/departments/:department/teams', function (req, res) {
@@ -380,7 +377,6 @@ if (devMode) {
     stats: true
   });
   server.listen(9090);
-  app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
 
 app.use(express.static('public'));

@@ -31,7 +31,7 @@ function ShiftManagerModel() {
 }
 
 ShiftManagerModel.prototype.initDepartments = async function() {
-    const resp = await fetch('/api/v1/volunteer/departments', {credentials: 'include'})
+    const resp = await fetch('/api/v1/departments', {credentials: 'include'})
     this.departments = await resp.json();
 };
 

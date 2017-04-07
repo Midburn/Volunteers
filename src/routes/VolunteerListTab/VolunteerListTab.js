@@ -10,6 +10,8 @@ import TableComponent from '../../components/TableComponent/TableComponent';
 export default class VolunteerListTab extends Component {
     state = {
         volunteers:[],
+        roles:[],
+        departments:[],
         filters: {
             filterText: '',
             department: null,
@@ -17,9 +19,11 @@ export default class VolunteerListTab extends Component {
             gotTicket: null,
             isProduction: null
         }
-    };
+    }
 
-    componentDidMount() {
+    componentDidMount(){
+        this.fetchRoles();
+        this.fetchDepartments();
         this.fetchVolunteers();
     }
 
@@ -38,12 +42,24 @@ export default class VolunteerListTab extends Component {
         .catch(this.logNetworkError);
     }
 
-    handleRowDelete = (department, profile_id) => {
+    fetchRoles = () => {
+         axios.get('/api/v1/roles')
+        .then((res) => this.setState({roles:res.data}))
+        .catch(this.logNetworkError);
+    }
+
+    fetchDepartments = () => {
+         axios.get('/api/v1/departments')
+        .then((res) => this.setState({departments:res.data}))
+        .catch(this.logNetworkError);
+    }
+
+    handleRowDelete = (department,profile_id) => {
         console.log('VolunteerListTab.handleRowDelete');
 
         axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
         .then(this.fetchVolunteers)
-        .catch( this.logNetworkError);
+        .catch(this.logNetworkError);
     }
 
     handleRowChange = (department, profile_id, diff) => {
@@ -93,25 +109,24 @@ export default class VolunteerListTab extends Component {
 
 //TODO get roles stucture from server side
     render() {
-        const { filters, volunteers } = this.state;
+        const { filters, volunteers, roles, departments } = this.state;
         return (
             <div className="volunteer-list-tab-component">
                 <div className="container card">
                     <FilterComponent
-                        filters={filters}
-                        onFilterTextInput={this.handleFilterTextInput}
-                        onFilterInput={this.handleFilterInput}
-                        onVolunteerSubmit={this.handleAddVolunteers}
-                        roles = { ['All','Manager','Day Manager','Shift Manager','Production','Department Manager','Volunteer','Team Leader']}
-                    />
+                    filters={filters}
+                    onFilterTextInput={this.handleFilterTextInput}
+                    onFilterInput={this.handleFilterInput}
+                    roles={roles}
+                    departments={departments}/>
                 </div>
                 <div className="container card container">
-                    <TableComponent
-                        volunteers={volunteers}
-                        filters={filters}
-                        onRowDelete={this.handleRowDelete}
-                        onRowChange={this.handleRowChange}
-                    />
+                    <TableComponent 
+                    volunteers= {volunteers} 
+                    filters={filters}
+                    roles={roles}
+                    onRowDelete= {this.handleRowDelete}
+                    onRowChange= {this.handleRowChange}/>
                 </div>
             </div>
         );
