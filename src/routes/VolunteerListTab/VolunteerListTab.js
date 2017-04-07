@@ -139,6 +139,7 @@ export default class VolunteerListTab extends React.Component {
                     <TableComponent 
                     volunteers= {this.state.volunteers} 
                     filters= {this.state.filters}
+                    roles={this.state.roles}
                     onRowDelete= {this.handleRowDelete}
                     onRowChange= {this.handleRowChange}/>
                 </div>
