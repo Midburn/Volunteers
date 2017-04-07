@@ -314,6 +314,10 @@ if (devMode) {
 }
 
 app.use(express.static('public'));
+if (devMode) {
+  app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
+}
+
 
 
 const server = app.listen(config.port, function () {
