@@ -215,21 +215,50 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
   console.log('POST');
   console.log(req.path);
-  console.log(`isarray:${req.body.isArray}`);
   console.log(req.body);
-  let dId = req.params.dId;
+  let dId = req.params.dId; //TODO sanitize
   let role = req.body.role;
   let production = req.body.is_production === true;
   let emails = req.body.emails;
+  let body = JSON.stringify(emails.map((email) => {
+    return {
+      email: email,
+      role: role
+    };
+  }));
 
-  res.status(200).send(req.body.emails.map(
-    (email) => {
-      return {
-        email: email,
-        status: "Success"
-      };
+  const options = {
+    hostname: 'localhost',
+    port: 3000,
+    path: `/volunteers/departments/${dId}/volunteers`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body)
     }
-  ));
+  };
+
+  let httpRequest = http.request(options, (httpResponse) => {
+    if (httpResponse.statusCode != 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
+      console.log(`Error on response from spark backend.`);
+      res.status(500).send('Internal server error on posting volunteers to spark backend');
+      return;
+    } else {
+      httpResponse.setEncoding('utf8');
+      let raw = '';
+      httpResponse.on('data', (chunk) => raw += chunk);
+      httpResponse.on('end', () => {
+        json = JSON.parse(raw);
+        res.status(200).send(json);
+      });
+    }
+  }).on('error', (error) => {
+    console.log(`ERROR:${error}`);
+    res.status(500).send('Internal Server Error');
+  });
+  httpRequest.write(body);
+  httpRequest.end();
+
 });
 
 app.get('/api/v1/departments', function (req, res) {
