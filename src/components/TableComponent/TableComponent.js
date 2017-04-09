@@ -42,7 +42,7 @@ export default class TableComponent extends React.Component{
             <VolunteerRow 
             volunteer={volunteer}
             roles={this.props.roles}
-            key={volunteer.profile_id}
+            key={''+volunteer.department_id+'_'+volunteer.profile_id}
             onRowDelete= {this.props.onRowDelete}
             onRowChange= {this.props.onRowChange}/>)});
 
