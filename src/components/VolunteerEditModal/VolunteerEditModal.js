@@ -1,6 +1,7 @@
 import React from 'react';
 import {Modal, OverlayTrigger, Button} from 'react-bootstrap';
 import update from 'immutability-helper';
+import axios from 'axios';
 
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import DropdownConverter from '../../DropdownConverter.js'
@@ -10,7 +11,11 @@ import DropdownConverter from '../../DropdownConverter.js'
 export default class VolunteerEditModal extends React.Component{
     constructor(props){
         super(props);
-        this.state={volunteer:{}};
+        this.state = {
+            volunteer:{},
+            errorTexts: [],
+            isButtonEnabled: true
+        };
 
         this.handleCancel=this.handleCancel.bind(this);
         this.handleSubmit=this.handleSubmit.bind(this);
@@ -51,15 +56,47 @@ export default class VolunteerEditModal extends React.Component{
 
     handleSubmit(){
         console.log('VolunteerEditModal.handleSubmit');
+        // Calculate diff
         let diff = Object.keys(this.state.volunteer).reduce((acc,cur)=>{
             if (this.state.volunteer[cur]!==undefined && this.state.volunteer[cur]!==this.props.volunteer[cur])
                 acc[cur] = this.state.volunteer[cur];
                 return acc;
         },{});
-        console.log(diff);
+        // display error if no diff was made
+        if(Object.keys(diff).length === 0) {
+            this.state.errorTexts = ['No Changes have been made']
+            console.log('error in submit');
+            console.log(diff);
+            console.log(Object.keys(diff).length);
+            this.setState(this.state)
+            return;
+        }
+        
+        // edit requst
+        const dept_id = this.props.volunteer.department_id;
+        const profile_id = this.props.volunteer.profile_id;
 
+        this.state.errorTexts = ['Editing... ']
+        this.state.isButtonEnabled = false
+        this.setState(this.state)
+
+        axios
+        .put(`/api/v1/departments/${dept_id}/volunteers/${profile_id}`, diff)
+        .then(res => {
+            // this.props.onSuccess(); //TODO
+            this.state.isButtonEnabled = true
+            this.setState(this.state)
+            // this.handleServerResponse(res) //TODO (display success/error by res)
+        })
+        .catch(error => {
+            this.logNetworkError
+            this.state.errorTexts = ['Server Error']
+            this.state.isButtonEnabled = true
+            this.setState(this.state)
+        });
+        
         this.handleReset();
-        this.props.onSubmit(diff)
+        // this.props.onSubmit(diff)
     }
     
     handleReset(){
@@ -74,10 +111,15 @@ export default class VolunteerEditModal extends React.Component{
         return roles
     }
 
+    getErrorText = () => (
+        <ul>{this.state.errorTexts.map((text, index) => <li key={`li-${index}`}>{text}</li>)}</ul>
+    )
+
     render(){
         console.log('VolunteerEditModal.render');
         let displayedVolunteer = this.calcDisplayedVolunteer();
         console.log(displayedVolunteer);
+        console.log(this.props.volunteer);
 
         return (
             <Modal show={this.props.show} onHide={this.handleCancel}>
@@ -141,11 +183,12 @@ export default class VolunteerEditModal extends React.Component{
                         </div>
                     </div>
                 </form>
+                {this.getErrorText()}
             </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.handleCancel}>Cancel</Button>
             <Button onClick={this.handleReset}>Reset</Button>
-            <Button onClick={this.handleSubmit}>Submit</Button>
+            <Button onClick={this.handleSubmit} disabled={!this.state.isButtonEnabled}>Submit</Button>
           </Modal.Footer>
         </Modal>
         )
