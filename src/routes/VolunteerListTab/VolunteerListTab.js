@@ -126,6 +126,7 @@ export default class VolunteerListTab extends Component {
                     volunteers= {volunteers} 
                     filters={filters}
                     roles={roles}
+                    departments={departments}
                     onRowDelete= {this.handleRowDelete}
                     onRowChange= {this.handleRowChange}/>
                 </div>

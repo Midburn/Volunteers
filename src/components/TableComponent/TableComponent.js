@@ -1,14 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import VolunteerRow from '../VolunteerRow/VolunteerRow.js';
 
 // css requires
 require('./TableComponent.css');
 
-export default class TableComponent extends React.Component{
-    constructor(props){
-        super(props);
-    }
+export default class TableComponent extends Component {
     
     meetsFilters(volunteer){
         return this.meetsTextFilter(volunteer) && this.meetsOptionsFilters(volunteer);
@@ -23,8 +20,8 @@ export default class TableComponent extends React.Component{
     }
 
     meetsOptionsFilters(volunteer){    
-        return this.meetsCriterion(this.props.filters.department,volunteer.department) &&
-        this.meetsCriterion(this.props.filters.role,volunteer.role) &&
+        return this.meetsCriterion(this.props.filters.department,this.departmentName(volunteer.department_id)) &&
+        this.meetsCriterion(this.props.filters.role,this.roleName(volunteer.role_id)) &&
         this.meetsCriterion(this.props.filters.gotTicket,volunteer.got_ticket) &&
         this.meetsCriterion(this.props.filters.isProduction,volunteer.is_production);
     }
@@ -33,15 +30,44 @@ export default class TableComponent extends React.Component{
         return critetion===null || critetion===value;
     }
 
+    departmentName = (department_id) => {
+        if (!this.props.departments) {
+            return ''
+        }
+        
+        for (var i = 0; i < this.props.departments.length; i++) {
+            var departmentObj = this.props.departments[i]
+            if (departmentObj.id == department_id) {
+                return departmentObj.name;
+            }
+        }
+
+        return 'Unknown'
+    }
+
+    roleName = (role_id) => {
+        console.log(this.props.roles)
+        if (!this.props.roles) {
+            return ''
+        }
+        
+        for (var i = 0; i < this.props.roles.length; i++) {
+            var roleObj = this.props.roles[i]
+            if (roleObj.id == role_id) {
+                return roleObj.name;
+            }
+        }
+
+        return 'Unknown'
+    }
+
     render () {
-        console.log('TableComponent.render');
-        console.log(this.props);
-        var rows = this.props.volunteers.
-        filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
+        var rows = this.props.volunteers.filter( (volunteer)=> {return this.meetsFilters(volunteer);}).
         map( (volunteer) =>{ return (
             <VolunteerRow 
             volunteer={volunteer}
             roles={this.props.roles}
+            departments={this.props.departments}
             key={''+volunteer.department_id+'_'+volunteer.profile_id}
             onRowDelete= {this.props.onRowDelete}
             onRowChange= {this.props.onRowChange}/>)});

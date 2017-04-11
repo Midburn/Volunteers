@@ -110,7 +110,7 @@ app.get('/api/v1/volunteers', function (req, res) {
           return {
             //TODO new ecma2017 {} operator
             department_id: item.department_id,
-            department: item.department_id === null ? null : `TODO DEP ID${item.department_id}`,
+            //department: item.department_id === null ? null : `TODO DEP ID${item.department_id}`,
             profile_id: item.user_id,
             email: item.email,
             first_name: item.first_name,
@@ -118,8 +118,8 @@ app.get('/api/v1/volunteers', function (req, res) {
             phone: item.phone_number,
             got_ticket: item.got_ticket,
             is_production: item.is_production,
-            role_id: item.role_id,
-            role: item.role_id === null ? null : `TODO ROLE NAME ${item.role_id}`
+            role_id: item.role_id
+            //role: item.role_id === null ? null : `TODO ROLE NAME ${item.role_id}`
           };
           //TODO more error handling and optimized role and department name conversion
         });
