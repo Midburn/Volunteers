@@ -90,7 +90,7 @@ app.get('/api/v1/volunteers', function (req, res) {
     if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
       console.log('Intenral server error calling to spark backend server');
       console.log(`statusCode:${httpResponse.statusCode}, content-type:${httpResponse.headers['content-type']}`);
-      responseFromSpark.resume();
+      httpResponse.resume();
       res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
 
     } else {
@@ -353,16 +353,19 @@ if (devMode) {
     stats: true
   });
   server.listen(9090);
-}
-
-app.use(express.static('public'));
-if (devMode) {
   app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
 
+app.use(express.static('public'));
+ 
 
-app.get('*', servePage);
-
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    next();
+  } else {
+    return servePage(req, res);
+  }
+});
 
 const server = app.listen(config.port, function () {
   const host = server.address().address
