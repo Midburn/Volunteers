@@ -11,13 +11,19 @@ require('./VolunteerAddModal.css')
 export default class VolunteerAddModal extends Component{
     state = {
         email: '',
-        department: 0,
+        department: -1,
         role: 4,
         production: false,
         errorTexts: [],
         isButtonEnabled: true
     }
     
+    componentWillReceiveProps() {
+        if (this.props.departments.length > 0 && this.state.department == -1) {
+            this.setState((state)=>update(state, {department:{$set:this.props.departments[0].id}}))
+        }
+    }
+
     getInputChangeHandler = (field) => {
         return (event) => this.handleChange(field,event);
     }
@@ -164,6 +170,7 @@ export default class VolunteerAddModal extends Component{
 
     render(){
         let converter = new DropdownConverter();
+
         return (
             <Modal show={this.props.show} onHide={this.handleClose}>
                 <Modal.Header closeButton>
