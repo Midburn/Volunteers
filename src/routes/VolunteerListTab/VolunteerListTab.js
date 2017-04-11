@@ -118,7 +118,8 @@ export default class VolunteerListTab extends Component {
                     onFilterTextInput={this.handleFilterTextInput}
                     onFilterInput={this.handleFilterInput}
                     roles={roles}
-                    departments={departments}/>
+                    departments={departments}
+                    onSuccess={this.fetchVolunteers} />
                 </div>
                 <div className="container card container">
                     <TableComponent 

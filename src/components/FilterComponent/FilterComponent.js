@@ -19,6 +19,7 @@ export default class FilterComponent extends React.Component{
         this.handleHide=this.handleHide.bind(this);
         this.getRolesOptions=this.getRolesOptions.bind(this);
         this.getDepartmentOptions=this.getDepartmentOptions.bind(this);
+        this.handleAddSuccess=this.handleAddSuccess.bind(this);
     }
 
     handleAdddModal(){
@@ -27,6 +28,10 @@ export default class FilterComponent extends React.Component{
 
     handleHide(){
         this.setState({add:false});
+    }
+
+    handleAddSuccess(){
+        this.props.onSuccess()
     }
 
     onResetClick(){
@@ -89,6 +94,7 @@ export default class FilterComponent extends React.Component{
                 <VolunteerAddModal 
                     show={!!this.state.add} 
                     onHide={this.handleHide} 
+                    onSuccess={this.handleAddSuccess}
                     roles={this.props.roles}
                     departments={this.props.departments} />
              </div>

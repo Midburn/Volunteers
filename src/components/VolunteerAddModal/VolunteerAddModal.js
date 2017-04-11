@@ -72,6 +72,7 @@ export default class VolunteerAddModal extends Component{
             })
             .then(response => {
                 this.state.isButtonEnabled = true
+                this.props.onSuccess() 
                 this.setState(this.state)
                 this.handleServerResponse(response)
             })
