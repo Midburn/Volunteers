@@ -80,12 +80,12 @@ app.get('/shift-manager', servePage);
 /////////////////////////////
 
 app.get('/api/v1/volunteers/me', function (req, res) {
-  console.log(req.path)
+  console.log(`GET ${req.path}`);
   retrunStub('get_volunteer_me', res); //TODO rename stub to get_volunteers_me
 })
 
 app.get('/api/v1/volunteers', function (req, res) {
-  console.log(req.path);
+  console.log(`GET ${req.path}`);
 
   const options = {
     host: 'localhost',
@@ -110,7 +110,7 @@ app.get('/api/v1/volunteers', function (req, res) {
           return {
             //TODO new ecma2017 {} operator
             department_id: item.department_id,
-            department: `TODO DEP ID${item.department_id}`,
+            department: item.department_id === null ? null : `TODO DEP ID${item.department_id}`,
             profile_id: item.user_id,
             email: item.email,
             first_name: item.first_name,
@@ -119,21 +119,22 @@ app.get('/api/v1/volunteers', function (req, res) {
             got_ticket: item.got_ticket,
             is_production: item.is_production,
             role_id: item.role_id,
-            role: `TODO ROLE NAME ${item.role_id}`
+            role: item.role_id === null ? null : `TODO ROLE NAME ${item.role_id}`
           };
           //TODO more error handling and optimized role and department name conversion
         });
         console.log(`json.length:${json.length}, sanitized.length:${sanitized.length}`);
         res.status(200).send(sanitized);
       });
-
     }
   }).on('error', (e) => console.log(e));
 });
 
 
 app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
-  console.log(req.path);
+  console.log(`GET ${req.path}`);
+  console.log(`parameters: department:${req.params.d}`);
+
   var options = {
     host: 'localhost',
     port: 3000,
@@ -152,6 +153,9 @@ app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
 });
 
 app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
+  console.log(`DELETE ${req.path}`);
+  console.log(`parameters: department:${req.params.d}, volunteer:${req.params.v}`);
+
   console.log(req.path)
 
   loadVolunteers(function (err, loaded) {
@@ -177,7 +181,7 @@ app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 });
 
 app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
-  console.log(req.path);
+  console.log(`PUT ${req.path}`);
   console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);
   loadVolunteers(function (err, volunteers) {
     let found = false;
@@ -212,23 +216,52 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 
 
 app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
-  console.log('POST');
-  console.log(req.path);
-  console.log(`isarray:${req.body.isArray}`);
-  console.log(req.body);
-  let dId = req.params.dId;
-  let role = req.body.role;
-  let production = req.body.is_production === true;
-  let emails = req.body.emails;
+  console.log(`POST ${req.path}`);
+  console.log(`req.body: ${JSON.stringify(req.body)}`);
+  const dId = req.params.dId; //TODO sanitize
+  const role_id = req.body.role; //TODO rename role to role_id on client and APIS
+  const is_production = req.body.is_production === true;
+  const emails = req.body.emails;
+  const body = JSON.stringify(emails.map((email) => {
+    return {
+      email: email,
+      role_id: role_id,
+      is_production: is_production
+    };
+  }));
 
-  res.status(200).send(req.body.emails.map(
-    (email) => {
-      return {
-        email: email,
-        status: "Success"
-      };
+  const options = {
+    hostname: 'localhost',
+    port: 3000,
+    path: `/volunteers/departments/${dId}/volunteers`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body)
     }
-  ));
+  };
+
+  let httpRequest = http.request(options, (httpResponse) => {
+    if (httpResponse.statusCode != 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
+      console.log(`Error on response from spark backend.`);
+      res.status(500).send('Internal server error on posting volunteers to spark backend');
+      return;
+    } else {
+      httpResponse.setEncoding('utf8');
+      let raw = '';
+      httpResponse.on('data', (chunk) => raw += chunk);
+      httpResponse.on('end', () => {
+        const json = JSON.parse(raw);
+        res.status(200).send(json);
+      });
+    }
+  }).on('error', (error) => {
+    console.log(`ERROR:${error}`);
+    res.status(500).send('Internal Server Error');
+  });
+  httpRequest.write(body);
+  httpRequest.end();
+
 });
 
 app.get('/api/v1/departments', function (req, res) {
