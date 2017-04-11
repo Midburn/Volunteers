@@ -15,6 +15,9 @@ const http = require('http');
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
+const SPARK_HOST = process.env.SPARK_HOST || 'localhost'
+const SPARK_PORT = process.env.SPARK_PORT || 3000
+const sparkRequestOptions = path => ({host: SPARK_HOST, port: SPARK_PORT, path})
 
 const devMode = (config.environment != 'production');
 
@@ -83,13 +86,7 @@ app.get('/api/v1/volunteers/me', function (req, res) {
 app.get('/api/v1/volunteers', function (req, res) {
   console.log(req.path);
 
-  const options = {
-    host: 'localhost',
-    port: 3000,
-    path: '/volunteers/volunteers'
-  };
-
-  http.get(options, (httpResponse) => {
+  http.get(sparkRequestOptions('/volunteers/volunteers'), (httpResponse) => {
     if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
       console.log('Intenral server error calling to spark backend server');
       console.log(`statusCode:${httpResponse.statusCode}, content-type:${httpResponse.headers['content-type']}`);
@@ -130,13 +127,8 @@ app.get('/api/v1/volunteers', function (req, res) {
 
 app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
   console.log(req.path);
-  var options = {
-    host: 'localhost',
-    port: 3000,
-    path: `/volunteers/departments/${req.params.departmentId}/volunteers/`
-  };
 
-  http.get(options, function (fromSpark) {
+  http.get(sparkRequestOptions(`/volunteers/departments/${req.params.departmentId}/volunteers/`), function (fromSpark) {
     console.log(fromSpark);
     fromSpark.setEncoding('utf8');
     let raw = '';
@@ -231,11 +223,7 @@ app.get('/api/v1/departments', function (req, res) {
   console.log(req.path);
   const host = 'localhost';
 
-  http.get({
-    host: host,
-    path: '/volunteers/departments/',
-    port: 3000
-  }, function (responseFromSpark) {
+  http.get(sparkRequestOptions('/volunteers/departments/'), responseFromSpark => {
     if (responseFromSpark.statusCode !== 200 || !/^application\/json/.test(responseFromSpark.headers['content-type'])) {
       responseFromSpark.resume();
       res.status(500).send('Internal Server Error. Connection to internal spark service has failed.');
@@ -264,13 +252,7 @@ app.get('/api/v1/departments', function (req, res) {
 app.get('/api/v1/roles', function (req, res) {
   console.log(req.path)
 
-  const options = {
-    host: 'localhost',
-    port: 3000,
-    path: '/volunteers/roles/'
-  };
-
-  http.get(options, (httpResponse) => {
+  http.get(sparkRequestOptions('/volunteers/roles/'), httpResponse => {
     if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
       console.log('error calling to spark');
       console.log(`statusCode:${httpResponse.statusCode}, content-type:${ httpResponse.headers['content-type'] }`);
