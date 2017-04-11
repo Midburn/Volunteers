@@ -93,7 +93,7 @@ export default class VolunteerAddModal extends Component{
         var successCounter = 0
 
         response.data.forEach(({email, status}) => {
-            if (status != 'Success') {
+            if (status != 'OK') {
                 errors.push(`Error: ${email} - ${status}`)
             } else {
                 successCounter += 1
