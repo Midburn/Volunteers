@@ -80,6 +80,7 @@ export default class VolunteerEditModal extends React.Component{
         this.state.isButtonEnabled = false
         this.setState(this.state)
 
+        // TODO - test and fix Error!
         axios
         .put(`/api/v1/departments/${dept_id}/volunteers/${profile_id}`, diff)
         .then(res => {
