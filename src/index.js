@@ -10,8 +10,12 @@ import ComingSoon from './components/ComingSoon/ComingSoon'
 const fetchUserData = async function() {
     try {
       const resp = await axios.get('/api/v1/volunteers/me', {credentials: 'include'});
-      console.log(JSON.stringify(resp));
-      render(App);
+      console.log(resp);
+      if(resp.data.length > 0){
+        render(App);
+      } else {
+        render(ComingSoon);
+      }
     } catch(error) {
       console.log(error);
       render(ComingSoon);
