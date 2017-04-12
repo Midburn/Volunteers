@@ -11,21 +11,29 @@ const webpackConfig = require("../webpack.config.js");
 const authHelper = require('./authHelper.js');
 const config = require('../config.js');
 const http = require('http');
+const axios = require('axios')
+const _ = require('lodash')
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
-
 const devMode = (config.environment !== 'production');
+
+
+const SPARK_HOST = process.env.SPARK_HOST || 'http://localhost:3000'
+const fetchSpark = (path, options) => axios(`${SPARK_HOST}${path}`, options).then(r => r.data)
+const handleStandardRequest = handler => (req, res) => {
+    console.log(`Requesting ${req.path}`);
+    return handler(req, res).then(data => res.status(200).send(data)).catch(e => {
+      console.log(e)
+      res.status(500).send(devMode ? e.toString() : 'Internal server error');
+    })
+}
 
 // ///////////////////////////
 // Session
 // ///////////////////////////
-const sess = {
-  secret: 'secret',
-  cookie: {}
-};
-
+const sess = {secret: 'secret', cookie: {}};
 app.use(session(sess));
 
 // ///////////////////////////
@@ -64,16 +72,11 @@ function servePage(req, res) {
   return;
 
   authHelper.GetUserAuth(token, res, (userDetails) => {
-
     req.session.token = token;
     req.session.userDetails = userDetails;
     res.sendFile(path.join(__dirname, '../src/index.html'));
   });
 }
-
-app.get('/', servePage);
-app.get('/volunteer-list-tab', servePage);
-app.get('/shift-manager', servePage);
 
 /////////////////////////////
 // SPARK APIS
@@ -90,69 +93,28 @@ app.get('/api/v1/volunteers/me', function (req, res) {
   }]);
 })
 
-app.get('/api/v1/volunteers', function (req, res) {
-  console.log(`GET ${req.path}`);
+function sendError(res)
+{
+    res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
+}
 
-  const options = {
-    host: 'localhost',
-    port: 3000,
-    path: '/volunteers/volunteers'
-  };
+app.get('/api/v1/volunteers', handleStandardRequest(req => fetchSpark('/volunteers/volunteers').then(data => (
+      data.map(item => _.assign({profile_id: item.user_id, phone: item.phone_number, department: `TODO DEP ID${item.department_id}`, role: `TODO ROLE NAME ${item.role_id}`}, 
+          _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id']))
+      )
+    )))
+)
 
-  http.get(options, (httpResponse) => {
-    if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
-      console.log('Intenral server error calling to spark backend server');
-      console.log(`statusCode:${httpResponse.statusCode}, content-type:${httpResponse.headers['content-type']}`);
-      responseFromSpark.resume();
-      res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
-
-    } else {
-      httpResponse.setEncoding('utf8');
-      let raw = '';
-      httpResponse.on('data', (chunk) => raw += chunk);
-      httpResponse.on('end', () => {
-        const json = JSON.parse(raw); //TODO error handling
-        const sanitized = json.map((item) => {
-          return {
-            department_id: item.department_id,
-            profile_id: item.user_id,
-            email: item.email,
-            first_name: item.first_name,
-            last_name: item.last_name,
-            phone: item.phone_number,
-            got_ticket: item.got_ticket,
-            is_production: item.is_production,
-            role_id: item.role_id
-          };
-        });
-        console.log(`json.length:${json.length}, sanitized.length:${sanitized.length}`);
-        res.status(200).send(sanitized);
-      });
-    }
-  }).on('error', (e) => console.log(e));
-});
+app.get('/api/v1/departments', handleStandardRequest(() => fetchSpark('/volunteers/departments/').then(depts => depts.map(n => _.assign({name: n.name_en}, n)))))
+app.get('/api/v1/roles', handleStandardRequest(() => fetchSpark('/volunteers/roles/')))
+app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({params}) => fetchSpark(`/volunteers/departments/${params.dId}/volunteers/`)))
 
 
-app.get('/api/v1/departments/:departmentId/volunteers', function (req, res) {
-  console.log(`GET ${req.path}`);
-  console.log(`parameters: department:${req.params.d}`);
-
-  var options = {
-    host: 'localhost',
-    port: 3000,
-    path: `/volunteers/departments/${req.params.departmentId}/volunteers/`
-  };
-
-  http.get(options, function (fromSpark) {
-    console.log(fromSpark);
-    fromSpark.setEncoding('utf8');
-    let raw = '';
-    fromSpark.on('data', (chunk) => raw += chunk);
-    fromSpark.on('end', () => res.status(200).send(JSON.parse(raw)));
-  }).on('error', (e) => {
-    console.log(`Got error: ${e.message}`);
-  });
-});
+app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res) => (
+  fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {method: 'post', 
+    body: req.body.emails.map(email => ({email, role_id: req.body.role, is_production: req.body.is_production}))
+  })
+)))
 
 app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   console.log(`DELETE ${req.path}`);
@@ -188,127 +150,7 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
       res.status(200).send([{status:'OK',profile_id:'0'}]);
 });
 
-
-app.post('/api/v1/departments/:dId/volunteers/', function (req, res) {
-  console.log(`POST ${req.path}`);
-  console.log(`req.body: ${JSON.stringify(req.body)}`);
-  const dId = req.params.dId; //TODO sanitize
-  const role_id = req.body.role; //TODO rename role to role_id on client and APIS
-  const is_production = req.body.is_production === true;
-  const emails = req.body.emails;
-  const body = JSON.stringify(emails.map((email) => {
-    return {
-      email: email,
-      role_id: role_id,
-      is_production: is_production
-    };
-  }));
-
-  const options = {
-    hostname: 'localhost',
-    port: 3000,
-    path: `/volunteers/departments/${dId}/volunteers`,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body)
-    }
-  };
-
-  let httpRequest = http.request(options, (httpResponse) => {
-    if (httpResponse.statusCode != 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
-      console.log(`Error on response from spark backend.`);
-      res.status(500).send('Internal server error on posting volunteers to spark backend');
-      return;
-    } else {
-      httpResponse.setEncoding('utf8');
-      let raw = '';
-      httpResponse.on('data', (chunk) => raw += chunk);
-      httpResponse.on('end', () => {
-        const json = JSON.parse(raw);
-        res.status(200).send(json);
-      });
-    }
-  }).on('error', (error) => {
-    console.log(`ERROR:${error}`);
-    res.status(500).send('Internal Server Error');
-  });
-  httpRequest.write(body);
-  httpRequest.end();
-
-});
-
-app.get('/api/v1/departments', function (req, res) {
-  console.log(req.path);
-  const host = 'localhost';
-
-  http.get({
-    host: host,
-    path: '/volunteers/departments/',
-    port: 3000
-  }, function (responseFromSpark) {
-    if (responseFromSpark.statusCode !== 200 || !/^application\/json/.test(responseFromSpark.headers['content-type'])) {
-      responseFromSpark.resume();
-      res.status(500).send('Internal Server Error. Connection to internal spark service has failed.');
-      return;
-    }
-
-    responseFromSpark.setEncoding('utf8');
-    let raw = '';
-    responseFromSpark.on('data', (chunk) => raw += chunk);
-    responseFromSpark.on('end', () => {
-      const sparkResponse = JSON.parse(raw);
-      const enrichedSparkResponse = sparkResponse.map((d) => {
-        let dd = d;
-        dd.name = d.name_en;
-        return dd;
-      });
-      res.status(200).send(enrichedSparkResponse);
-    }).on('error', (error) => {
-      console.log(error);
-      res.status(500).send(`Internal Server Error 2352. ${error.message}`);
-
-    });
-  });
-})
-
-app.get('/api/v1/roles', function (req, res) {
-  console.log(req.path)
-
-  const options = {
-    host: 'localhost',
-    port: 3000,
-    path: '/volunteers/roles/'
-  };
-
-  http.get(options, (httpResponse) => {
-    if (httpResponse.statusCode !== 200 || !/^application\/json/.test(httpResponse.headers['content-type'])) {
-      console.log('error calling to spark');
-      console.log(`statusCode:${httpResponse.statusCode}, content-type:${ httpResponse.headers['content-type'] }`);
-
-      res.status(500).send('Inrernal Server Error. Unexpected response calling to spark.');
-      return;
-    } else {
-      httpResponse.setEncoding('utf8');
-      let raw = '';
-      httpResponse.on('data', (chunk) => raw += chunk);
-
-      //TODO error handling and internal server sanitation
-      httpResponse.on('end', () => {
-        json = JSON.parse(raw);
-        res.status(200).send(json);
-      }).on('error', (err) => console.log(err));
-    }
-  });
-});
-
-
-
-/////////////////////////////
-// STUBS
-/////////////////////////////
-
-
+     
 /////////////////////////////
 // webpack-dev-server
 /////////////////////////////
@@ -322,14 +164,19 @@ if (devMode) {
     stats: true
   });
   server.listen(9090);
-}
-
-app.use(express.static('public'));
-if (devMode) {
   app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
 
+app.use(express.static('public'));
+ 
 
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    next();
+  } else {
+    return servePage(req, res);
+  }
+});
 
 const server = app.listen(config.port, function () {
   const host = server.address().address
