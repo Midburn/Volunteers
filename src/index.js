@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 import { AppContainer } from 'react-hot-loader';
 
@@ -7,13 +8,17 @@ import App from './routes/App'
 import ComingSoon from './components/ComingSoon/ComingSoon'
 
 const fetchUserData = async function() {
-    const resp = await fetch('/api/v1/volunteers/me', {credentials: 'include'});
-    const me = await resp.json();
-    console.log(JSON.stringify(me));
-    if (me.length > 0) {
+    try {
+      const resp = await axios.get('/api/v1/volunteers/me', {credentials: 'include'});
+      console.log(resp);
+      if(resp.data.length > 0){
         render(App);
-    } else {
+      } else {
         render(ComingSoon);
+      }
+    } catch(error) {
+      console.log(error);
+      render(ComingSoon);
     }
 };
 
