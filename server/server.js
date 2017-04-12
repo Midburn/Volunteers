@@ -106,7 +106,7 @@ app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({params}) 
 
 app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res) => (
   fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {method: 'post', 
-    body: req.body.emails.map(email => ({email, role_id: req.body.role, is_production: req.body.is_production}))
+    data: req.body.emails.map(email => ({email, role_id: req.body.role, is_production: req.body.is_production}))
   })
 )))
 
