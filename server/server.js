@@ -120,7 +120,9 @@ app.get('/api/v1/volunteers', handleStandardRequest(req => fetchSpark('/voluntee
 ))));
 
 //READ ALL VOLUNTEERS IN SPECIFIC DEPARTMENT
-app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest( ({params}) => fetchSpark(`/volunteers/departments/${params.dId}/volunteers`).then(data => (
+app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({
+  params
+}) => fetchSpark(`/volunteers/departments/${params.dId}/volunteers`).then(data => (
   data.map(item => _.assign({
       profile_id: item.user_id,
       phone: item.phone_number,
@@ -130,7 +132,7 @@ app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest( ({params})
 
 
 //POST MULTIPLE VOLUNTEERINGS - CREATE
-app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res) => (
+app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req) => (
   fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {
     method: 'post',
     body: req.body.emails.map(email => ({
@@ -142,18 +144,17 @@ app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res
 )))
 
 //PUT SINGLE VOLUNTEERING - UPDATE
-app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
-  console.log(`PUT ${req.path}`);
-  console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);
-  res.status(200).send([{
-    status: 'OK',
-    profile_id: '0'
-  }]);
-});
+app.put('/api/v1/departments/:dId/volunteers/:uid', handleStandardRequest((req) => fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers/${req.params.uid}`, {
+    method: 'put',
+    body: _.pick(req.body, ['role_id', 'is_production'])
+  })
+  .then(data => _.pick(data, ['status']))));
 
 //DELETE SINGLUE VOLUNTEERING - REMOVE
 app.delete('/api/v1/departments/:dId/volunteers/:uid',
-  handleStandardRequest( ({params}) =>
+  handleStandardRequest(({
+      params
+    }) =>
     fetchSpark(`/volunteers/departments/${params.dId}/volunteers/${params.uid}/`, {
       method: 'delete'
     }).then(data => _.pick(data, ['status']))));
