@@ -6,9 +6,8 @@ Midburn's volunteers module.
 ### Installation
 
 clone repo
-
+run `nvm use`
 run `npm install`
-
 run `npm start`
 
 
