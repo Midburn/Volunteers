@@ -10,3 +10,4 @@ public/bundle.js.map
 
 # npm log et al
 *.log
+.idea
