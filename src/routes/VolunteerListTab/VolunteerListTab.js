@@ -63,9 +63,8 @@ export default class VolunteerListTab extends Component {
     }
 
     handleRowChange = (department, profile_id, diff) => {
-        let query = Object.keys(diff).reduce((acc, cur) => `${acc}&${cur}=${diff[cur]}`, '?');
         axios
-            .put(`/api/v1/departments/${department}/volunteers/${profile_id}${query}`)
+            .put(`/api/v1/departments/${department}/volunteers/${profile_id}`,diff)
             .then(this.fetchVolunteers)
             .catch(this.logNetworkError);
     }
