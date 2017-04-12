@@ -81,7 +81,7 @@ function servePage(req, res) {
 /////////////////////////////
 
 app.get('/api/v1/volunteers/me', function (req, res) {
-  console.log(req.path)
+  console.log(`GET ${req.path}`);
   retrunStub('get_volunteer_me', res); //TODO rename stub to get_volunteers_me
 })
 
@@ -89,6 +89,7 @@ function sendError(res)
 {
     res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
 }
+
 
 
 app.get('/api/v1/volunteers', handleStandardRequest(req => fetchSpark('/volunteers/volunteers').then(data => (
@@ -102,6 +103,7 @@ app.get('/api/v1/departments', handleStandardRequest(() => fetchSpark('/voluntee
 app.get('/api/v1/roles', handleStandardRequest(() => fetchSpark('/volunteers/roles/')))
 app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({params}) => fetchSpark(`/volunteers/departments/${params.dId}/volunteers/`)))
 
+
 app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res) => (
   fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {method: 'post', 
     body: req.body.emails.map(email => ({email, role_id: req.body.role, is_production: req.body.is_production}))
@@ -109,6 +111,9 @@ app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res
 )))
 
 app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
+  console.log(`DELETE ${req.path}`);
+  console.log(`parameters: department:${req.params.d}, volunteer:${req.params.v}`);
+
   console.log(req.path)
 
   loadVolunteers(function (err, loaded) {
@@ -134,7 +139,7 @@ app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 });
 
 app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
-  console.log(req.path);
+  console.log(`PUT ${req.path}`);
   console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);
   loadVolunteers(function (err, volunteers) {
     let found = false;

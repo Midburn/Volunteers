@@ -1,33 +1,25 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {Modal, Button} from 'react-bootstrap';
 import update from 'immutability-helper';
 
 import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
 import VolunteerEditModal from '../VolunteerEditModal/VolunteerEditModal.js';
 
-export default class VolunteerRow extends React.Component{
-    constructor(props){
-        super(props);
-        this.state={
-            edit:false,
-            volunteer:{}
-        };
-        this.handleEdit= this.handleEdit.bind(this);
-        this.handleHide=this.handleHide.bind(this);
-        this.handleSubmit= this.handleSubmit.bind(this);
-        this.handleDelete= this.handleDelete.bind(this);
+export default class VolunteerRow extends Component {
+    state = {
+        edit:false,
+        volunteer:{}
     }
 
-    handleEdit(){
-        this.setState( {edit: true} );
+    handleEdit = () => {
+        this.setState( {edit: true} )
     }
 
-    handleHide(){
-        this.setState({edit:false});
+    handleHide = () => {
+        this.setState({edit:false})
     }
 
-    handleSubmit(diff){
-        console.log('VolunteerRow.handleSubmit');
+    handleSubmit = (diff) => {
         console.log(diff);
         //TODO BUG
         //TODO either row is updated on every submit and then no need for diff merge or an additional send to server phase is added
@@ -36,24 +28,53 @@ export default class VolunteerRow extends React.Component{
         this.setState((state)=>update(state,{ edit:{$set:false} ,volunteer: {$merge: diff}} ));
     }
 
-    handleDelete(){
-        console.log('VolunteerRow.handleDelete');
+    handleDelete = () => {
         this.props.onRowDelete(this.props.volunteer.department_id,this.props.volunteer.profile_id);
+    }
+
+    departmentName = () => {
+        if (!this.props.departments) {
+            return ''
+        }
+        
+        for (var i = 0; i < this.props.departments.length; i++) {
+            var departmentObj = this.props.departments[i]
+            if (departmentObj.id == this.props.volunteer.department_id) {
+                return departmentObj.name;
+            }
+        }
+
+        console.log('couldnt find')
+        console.log(this.props.departments)
+        console.log(this.props.volunteer.department_id)
+
+        return 'Unknown'
+    }
+
+    roleName = () => {
+        console.log(this.props.roles)
+        if (!this.props.roles) {
+            return ''
+        }
+        
+        for (var i = 0; i < this.props.roles.length; i++) {
+            var roleObj = this.props.roles[i]
+            if (roleObj.id == this.props.volunteer.role_id) {
+                return roleObj.name;
+            }
+        }
+
+        return 'Unknown'
     }
 
     
     render() {
-        console.log('VolunteerRow.render');
-        console.log(this.props.volunteer);
-        console.log(this.state.volunteer);
-
+        console.log(this.props.volunteer)
         if (!this.props.volunteer){
-            console.log('props.volunteer is falsy. That is a bug');
             return null;
         }
         else {
-            let effectiveVolunteer=update(this.props.volunteer,{$merge:this.state.volunteer});
-            console.log(effectiveVolunteer);
+            let effectiveVolunteer = update(this.props.volunteer,{$merge:this.state.volunteer});
 
             return (          
                 <tr className="volunteer-row">
@@ -67,8 +88,8 @@ export default class VolunteerRow extends React.Component{
                     <td>{effectiveVolunteer.email}</td>
                     <td>{effectiveVolunteer.first_name}</td>
                     <td>{effectiveVolunteer.last_name}</td>
-                    <td>{effectiveVolunteer.department}</td>
-                    <td>{effectiveVolunteer.role}</td>
+                    <td>{this.departmentName()}</td>
+                    <td>{this.roleName()}</td>
                     <td>{effectiveVolunteer.is_production?'Yes':'No'}</td>
                     <td>{effectiveVolunteer.phone}</td>
                     <td>{effectiveVolunteer.got_ticket?'Yes':'No'}</td>

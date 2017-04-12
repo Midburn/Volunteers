@@ -89,6 +89,7 @@ export default class FilterComponent extends React.Component{
                 <VolunteerAddModal 
                     show={!!this.state.add} 
                     onHide={this.handleHide} 
+                    onSuccess={this.props.onSuccess}
                     roles={this.props.roles}
                     departments={this.props.departments} />
              </div>
