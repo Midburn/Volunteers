@@ -8,5 +8,8 @@ public/bundle.js.map
 #ignore runtime datastore directory contents
 /server/json_modified/**
 
+#IDE stuff
+.vscode
+
 # npm log et al
 *.log
