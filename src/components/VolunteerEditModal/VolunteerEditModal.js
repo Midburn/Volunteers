@@ -12,7 +12,10 @@ export default class VolunteerEditModal extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            volunteer:{},
+            volunteer:{
+                role: this.props.role,
+                is_production: this.props.is_production
+            },
             errorTexts: [],
             isButtonEnabled: true
         };
@@ -56,18 +59,10 @@ export default class VolunteerEditModal extends React.Component{
 
     handleSubmit(){
         console.log('VolunteerEditModal.handleSubmit');
-        // Calculate diff
-        let diff = Object.keys(this.state.volunteer).reduce((acc,cur)=>{
-            if (this.state.volunteer[cur]!==undefined && this.state.volunteer[cur]!==this.props.volunteer[cur])
-                acc[cur] = this.state.volunteer[cur];
-                return acc;
-        },{});
-        // display error if no diff was made
-        if(Object.keys(diff).length === 0) {
+        // display error if no changes were made
+        if(this.state.role === this.props.role 
+            && this.state.is_production === this.props.is_production) {
             this.state.errorTexts = ['No Changes have been made']
-            console.log('error in submit');
-            console.log(diff);
-            console.log(Object.keys(diff).length);
             this.setState(this.state)
             return;
         }
@@ -80,14 +75,13 @@ export default class VolunteerEditModal extends React.Component{
         this.state.isButtonEnabled = false
         this.setState(this.state)
 
-        // TODO - test and fix Error!
         axios
-        .put(`/api/v1/departments/${dept_id}/volunteers/${profile_id}`, diff)
+        .put(`/api/v1/departments/${dept_id}/volunteers/${profile_id}`, this.state.volunteer)
         .then(res => {
-            // this.props.onSuccess(); //TODO
+            this.props.onSuccess();
             this.state.isButtonEnabled = true
+            this.state.errorTexts = ['Great Success!']
             this.setState(this.state)
-            // this.handleServerResponse(res) //TODO (display success/error by res)
         })
         .catch(error => {
             this.logNetworkError
@@ -95,13 +89,15 @@ export default class VolunteerEditModal extends React.Component{
             this.state.isButtonEnabled = true
             this.setState(this.state)
         });
-        
-        this.handleReset();
-        // this.props.onSubmit(diff)
     }
     
     handleReset(){
-        this.setState( {volunteer:{}} );
+        this.setState( {volunteer:{
+            role: this.props.role,
+            is_production: this.props.is_production
+        },
+        errorTexts: [],
+        });
     }
 
     getRolesOptions(){

@@ -62,13 +62,13 @@ export default class VolunteerListTab extends Component {
         .catch(this.logNetworkError);
     }
 
-    handleRowChange = (department, profile_id, diff) => {
-        let query = Object.keys(diff).reduce((acc, cur) => `${acc}&${cur}=${diff[cur]}`, '?');
-        axios
-            .put(`/api/v1/departments/${department}/volunteers/${profile_id}${query}`)
-            .then(this.fetchVolunteers)
-            .catch(this.logNetworkError);
-    }
+    // handleRowChange = (department, profile_id, diff) => {
+    //     let query = Object.keys(diff).reduce((acc, cur) => `${acc}&${cur}=${diff[cur]}`, '?');
+    //     axios
+    //         .put(`/api/v1/departments/${department}/volunteers/${profile_id}${query}`)
+    //         .then(this.fetchVolunteers)
+    //         .catch(this.logNetworkError);
+    // }
 
     handleFilterTextInput = (filterText) => {
         this.handleFilterInput('filterText', filterText);
@@ -128,7 +128,7 @@ export default class VolunteerListTab extends Component {
                     roles={roles}
                     departments={departments}
                     onRowDelete= {this.handleRowDelete}
-                    onRowChange= {this.handleRowChange}/>
+                    onSuccess= {this.fetchVolunteers}/>
                 </div>
             </div>
         );

@@ -70,7 +70,7 @@ export default class TableComponent extends Component {
             departments={this.props.departments}
             key={''+volunteer.department_id+'_'+volunteer.profile_id}
             onRowDelete= {this.props.onRowDelete}
-            onRowChange= {this.props.onRowChange}/>)});
+            onSuccess= {this.props.onSuccess} />)});
 
         return (
             <div className="table-component col-xs-12">

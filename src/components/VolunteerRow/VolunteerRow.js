@@ -19,15 +19,6 @@ export default class VolunteerRow extends Component {
         this.setState({edit:false})
     }
 
-    handleSubmit = (diff) => {
-        console.log(diff);
-        //TODO BUG
-        //TODO either row is updated on every submit and then no need for diff merge or an additional send to server phase is added
-        this.props.onRowChange(this.props.volunteer.department, this.props.volunteer.profile_id, diff);//TODO include department id in model
-
-        this.setState((state)=>update(state,{ edit:{$set:false} ,volunteer: {$merge: diff}} ));
-    }
-
     handleDelete = () => {
         this.props.onRowDelete(this.props.volunteer.department_id,this.props.volunteer.profile_id);
     }
@@ -81,7 +72,7 @@ export default class VolunteerRow extends Component {
                     <VolunteerEditModal 
                         show={!!this.state.edit} 
                         onHide={this.handleHide} 
-                        onSubmit={this.handleSubmit}
+                        onSuccess={this.props.onSuccess}
                         volunteer={effectiveVolunteer}
                         roles={this.props.roles}/>
                     <td>{effectiveVolunteer.profile_id}</td>
