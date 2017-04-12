@@ -13,8 +13,8 @@ export default class VolunteerEditModal extends React.Component{
         super(props);
         this.state = {
             volunteer:{
-                role: this.props.role,
-                is_production: this.props.is_production
+                role: this.props.volunteer.role,
+                is_production: this.props.volunteer.is_production
             },
             errorTexts: [],
             isButtonEnabled: true
@@ -59,8 +59,8 @@ export default class VolunteerEditModal extends React.Component{
     handleSubmit(){
         console.log('VolunteerEditModal.handleSubmit');
         // display error if no changes were made
-        if(this.state.role === this.props.role 
-            && this.state.is_production === this.props.is_production) {
+        if(this.state.volunteer.role === this.props.volunteer.role 
+            && this.state.volunteer.is_production === this.props.volunteer.is_production) {
             this.state.errorTexts = ['No Changes have been made']
             this.setState(this.state)
             return;
