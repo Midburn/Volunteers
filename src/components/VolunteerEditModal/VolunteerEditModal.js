@@ -53,7 +53,6 @@ export default class VolunteerEditModal extends React.Component{
     }
     
     handleCancel(){
-        this.handleReset();
         this.props.onHide();
     }
 
@@ -88,15 +87,6 @@ export default class VolunteerEditModal extends React.Component{
             this.state.errorTexts = ['Server Error']
             this.state.isButtonEnabled = true
             this.setState(this.state)
-        });
-    }
-    
-    handleReset(){
-        this.setState( {volunteer:{
-            role: this.props.role,
-            is_production: this.props.is_production
-        },
-        errorTexts: [],
         });
     }
 
