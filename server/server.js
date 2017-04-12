@@ -23,7 +23,7 @@ const SPARK_HOST = process.env.SPARK_HOST || 'http://localhost:3000'
 const fetchSpark = (path, options) => axios(`${SPARK_HOST}${path}`, options).then(r => r.data);
 
 const handleStandardRequest = handler => (req, res) => {
-  console.log(`Requesting ${req.method.toUpperCase()} ${req.path}`);
+  console.log(`${req.method.toUpperCase()} ${req.path}`);
   return handler(req, res).then(data => res.status(200).send(data)).catch(e => {
     console.log(e)
     res.status(500).send(devMode ? e.toString() : 'Internal server error');
@@ -100,6 +100,16 @@ function sendError(res) {
   res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
 }
 
+
+//READ DEPARTMENTS
+app.get('/api/v1/departments', handleStandardRequest(() => fetchSpark('/volunteers/departments/').then(depts => depts.map(n => _.assign({
+  name: n.name_en
+}, n)))));
+//READ ROLES
+app.get('/api/v1/roles', handleStandardRequest(() => fetchSpark('/volunteers/roles/')));
+
+
+
 //READ ALL VOLUNTEERINGS - READ
 app.get('/api/v1/volunteers', handleStandardRequest(req => fetchSpark('/volunteers/volunteers').then(data => (
   data.map(item => _.assign({
@@ -118,14 +128,6 @@ app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest( ({params})
     _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id'])))
 ))));
 
-//READ DEPARTMENTS
-app.get('/api/v1/departments', handleStandardRequest(() => fetchSpark('/volunteers/departments/').then(depts => depts.map(n => _.assign({
-  name: n.name_en
-}, n)))));
-//READ ROLES
-app.get('/api/v1/roles', handleStandardRequest(() => fetchSpark('/volunteers/roles/')));
-
-
 
 //POST MULTIPLE VOLUNTEERINGS - CREATE
 app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res) => (
@@ -139,13 +141,6 @@ app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res
   })
 )))
 
-//DELETE SINGLUE VOLUNTEERING - REMOVE
-app.delete('/api/v1/departments/:dId/volunteers/:uid',
-  handleStandardRequest( ({params}) =>
-    fetchSpark(`/volunteers/departments/${params.dId}/volunteers/${params.uid}/`, {
-      method: 'delete'
-    }).then(data => _.pick(data, ['status']))));
-
 //PUT SINGLE VOLUNTEERING - UPDATE
 app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   console.log(`PUT ${req.path}`);
@@ -155,6 +150,13 @@ app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
     profile_id: '0'
   }]);
 });
+
+//DELETE SINGLUE VOLUNTEERING - REMOVE
+app.delete('/api/v1/departments/:dId/volunteers/:uid',
+  handleStandardRequest( ({params}) =>
+    fetchSpark(`/volunteers/departments/${params.dId}/volunteers/${params.uid}/`, {
+      method: 'delete'
+    }).then(data => _.pick(data, ['status']))));
 
 
 /////////////////////////////
