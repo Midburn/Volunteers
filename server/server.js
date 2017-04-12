@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
-const fs = require('fs');
+//const fs = require('fs');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const webpack = require('webpack');
@@ -16,7 +16,7 @@ var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 
-const devMode = (config.environment != 'production');
+const devMode = (config.environment !== 'production');
 
 // ///////////////////////////
 // Session
@@ -81,7 +81,13 @@ app.get('/shift-manager', servePage);
 
 app.get('/api/v1/volunteers/me', function (req, res) {
   console.log(`GET ${req.path}`);
-  retrunStub('get_volunteer_me', res); //TODO rename stub to get_volunteers_me
+  res.status(200).send([{
+    "permission": 4,
+    "department_id": 2
+  }, {
+    "permission": 1,
+    "department_id": 0
+  }]);
 })
 
 app.get('/api/v1/volunteers', function (req, res) {
@@ -108,9 +114,7 @@ app.get('/api/v1/volunteers', function (req, res) {
         const json = JSON.parse(raw); //TODO error handling
         const sanitized = json.map((item) => {
           return {
-            //TODO new ecma2017 {} operator
             department_id: item.department_id,
-            //department: item.department_id === null ? null : `TODO DEP ID${item.department_id}`,
             profile_id: item.user_id,
             email: item.email,
             first_name: item.first_name,
@@ -119,9 +123,7 @@ app.get('/api/v1/volunteers', function (req, res) {
             got_ticket: item.got_ticket,
             is_production: item.is_production,
             role_id: item.role_id
-            //role: item.role_id === null ? null : `TODO ROLE NAME ${item.role_id}`
           };
-          //TODO more error handling and optimized role and department name conversion
         });
         console.log(`json.length:${json.length}, sanitized.length:${sanitized.length}`);
         res.status(200).send(sanitized);
@@ -183,35 +185,7 @@ app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
 app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   console.log(`PUT ${req.path}`);
   console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);
-  loadVolunteers(function (err, volunteers) {
-    let found = false;
-    let modifiedVolunteers = volunteers.map((volunteer) => {
-      if (isMatch(volunteer, req.params.d, req.params.v)) {
-        found = true;
-        let modified = volunteer;
-        if (req.query.role) {
-          modified.role = req.query.role;
-        }
-        if (req.query.is_production) {
-          modified.is_production = req.query.is_production === 'true';
-        }
-        return modified;
-      } else return volunteer;
-    });
-
-    if (found) {
-      saveVolunteers(modifiedVolunteers,
-        (err) => {
-          if (!err) {
-            res.status(200).send('Volunteer modified');
-          } else {
-            res.status(500).send('Internal server error');
-          }
-        });
-    } else {
-      res.status(400).send('Not Found');
-    }
-  });
+      res.status(200).send([{status:'OK',profile_id:'0'}]);
 });
 
 
@@ -334,66 +308,6 @@ app.get('/api/v1/roles', function (req, res) {
 // STUBS
 /////////////////////////////
 
-function isMatch(volunteer, department_id, profile_id) {
-  return volunteer.department_id === department_id && volunteer.profile_id === profile_id;
-}
-
-//the folowwing should be used since in a few cycles associations would be kept apart from the volunteer cache which dependss on the spark service
-function loadAssociations(callback) {
-  loadVolunteers((volunteers) => callback(volunteers.map((loaded) => {
-    return {
-      profile_id: loaded.profile_id,
-      role: loaded.role,
-      email: loaded.email,
-      is_production: loaded.is_production,
-      department_id: loaded.department_id
-    };
-  })));
-}
-
-function loadVolunteers(callback) {
-  readJSONFile(path.join(__dirname, '/json_modified/get_volunteer_volunteers.json'),
-    function (err, data) {
-      if (err) {
-        readJSONFile(path.join(__dirname, '/json_stubs/get_volunteer_volunteers.json'), callback);
-      } else {
-        callback(null, data);
-      }
-    });
-}
-
-function saveVolunteers(json, callback) {
-  fs.writeFile(path.join(__dirname, '/json_modified/get_volunteer_volunteers.json'),
-    JSON.stringify(json),
-    callback);
-}
-
-function retrunStub(filename, res) {
-  let fullPath = path.join(__dirname, `/json_stubs/${filename}.json`);
-  readJSONFile(fullPath, function (err, data) {
-    if (err) {
-      console.log(err)
-      res.status(404).send('Not found');
-    } else {
-      res.send(data);
-    }
-    res.end();
-  });
-}
-
-function readJSONFile(filename, callback) {
-  fs.readFile(filename, function (err, data) {
-    if (err) {
-      callback(err);
-      return;
-    }
-    try {
-      callback(null, JSON.parse(data));
-    } catch (exception) {
-      callback(exception);
-    }
-  });
-}
 
 /////////////////////////////
 // webpack-dev-server
