@@ -135,7 +135,7 @@ app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({
 app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req) => (
   fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {
     method: 'post',
-    body: req.body.emails.map(email => ({
+    data: req.body.emails.map(email => ({
       email,
       role_id: req.body.role,
       is_production: req.body.is_production
@@ -146,7 +146,7 @@ app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req) => 
 //PUT SINGLE VOLUNTEERING - UPDATE
 app.put('/api/v1/departments/:dId/volunteers/:uid', handleStandardRequest((req) => fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers/${req.params.uid}`, {
     method: 'put',
-    body: _.pick(req.body, ['role_id', 'is_production'])
+    data: _.pick(req.body, ['role_id', 'is_production'])
   })
   .then(data => _.pick(data, ['status']))));
 
