@@ -23,17 +23,20 @@ const devMode = (config.environment !== 'production');
 const SPARK_HOST = process.env.SPARK_HOST || 'http://localhost:3000'
 const fetchSpark = (path, options) => axios(`${SPARK_HOST}${path}`, options).then(r => r.data)
 const handleStandardRequest = handler => (req, res) => {
-    console.log(`Requesting ${req.path}`);
-    return handler(req, res).then(data => res.status(200).send(data)).catch(e => {
-      console.log(e)
-      res.status(500).send(devMode ? e.toString() : 'Internal server error');
-    })
+  console.log(`Requesting ${req.path}`);
+  return handler(req, res).then(data => res.status(200).send(data)).catch(e => {
+    console.log(e)
+    res.status(500).send(devMode ? e.toString() : 'Internal server error');
+  })
 }
 
 // ///////////////////////////
 // Session
 // ///////////////////////////
-const sess = {secret: 'secret', cookie: {}};
+const sess = {
+  secret: 'secret',
+  cookie: {}
+};
 app.use(session(sess));
 
 // ///////////////////////////
@@ -93,64 +96,57 @@ app.get('/api/v1/volunteers/me', function (req, res) {
   }]);
 })
 
-function sendError(res)
-{
-    res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
+function sendError(res) {
+  res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
 }
 
 app.get('/api/v1/volunteers', handleStandardRequest(req => fetchSpark('/volunteers/volunteers').then(data => (
-      data.map(item => _.assign({profile_id: item.user_id, phone: item.phone_number, department: `TODO DEP ID${item.department_id}`, role: `TODO ROLE NAME ${item.role_id}`}, 
-          _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id']))
-      )
-    )))
-)
+  data.map(item => _.assign({
+      profile_id: item.user_id,
+      phone: item.phone_number,
+      department: `TODO DEP ID${item.department_id}`,
+      role: `TODO ROLE NAME ${item.role_id}`
+    },
+    _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id'])))
+))))
 
-app.get('/api/v1/departments', handleStandardRequest(() => fetchSpark('/volunteers/departments/').then(depts => depts.map(n => _.assign({name: n.name_en}, n)))))
+app.get('/api/v1/departments', handleStandardRequest(() => fetchSpark('/volunteers/departments/').then(depts => depts.map(n => _.assign({
+  name: n.name_en
+}, n)))))
 app.get('/api/v1/roles', handleStandardRequest(() => fetchSpark('/volunteers/roles/')))
-app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({params}) => fetchSpark(`/volunteers/departments/${params.dId}/volunteers/`)))
+app.get('/api/v1/departments/:dId/volunteers', handleStandardRequest(({
+  params
+}) => fetchSpark(`/volunteers/departments/${params.dId}/volunteers/`)))
 
 
 app.post('/api/v1/departments/:dId/volunteers/', handleStandardRequest((req, res) => (
-  fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {method: 'post', 
-    body: req.body.emails.map(email => ({email, role_id: req.body.role, is_production: req.body.is_production}))
+  fetchSpark(`/volunteers/departments/${req.params.dId}/volunteers`, {
+    method: 'post',
+    body: req.body.emails.map(email => ({
+      email,
+      role_id: req.body.role,
+      is_production: req.body.is_production
+    }))
   })
 )))
 
-app.delete('/api/v1/departments/:d/volunteers/:v', function (req, res) {
-  console.log(`DELETE ${req.path}`);
-  console.log(`parameters: department:${req.params.d}, volunteer:${req.params.v}`);
-
-  console.log(req.path)
-
-  loadVolunteers(function (err, loaded) {
-    if (err) {
-      console.log(err);
-      res.status(404).send('Not found');
-    } else {
-      let filtered = loaded.filter((volunteer) => !isMatch(volunteer, req.params.d, req.params.v));
-      if (filtered.length !== loaded.length) {
-        saveVolunteers(filtered, (err) => {
-          if (!err) {
-            res.status(200).send('Volunteer disassociated with department');
-          } else {
-            res.status(500).send('Internal server error');
-          }
-        });
-      } else {
-        res.statusCode = 404;
-        res.send('Not found')
-      }
-    }
-  });
-});
+//DELETE SINGLUE VOLUNTEERING
+app.delete('/api/v1/departments/:dId/volunteers/:uid',
+  handleStandardRequest( ({params}) =>
+    fetchSpark(`/volunteers/departments/${params.dId}/volunteers/${params.uid}/`, {
+      method: 'delete'
+    }).then(data => _.pick(data, ['status']))));
 
 app.put('/api/v1/departments/:d/volunteers/:v', function (req, res) {
   console.log(`PUT ${req.path}`);
   console.log(`EDIT ASSOCIATION path:${req.path}, department:${req.params.d}, volunteer:${req.params.v}`);
-      res.status(200).send([{status:'OK',profile_id:'0'}]);
+  res.status(200).send([{
+    status: 'OK',
+    profile_id: '0'
+  }]);
 });
 
-     
+
 /////////////////////////////
 // webpack-dev-server
 /////////////////////////////
@@ -168,7 +164,7 @@ if (devMode) {
 }
 
 app.use(express.static('public'));
- 
+
 
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) {
