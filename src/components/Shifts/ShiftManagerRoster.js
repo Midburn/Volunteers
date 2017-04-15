@@ -7,14 +7,16 @@ import _ from 'lodash'
 /* 
 */
 
+const heightPerDay = 1000
+const heightPerMinute = 24 * 60 / heightPerDay
 const DayView = observer(({shifts, date, onEdit, onDelete, onFocus, focusedShift}) => (
-    (dayShifts => <div className="day-view" key={date}>
+    (dayShifts => <div className="day-view" key={date} style={{height: heightPerDay}}>
         <div className="header">
             {moment(date).format('dddd D/M')}
         </div>
         <div className="table">
             {_.map(dayShifts, shift => (
-                <ShiftBox shift={shift} onEdit={() => onEdit(shift)} onDelete={() => onDelete(shift)} onFocus={onFocus} focusedShift={focusedShift} />
+                <ShiftBox heightPerMinute={heightPerMinute} shift={shift} onEdit={() => onEdit(shift)} onDelete={() => onDelete(shift)} onFocus={onFocus} focusedShift={focusedShift} />
             ))}
         </div>
     </div>)(shifts.filter(s => moment(s.startDate).startOf('day').unix() === moment(date).startOf('day').unix()))

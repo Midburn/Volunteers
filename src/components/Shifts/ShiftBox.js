@@ -1,7 +1,11 @@
 import {observer} from "mobx-react"
 import React from 'react'
 import moment from 'moment'
+import {Button} from 'react-bootstrap'
 require ('./ShiftBox.scss');
+require("moment-duration-format")
+
+const heightPerMinute = 1.5
 
 const ShiftBox = observer(({shift, onEdit, onDelete, focusedShift, onFocus}) => {
     const {id, title, color, startDate, endDate, volunteers} = shift
@@ -15,13 +19,13 @@ const ShiftBox = observer(({shift, onEdit, onDelete, focusedShift, onFocus}) => 
                 width: `${100 / shift.overlapCount}%`,
                 height: 0
                 }}>
-                <div className="box" style={{backgroundColor: color}}  onClick={() => onFocus(id)}>
+                <div className="box" style={{backgroundColor: color, height: moment(endDate).diff(startDate, 'minutes') * heightPerMinute }}  onClick={() => onFocus(id)}>
                     <div className="title">{title}</div>
                     <div className="count">{volunteers.length} volunteers</div>
-                    <div className="duration">{moment(endDate).diff(startDate, 'minutes')} minutes</div>
+                    <div className="duration">{moment.duration(moment(endDate).diff(startDate, 'minutes'), 'minutes').format()}</div>
                     <div className="toolbar">
-                        <input type="button" onClick={() => onEdit(shift)} value="Edit" />
-                        <input type="button" onClick={() => onDelete(shift)} value="Delete" />
+                        <Button bsSize="xsmall" onClick={() => onEdit(shift)} className="glyphicon glyphicon-edit" />
+                        <Button bsSize="xsmall" onClick={() => onDelete(shift)} className="glyphicon glyphicon-trash" />
                     </div>
                 </div>
 

@@ -93,6 +93,10 @@ function ShiftManagerModel() {
         this.refreshShifts()
     })
 
+    reaction(() => this.currentShift, async shift => {
+        this.refreshShifts()
+    })
+
     reaction(() => [this.shifts, this.searchText, this.dateRange], ([shifts, searchText, [startDate, endDate]]) => {
         const overlaps = (a, b) => moment(a.startDate).isBefore(b.endDate) && moment(a.endDate).isAfter(b.startDate)
         this.filteredShifts = _(shifts)
