@@ -15,11 +15,6 @@ function ShiftManagerModel() {
             return getNameById(this.departments, this.departmentID);
         },
 
-        shiftStatusID: null,
-        shiftStatuses: [{name: "Open", id: "open"}, {name: "Closed", id: "closed"}],
-        get shiftStatusName() {
-            return getNameById(this.shiftStatuses, this.shiftStatusID);
-        },
         date: new Date(),
         weekView: true,
         currentShift: null,
@@ -41,6 +36,10 @@ function ShiftManagerModel() {
         console.log(this.departments)
     }
 
+    this.refreshShifts = async() => {
+        this.shifts = await (axios(`/api/v1/departments/${dept}/shifts`)).data        
+    }
+
     function transformShift(shift) {
         _.assign({
             startDate: moment(shift.startDate).format(),
@@ -56,9 +55,11 @@ function ShiftManagerModel() {
 
         try {
             const method = this.currentShift.isNew ? 'post' : 'put'
-            const response = await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift.id}`, 
+            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift.id}`, 
                 {credentials: 'include', data: transformShift(this.currentShift), method}
                 )
+
+            await this.refreshShifts()            
             this.currentShift = null
         } catch (e) {
             this.editError = e.message
@@ -80,7 +81,7 @@ function ShiftManagerModel() {
     reaction(() => this.departmentID, async dept => {
         // Can optimize by connecting with other model
         this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
-        this.shifts = await (axios(`/api/v1/departments/${dept}/shifts`)).data
+        this.refreshShifts()
     })
 
     this.initDepartments()
