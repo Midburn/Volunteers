@@ -3,9 +3,11 @@
         display: flex;
     }
 
+    input[type="color"] {
+        width: 50px;
+    }
+
     .shift-manager-roster {
-        .header {
-            display: flex;
-        }
+        display: grid;
     }
 }

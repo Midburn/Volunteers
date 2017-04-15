@@ -1,43 +1,30 @@
 import DynamicDropdown from '../DynamicDropdown'
 import {observer} from "mobx-react";
 import React from 'react';
-import {Radio, Button} from 'react-bootstrap'
 import moment from 'moment';
 
 const ShiftManagerHeader = observer(({shiftManagerModel}) => (
     <div className="shift-manager-header">
-        <DynamicDropdown 
-            key="dept"
-            label="Department"
-            placeholder="Select department..."
-            model={shiftManagerModel}
-            title="departmentName"
-            collectionName="departments"
-            current="departmentID" />
+        <select onChange={e => shiftManagerModel.departmentID = e.target.value} value={shiftManagerModel.departmentID || 0}>
+            <option value="0">Select Department</option>
+            {shiftManagerModel.departments.map(({id, name}) => <option value={id} key={id}>{name}</option>)}
+        </select>
         
-        {shiftManagerModel.departmentID ? (<div className="shift-manager-header">
-            <input className="form-control" placeholder="Search" style={{width: '140px'}} name="srch-term" id="srch-term" type="text" />
-            <DynamicDropdown 
-                    key="status"
-                    label="Shift Status"
-                    model={shiftManagerModel}
-                    title="shiftStatusName"
-                    collectionName="shiftStatuses"
-                    current="shiftStatusID" 
-                    />
-            <span className="date-title">
-                {shiftManagerModel.dateRange[0].format('MMMM Do YYYY')} - {moment(shiftManagerModel.dateRange[1]).format('MMMM Do YYYY')}
-            </span>
-            <Radio key="daily" name="dateRange" className="radio-inline" value="daily" onChange={() => shiftManagerModel.weekView = false} checked={!shiftManagerModel.weekView}>Daily</Radio>
-            <Radio key="weekly" name="dateRange" className="radio-inline" value="weekly" onChange={() => shiftManagerModel.weekView = true} checked={shiftManagerModel.weekView}>Weekly</Radio>
-            <Button key="today" onClick={() => shiftManagerModel.date = new Date()}>Today</Button>
+        <div className="shift-manager-header">
+            <input type="button" key="create" value="New" onClick={shiftManagerModel.createShift} />
+            <input key="search" className="form-control" placeholder="Search" style={{width: '140px'}} name="srch-term" id="srch-term" type="text" 
+                onInput={e => shiftManagerModel.searchText = e.target.value}
+                value={shiftManagerModel.searchText} />
+
+            <input type="button" key="daily" value="Daily" onClick={() => shiftManagerModel.weekView = false} value="Daily" />
+            <input type="button" key="weekly" value="Weekly" onClick={() => shiftManagerModel.weekView = true} value="Weekly" />
+            <input type="button" key="today" onClick={() => shiftManagerModel.date = new Date()} value="Now" />
             {
-                shiftManagerModel.specialDates.map(({date, name}) => <Button key="name" onClick={() => shiftManagerModel.date = date}>{name}</Button>)
+                shiftManagerModel.specialDates.map(({date, name}) => <input key={name} onClick={() => shiftManagerModel.date = date} type="button" value={name} />)
             }
-            <Button key="prev" className="glyphicon glyphicon-chevron-left" onClick={() => shiftManagerModel.date = moment(shiftManagerModel.date).subtract(1, shiftManagerModel.weekView ? 'weeks' : 'days')} />
-            <Button key="next" className="glyphicon glyphicon-chevron-right" onClick={() => shiftManagerModel.date = moment(shiftManagerModel.date).add(1, shiftManagerModel.weekView ? 'weeks' : 'days')} />
-        </div>) : ''
-    }
+            <input type="button" key="prev" onClick={() => shiftManagerModel.date = moment(shiftManagerModel.date).subtract(1, shiftManagerModel.weekView ? 'weeks' : 'days')} value="&lt;" />
+            <input type="button" onClick={() => shiftManagerModel.date = moment(shiftManagerModel.date).add(1, shiftManagerModel.weekView ? 'weeks' : 'days')} value="&gt;" />
+        </div>
     </div>
 ))
 

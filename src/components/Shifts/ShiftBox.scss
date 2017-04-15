@@ -1,0 +1,10 @@
+.shift-box {
+    .toolbar {
+        visibility: hidden;
+    }
+    &::focus {
+        .toolbar {
+            visibility: visible;
+        }
+    }
+}
