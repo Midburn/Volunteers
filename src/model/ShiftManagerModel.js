@@ -108,6 +108,7 @@ function ShiftManagerModel() {
                 overlaps(shift, {startDate, endDate}) && 
                 !_.size(searchText) || _.find(_.flattenDeep([shift.title, _.map(shift.volunteers, _.values)]), 
                 str => _.includes/(str.toLowerCase(), searchText.toLowerCase()))
+            ).map(shift => _.defaults({volunteers: shift.volunteers.map(v => _.find(this.volunteers, {profile_id: v}))}, shift)
             ).reduce((acc, shift) => {
             const overlapping = _.filter(acc, s => overlaps(s, shift))
             const overlapCount = _.size(overlapping) + 1

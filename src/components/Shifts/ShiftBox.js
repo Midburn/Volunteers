@@ -21,8 +21,8 @@ const ShiftBox = observer(({shift, onEdit, onDelete, focusedShift, onFocus}) => 
                 }}>
                 <div className="box" style={{backgroundColor: color, height: moment(endDate).diff(startDate, 'minutes') * heightPerMinute }}  onClick={() => onFocus(id)}>
                     <div className="title">{title}</div>
+                    <div className="duration">{moment(startDate).format('H:mm')} - {moment(endDate).format('H:mm')}</div>
                     <div className="count">{volunteers.length} volunteers</div>
-                    <div className="duration">{moment.duration(moment(endDate).diff(startDate, 'minutes'), 'minutes').format()}</div>
                     <div className="toolbar">
                         <Button bsSize="xsmall" onClick={() => onEdit(shift)} className="glyphicon glyphicon-edit" />
                         <Button bsSize="xsmall" onClick={() => onDelete(shift)} className="glyphicon glyphicon-trash" />

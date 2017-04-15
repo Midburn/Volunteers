@@ -55,11 +55,13 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
         <FormGroup controlId="volunteers">
             <ControlLabel>Volunteers</ControlLabel>
             <Table striped bordered condensed hover key="table">
+                <tbody>
                 {shift.volunteers.map((v, i) => 
                     <tr>
                         <td>{`${v.first_name} ${v.last_name}`}</td>
                         <td><Button onClick={() => shift.volunteers = _.without(shift.volunteers, v)}>Delete</Button></td>
                     </tr>)}
+                </tbody>
             </Table>
             <DropdownButton id="addVolunteerToShift" title="Add" key="add">
                 {_.difference(departmentVolunteers, shift.volunteers).map(v => 
