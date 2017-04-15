@@ -1,10 +1,19 @@
 .shift-box {
-    .toolbar {
-        visibility: hidden;
-    }
-    &::focus {
-        .toolbar {
+    &.focused {
+        .box .toolbar {
             visibility: visible;
         }
     }
+    .box {  
+        border: solid black 1px;        
+
+        .toolbar {
+            visibility: hidden;
+        }
+        .title {
+            font-weight: bold;
+        }
+    }
+
+    position: relative;
 }

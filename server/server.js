@@ -144,10 +144,10 @@ const shiftsByDepartment = {}
 
 const shiftsFacade = require('./shiftsMock')
 const sanitizeShift = body => _.assign({volunteers: _.filter(body.volunteers, v => _.isString || _.isNumber)}, 
-        _.pick(body, ['title', 'color', 'start_date', 'end_date']))
+        _.pick(body, ['title', 'color', 'startDate', 'endDate']))
 
 app.get('/api/v1/departments/:dId/shifts', handleStandardRequest(req => shiftsFacade.shiftsByDepartment(req.params.dId)))
-app.post('/api/v1/departments/:dId/shifts/:dId', handleStandardRequest(req => shiftsFacade.addShift(req.params.dId, req.params.sId, sanitizeShift(req.body))))
+app.post('/api/v1/departments/:dId/shifts/:sId', handleStandardRequest(req => shiftsFacade.addShift(req.params.dId, req.params.sId, sanitizeShift(req.body))))
 app.put('/api/v1/departments/:dId/shifts/:sId', handleStandardRequest(req => shiftsFacade.updateShift(req.params.dId, req.params.sId, sanitizeShift(req.body))))
 app.delete('/api/v1/departments/:dId/shifts/:sId', handleStandardRequest(req => shiftsFacade.deleteShift(req.params.dId, req.params.sId)))
 

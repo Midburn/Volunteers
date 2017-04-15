@@ -1,4 +1,6 @@
 .shift-manager {
+    overflow: scroll;
+    min-height: 500px;
     .shift-manager-header {
         display: flex;
     }
@@ -8,6 +10,17 @@
     }
 
     .shift-manager-roster {
-        display: grid;
+        display: flex;
+        min-height: 800px;
+
+        .day-view {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+
+            .table {
+                flex: 1;
+            }
+        }
     }
 }
