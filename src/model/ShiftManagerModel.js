@@ -93,12 +93,23 @@ function ShiftManagerModel() {
     reaction(() => this.departmentID, async dept => {
         // Can optimize by connecting with volunteer-list model
         this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
+        location.href = `#${dept}`
         this.refreshShifts()
     })
+
+    const deptFromHash = () => {
+        const dept = +location.hash.substr(1)
+        if (_.isFinite(dept)) {
+            this.departmentID = dept
+        }
+    }
+
+    window.onhachchange = window.onload = deptFromHash
 
     reaction(() => this.currentShift, async shift => {
         this.refreshShifts()
     })
+    
 
     reaction(() => [this.shifts, this.searchText, this.dateRange], ([shifts, searchText, [startDate, endDate]]) => {
         const overlaps = (a, b) => moment(a.startDate).isBefore(b.endDate) && moment(a.endDate).isAfter(b.startDate)
