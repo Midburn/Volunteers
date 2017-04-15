@@ -19,7 +19,7 @@ const DayView = observer(({shifts, date, onEdit, onDelete, onFocus, focusedShift
                 <ShiftBox heightPerMinute={heightPerMinute} shift={shift} onEdit={() => onEdit(shift)} onDelete={() => onDelete(shift)} onFocus={onFocus} focusedShift={focusedShift} />
             ))}
         </div>
-    </div>)(shifts.filter(s => moment(s.startDate).startOf('day').unix() === moment(date).startOf('day').unix()))
+    </div>)(shifts.filter(s => moment(s.startDate).isBetween(moment(date).startOf('day'), moment(date).endOf('day'))))
 ))
 
 const ShiftManagerRoster = observer(({shiftManagerModel}) => (
