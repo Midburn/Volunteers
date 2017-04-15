@@ -14,7 +14,7 @@ const ShiftManagerComponent = observer(({shiftManagerModel}) =>(
             shift={shiftManagerModel.currentShift}
             departmentVolunteers={shiftManagerModel.volunteers}
             onCancel={() => shiftManagerModel.currentShift = null}
-            onSubmit={shiftManagerModel.submitShift} />
+            onSubmit={() => shiftManagerModel.submitShift().then(id => document.getElementById(id).scrollIntoView())} />
     </div>
 ))
 

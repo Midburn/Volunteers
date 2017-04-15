@@ -12,7 +12,7 @@ const ShiftBox = observer(({shift, onEdit, onDelete, focusedShift, onFocus}) => 
     const startOfDay = moment(startDate).startOf('day')
     const relStart = moment(startDate).diff(startOfDay, 'days', true)
     const relEnd = moment(endDate).diff(startOfDay, 'days', true)
-    return <div key={id} className={`shift-box ${shift.id === focusedShift ? 'focused' :''}`}
+    return <div id={id} key={id} className={`shift-box ${shift.id === focusedShift ? 'focused' :''}`}
             style={{ 
                 left: `${shift.overlapIndex * 100 / shift.overlapCount}%`,
                 top: `${relStart * 100}%`,

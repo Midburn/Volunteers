@@ -7,10 +7,10 @@ import _ from 'lodash'
 /* 
 */
 
-const heightPerDay = 1000
-const heightPerMinute = 24 * 60 / heightPerDay
+const heightPerMinute = 1
+const heightPerDay =heightPerMinute * 60 * 24
 const DayView = observer(({shifts, date, onEdit, onDelete, onFocus, focusedShift}) => (
-    (dayShifts => <div className="day-view" key={date} style={{height: heightPerDay}}>
+    (dayShifts => <div className="day-view" key={date}>
         <div className="header">
             {moment(date).format('dddd D/M')}
         </div>
@@ -23,7 +23,13 @@ const DayView = observer(({shifts, date, onEdit, onDelete, onFocus, focusedShift
 ))
 
 const ShiftManagerRoster = observer(({shiftManagerModel}) => (
-    <div className={`shift-manager-roster ${shiftManagerModel.weekView ? 'weekly' : 'daily'}`}>
+    <div className={`shift-manager-roster ${shiftManagerModel.weekView ? 'weekly' : 'daily'}`} style={{height: heightPerDay}}>
+        <div className="row-header">
+            <div className="header"></div>
+            {new Array(48).fill(0).map((d, i) => 
+                <div style={{height: heightPerMinute * 30}}>{i % 2 ? '' : moment().startOf('day').add(i * 30, 'minutes').format('H:mm')}</div>
+            )}
+        </div>
         {new Array(shiftManagerModel.weekView ? 7 : 1).fill(0).map((d, i) => 
             <DayView shifts={shiftManagerModel.filteredShifts} focusedShift={shiftManagerModel.focusedShift}
                 onDelete={shiftManagerModel.deleteShift}

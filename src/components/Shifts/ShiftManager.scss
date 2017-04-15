@@ -1,6 +1,22 @@
 .shift-manager {
     overflow: scroll;
     min-height: 500px;
+    min-height: 968px;
+    .header {
+        height: 30px;
+        background: darkblue;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .row-header {
+        > div {
+            display: flex;
+            align-items: center;
+        }
+        vertical-align: middle;
+    }
     .shift-manager-header {
         display: flex;
     }

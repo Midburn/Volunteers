@@ -5,7 +5,8 @@
         }
     }
     .box {  
-        border: solid black 1px;        
+        border: solid black 1px;    
+        min-height: 80px;    
 
         .toolbar {
             visibility: hidden;

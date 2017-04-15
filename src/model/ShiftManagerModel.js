@@ -63,8 +63,11 @@ function ShiftManagerModel() {
                 {credentials: 'include', data: transformShift(this.currentShift), method}
                 )
 
-            await this.refreshShifts()            
+            await this.refreshShifts() 
+            const id = this.currentShift.id           
             this.currentShift = null
+            this.focusedShift = id
+            return id
         } catch (e) {
             this.editError = e.message
         }
