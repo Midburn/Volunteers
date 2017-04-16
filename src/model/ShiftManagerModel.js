@@ -109,22 +109,30 @@ function ShiftManagerModel() {
     reaction(() => this.currentShift, async shift => {
         this.refreshShifts()
     })
+
+    const extractTextsFromShift = shift => _([shift.title, ..._.map(shift.volunteers, _.values)])
+        .flatten()
+        .filter(_.isString)
+        .map(s => s.toLowerCase())
+        .value()
     
 
     reaction(() => [this.shifts, this.searchText, this.dateRange], ([shifts, searchText, [startDate, endDate]]) => {
-        const overlaps = (a, b) => moment(a.startDate).isBefore(b.endDate) && moment(a.endDate).isAfter(b.startDate)
+        const overlapsDateRange = (a, b) => moment(a.startDate).isBefore(b.endDate) && moment(a.endDate).isAfter(b.startDate)
         this.filteredShifts = _(shifts)
-            .reduce((a, v, id) => ([...a, _.assign({id}, v)]), [])
-            .filter(shift => 
-                overlaps(shift, {startDate, endDate}) && 
-                !_.size(searchText) || _.find(_.flattenDeep([shift.title, _.map(shift.volunteers, _.values)]), 
-                str => _.includes/(str.toLowerCase(), searchText.toLowerCase()))
-            ).map(shift => _.defaults({volunteers: shift.volunteers.map(v => _.find(this.volunteers, {profile_id: v}))}, shift)
-            ).reduce((acc, shift) => {
-            const overlapping = _.filter(acc, s => overlaps(s, shift))
-            const overlapCount = _.size(overlapping) + 1
-            _.forEach([...overlapping, shift], (o, overlapIndex) => _.assign(o, {overlapCount, overlapIndex}))
-            return [...acc, shift]
+            .map((shift, id) => 
+                _.defaults({id, volunteers: shift.volunteers.map(v => _.find(this.volunteers, {profile_id: v}))}, shift))
+            .reduce((acc, shift) => {
+                if (!overlapsDateRange(shift, {startDate, endDate}) || 
+                    _.size(searchText) &&
+                    (text => !_.find(extractTextsFromShift(shift), str => _.includes(str, text)))(searchText.toLowerCase())) {
+                    return acc
+                }
+
+                const overlapping = _.filter(acc, s => overlaps(s, shift))
+                const overlapCount = _.size(overlapping) + 1
+                _.forEach([...overlapping, shift], (o, overlapIndex) => _.assign(o, {overlapCount, overlapIndex}))
+                return [...acc, shift]
         }, [])
     })
 
