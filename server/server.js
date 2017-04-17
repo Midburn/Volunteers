@@ -60,6 +60,9 @@ function getUserFromSession(req, res, next) {
 
 app.use('/api', getUserFromSession);
 
+app.use('/volunteers/departments', require('./routes/shifts'));
+app.use('/volunteers/departments', require('./routes/shift-participants'));
+
 /////////////////////////////
 // WEB
 /////////////////////////////
@@ -143,7 +146,7 @@ app.delete('/api/v1/departments/:dId/volunteers/:uid',
 const shiftsByDepartment = {}
 
 const shiftsFacade = require('./shiftsMock')
-const sanitizeShift = body => _.assign({volunteers: _.filter(body.volunteers, v => _.isString || _.isNumber)}, 
+const sanitizeShift = body => _.assign({volunteers: _.filter(body.volunteers, v => _.isString || _.isNumber)},
         _.pick(body, ['title', 'color', 'startDate', 'endDate']))
 
 app.get('/api/v1/departments/:dId/shifts', handleStandardRequest(req => shiftsFacade.shiftsByDepartment(req.params.dId)))
