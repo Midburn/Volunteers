@@ -14,6 +14,8 @@ const http = require('http');
 const axios = require('axios')
 const _ = require('lodash')
 const SpartFacade = require('./spark/spark');
+const mongoose = require('mongoose');
+
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
@@ -180,6 +182,12 @@ app.get('*', (req, res, next) => {
     return servePage(req, res);
   }
 });
+
+/////////////////////////////
+// Mongoose
+/////////////////////////////
+mongoose.connect(config.mongoUrl);
+mongoose.Promise = Promise;  
 
 const server = app.listen(config.port, function () {
   const host = server.address().address
