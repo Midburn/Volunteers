@@ -11,13 +11,13 @@ const webpackConfig = require("../webpack.config.js");
 const authHelper = require('./authHelper.js');
 const config = require('../config.js');
 const http = require('http');
-const axios = require('axios')
-const _ = require('lodash')
+const axios = require('axios');
+const _ = require('lodash');
 const SpartFacade = require('./spark/spark');
 const mongoose = require('mongoose');
 
 
-var app = express();
+const app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 
@@ -33,7 +33,7 @@ const handleStandardRequest = handler => (req, res) => {
     console.log(e)
     res.status(500).send(devMode ? e.toString() : 'Internal server error');
   })
-}
+};
 
 // ///////////////////////////
 // Session
@@ -51,7 +51,7 @@ app.use(session(sess));
 function getUserFromSession(req, res, next) {
   const session = req.session;
   if (!session || !session.userDetails) {
-    res.status(400).json({
+    res.status(401).json({
       error: 'Unauthorized'
     });
   } else {
@@ -61,9 +61,12 @@ function getUserFromSession(req, res, next) {
 }
 
 app.use('/api', getUserFromSession);
+app.use((err, req, res, next) => {
+  console.log(err);
+  return res.status(500).json({error: err});
+});
 
-app.use('/volunteers/departments', require('./routes/shifts'));
-app.use('/volunteers/departments', require('./routes/shift-participants'));
+app.use('/api/v1', require('./routes/shifts'));
 
 /////////////////////////////
 // WEB
@@ -147,14 +150,8 @@ app.delete('/api/v1/departments/:dId/volunteers/:uid',
 
 const shiftsByDepartment = {}
 
-const shiftsFacade = require('./shiftsMock')
 const sanitizeShift = body => _.assign({volunteers: _.filter(body.volunteers, v => _.isString || _.isNumber)},
         _.pick(body, ['title', 'color', 'startDate', 'endDate']))
-
-app.get('/api/v1/departments/:dId/shifts', handleStandardRequest(req => shiftsFacade.shiftsByDepartment(req.params.dId)))
-app.post('/api/v1/departments/:dId/shifts/:sId', handleStandardRequest(req => shiftsFacade.addShift(req.params.dId, req.params.sId, sanitizeShift(req.body))))
-app.put('/api/v1/departments/:dId/shifts/:sId', handleStandardRequest(req => shiftsFacade.updateShift(req.params.dId, req.params.sId, sanitizeShift(req.body))))
-app.delete('/api/v1/departments/:dId/shifts/:sId', handleStandardRequest(req => shiftsFacade.deleteShift(req.params.dId, req.params.sId)))
 
 /////////////////////////////
 // webpack-dev-server

@@ -1,51 +1,72 @@
 const express = require('express');
 const router = express.Router();
 const Shift = require('../models/shift');
-const ObjectID = require('mongodb').ObjectID
+const co = require('co');
+const _ = require('lodash');
 
-router.get('/:departmentId/shifts', function(req, res) {
-  Shift.find({}, function(err, shifts) {
-    if (err) return res.status(500).json({error: err});
+router.get('/departments/:departmentId/shifts', co.wrap(function*(req, res) {
+    const departmentId = req.params.departmentId;
 
+    const shifts = yield Shift.find({departmentId: departmentId});
     return res.json(shifts);
-  });
-});
+}));
 
-router.post('/:departmentId/shifts', function(req, res) {
-  const shift  = Shift({
-    "_id": ObjectID(req.body._id),
-    "title": req.body.title,
-    "color": req.body.color,
-    "department_id": req.body.department_id,
-    "start_time": req.body.start_time,
-    "end_time": req.body.end_time
-  });
+router.post('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, res) {
+    const departmentId = req.params.departmentId;
+    const shiftId = req.params.shiftId;
 
-  Shift.save(function(err) {
-    if (err) return res.status(500).json({error: err});
-
-    return res.json(shift);
-  });
-});
-
-router.put('/:departmentId/shifts/:shiftId', function(req, res) {
-  Shift.findByIdAndUpdate(shiftId, req.body, function(err, shift) {
-    if (err) return res.status(500).json({error: err});
-
-    return res.json(shift);
-  });
-});
-
-router.delete('/:departmentId/shifts/:shiftId', function(req, res) {
-  Shift.findById(shiftId, function(err, shift) {
-    if (err) return res.status(500).json({error: err});
-
-    shift.remove(function(err) {
-      if (err) return res.status(500).json({error: err});
-
-      return res.json(shift);
+    const shift = new Shift({
+        '_id': shiftId,
+        'title': req.body.title,
+        'color': req.body.color,
+        'departmentId': departmentId,
+        'startDate': req.body.startDate,
+        'endDate': req.body.endDate,
+        'volunteers': req.body.volunteers
     });
-  });
-});
 
-module.exports = router
+    yield shift.save();
+
+    return res.json(shift);
+}));
+
+router.put('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, res) {
+    const departmentId = req.params.departmentId;
+    const shiftId = req.params.shiftId;
+
+    const updatedShift = {
+        'title': req.body.title,
+        'color': req.body.color,
+        'startDate': req.body.startDate,
+        'endDate': req.body.endDate,
+        'volunteers': req.body.volunteers
+    };
+
+    const shift = yield Shift.findOne({_id: shiftId, departmentId: departmentId});
+
+    if (_.isEmpty(shift)) return res.status(400).json({error: `Shift ${shiftId} is not exists`});
+
+    for (const key in updatedShift) {
+
+        shift[key] = updatedShift[key] || shift[key];
+    }
+
+    yield shift.save();
+
+    return res.json(shift);
+}));
+
+router.delete('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, res) {
+    const departmentId = req.params.departmentId;
+    const shiftId = req.params.shiftId;
+
+    const shift = yield Shift.findOne({_id: shiftId, departmentId: departmentId});
+
+    if (_.isEmpty(shift)) return res.status(400).json({error: `Shift ${shiftId} is not exists`});
+
+    yield shift.remove();
+
+    return res.json(shift);
+}));
+
+module.exports = router;
