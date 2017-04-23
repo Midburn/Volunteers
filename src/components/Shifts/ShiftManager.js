@@ -2,10 +2,6 @@ import React from 'react';
 import {observer} from 'mobx-react';
 
 import ShiftManagerHeader from './ShiftManagerHeader'
-import ShiftManagerRoster from './ShiftManagerRoster'
-
-import DynamicDropdown from '../DynamicDropdown'
-
 require ('./ShiftManager.scss');
 import ShiftModal from './ShiftModal'
 

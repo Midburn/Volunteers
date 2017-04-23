@@ -1,4 +1,3 @@
-import DynamicDropdown from '../DynamicDropdown'
 import {observer} from "mobx-react";
 import React from 'react';
 import moment from 'moment';
@@ -11,7 +10,7 @@ const ShiftManagerHeader = observer(({shiftManagerModel}) => (
                 <DropdownButton title={shiftManagerModel.departmentID ? `Department: ${shiftManagerModel.departmentName}` : 'Select Department'} value={shiftManagerModel.departmentID || 0}>
                     {shiftManagerModel.departments.map(({id, name}) => <MenuItem onSelect={() => shiftManagerModel.departmentID = id}>{name}</MenuItem>)}
                 </DropdownButton>
-        
+
                 <OverlayTrigger placement="top" overlay={<Tooltip>Create session</Tooltip>}>
                     <Button bsStyle="primary" key="create" onClick={shiftManagerModel.createShift} className="glyphicon glyphicon-plus" />
                 </OverlayTrigger>
@@ -30,12 +29,12 @@ const ShiftManagerHeader = observer(({shiftManagerModel}) => (
                 <OverlayTrigger placement="top" overlay={<Tooltip>Today</Tooltip>}>
                     <Button key="today" onClick={() => shiftManagerModel.date = moment(new Date).startOf('day')} className="glyphicon glyphicon-time" />
                 </OverlayTrigger>
-                        
+
                 {
                     shiftManagerModel.specialDates.map(({date, name}) => <Button key={name} onClick={() => shiftManagerModel.date = date} >{name}</Button>)
                 }
             </ButtonToolbar>
-            <input key="search" className="form-control" placeholder="Search" style={{width: 200}} name="srch-term" id="srch-term" type="text" 
+            <input key="search" className="form-control" placeholder="Search" style={{width: 200}} name="srch-term" id="srch-term" type="text"
                 onInput={e => shiftManagerModel.searchText = e.target.value}
                 value={shiftManagerModel.searchText} />
         </div>
