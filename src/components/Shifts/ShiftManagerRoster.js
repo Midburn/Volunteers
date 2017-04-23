@@ -4,7 +4,7 @@ import moment from 'moment'
 import ShiftModal from './ShiftModal'
 import ShiftBox from './ShiftBox'
 import _ from 'lodash'
-/* 
+/*
 */
 
 const heightPerMinute = 1

@@ -41,7 +41,7 @@ function ShiftManagerModel() {
 
     this.refreshShifts = async() => {
         const resp = await axios(`/api/v1/departments/${this.departmentID}/shifts`, {credentials: 'include'})
-        this.shifts = resp.data        
+        this.shifts = resp.data
     }
 
     function transformShift(shift) {
@@ -59,12 +59,12 @@ function ShiftManagerModel() {
 
         try {
             const method = this.currentShift.isNew ? 'post' : 'put'
-            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift.id}`, 
+            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift.id}`,
                 {credentials: 'include', data: transformShift(this.currentShift), method}
                 )
 
-            await this.refreshShifts() 
-            const id = this.currentShift.id           
+            await this.refreshShifts()
+            const id = this.currentShift.id
             this.currentShift = null
             this.focusedShift = id
             return id
@@ -72,7 +72,7 @@ function ShiftManagerModel() {
             this.editError = e.message
         }
     }
-    
+
     this.createShift = () => {
         this.currentShift = {
             id: createGuid(),
@@ -88,6 +88,10 @@ function ShiftManagerModel() {
     this.deleteShift = async shift => {
         await axios.delete(`/api/v1/departments/${this.departmentID}/shifts/${shift.id}`)
         this.refreshShifts()
+    }
+
+    this.editShift = shift => {
+       this.currentShift = shift;
     }
 
     reaction(() => this.departmentID, async dept => {
@@ -115,21 +119,21 @@ function ShiftManagerModel() {
         .filter(_.isString)
         .map(s => s.toLowerCase())
         .value()
-    
 
+    const overlapsDateRange = (a, b) => moment(a.startDate).isBefore(b.endDate) && moment(a.endDate).isAfter(b.startDate)
     reaction(() => [this.shifts, this.searchText, this.dateRange], ([shifts, searchText, [startDate, endDate]]) => {
-        const overlapsDateRange = (a, b) => moment(a.startDate).isBefore(b.endDate) && moment(a.endDate).isAfter(b.startDate)
+
         this.filteredShifts = _(shifts)
-            .map((shift, id) => 
+            .map((shift, id) =>
                 _.defaults({id, volunteers: shift.volunteers.map(v => _.find(this.volunteers, {profile_id: v}))}, shift))
             .reduce((acc, shift) => {
-                if (!overlapsDateRange(shift, {startDate, endDate}) || 
+                if (!overlapsDateRange(shift, {startDate, endDate}) ||
                     _.size(searchText) &&
                     (text => !_.find(extractTextsFromShift(shift), str => _.includes(str, text)))(searchText.toLowerCase())) {
                     return acc
                 }
 
-                const overlapping = _.filter(acc, s => overlaps(s, shift))
+                const overlapping = _.filter(acc, s => overlapsDateRange(s, shift))
                 const overlapCount = _.size(overlapping) + 1
                 _.forEach([...overlapping, shift], (o, overlapIndex) => _.assign(o, {overlapCount, overlapIndex}))
                 return [...acc, shift]
