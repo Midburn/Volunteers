@@ -8,6 +8,9 @@ Midburn's volunteers module.
 clone repo
 run `nvm use`
 run `npm install`
+
+run mongodb locally
+
 run `npm start`
 
 
