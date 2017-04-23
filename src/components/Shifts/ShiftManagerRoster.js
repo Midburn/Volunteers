@@ -27,7 +27,7 @@ const ShiftManagerRoster = observer(({shiftManagerModel}) => (
         <div className="row-header">
             <div className="header"></div>
             {new Array(48).fill(0).map((d, i) => 
-                <div className="hour-header" style={{height: heightPerMinute * 30}}>{i % 2 ? '' : moment().startOf('day').add(i * 30, 'minutes').format('H:mm')} </div>
+                <div className="hour-header" style={{height: heightPerMinute * 30}}>{moment().startOf('day').add(i * 30, 'minutes').format('H:mm')} </div>
             )}
         </div>
         {new Array(shiftManagerModel.weekView ? 7 : 1).fill(0).map((d, i) => 

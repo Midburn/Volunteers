@@ -5,9 +5,7 @@ import {Button} from 'react-bootstrap'
 require ('./ShiftBox.scss');
 require("moment-duration-format")
 
-const heightPerMinute = 1.5
-
-const ShiftBox = observer(({shift, onEdit, onDelete, focusedShift, onFocus}) => {
+const ShiftBox = observer(({heightPerMinute, shift, onEdit, onDelete, focusedShift, onFocus}) => {
     const {_id, title, color, startDate, endDate, volunteers} = shift
     const startOfDay = moment(startDate).startOf('day')
     const relStart = moment(startDate).diff(startOfDay, 'days', true)
@@ -19,7 +17,7 @@ const ShiftBox = observer(({shift, onEdit, onDelete, focusedShift, onFocus}) => 
                 width: `${100 / shift.overlapCount}%`,
                 height: 0
                 }}>
-                <div className="box" style={{backgroundColor: color, height: moment(endDate).diff(startDate, 'minutes') * heightPerMinute }}  onClick={() => onFocus(_id)}>
+                <div className="box" style={{backgroundColor: color, height: moment(endDate).diff(startDate, 'minutes') * heightPerMinute}}  onClick={() => onFocus(_id)}>
                     <div className="title">{title}</div>
                     <div className="duration">{moment(startDate).format('H:mm')} - {moment(endDate).format('H:mm')}</div>
                     <div className="count">{volunteers.length} volunteers</div>
