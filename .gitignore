@@ -5,8 +5,6 @@ node_modules
 public/bundle.js
 public/bundle.js.map
 
-yarn.lock
-
 #ignore runtime datastore directory contents
 /server/json_modified/**
 

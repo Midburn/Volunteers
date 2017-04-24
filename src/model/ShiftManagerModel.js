@@ -59,12 +59,12 @@ function ShiftManagerModel() {
 
         try {
             const method = this.currentShift.isNew ? 'post' : 'put'
-            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift.id}`,
+            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift._id}`,
                 {credentials: 'include', data: transformShift(this.currentShift), method}
                 )
 
             await this.refreshShifts()
-            const id = this.currentShift.id
+            const id = this.currentShift._id
             this.currentShift = null
             this.focusedShift = id
             return id
@@ -75,7 +75,7 @@ function ShiftManagerModel() {
 
     this.createShift = () => {
         this.currentShift = {
-            id: createGuid(),
+            _id: createGuid(),
             startDate: moment(this.date).startOf('hour').add(1, 'hours'),
             endDate: moment(this.date).startOf('hour').add(2, 'hours'),
             title: "New Shift",
@@ -86,7 +86,7 @@ function ShiftManagerModel() {
     }
 
     this.deleteShift = async shift => {
-        await axios.delete(`/api/v1/departments/${this.departmentID}/shifts/${shift.id}`)
+        await axios.delete(`/api/v1/departments/${this.departmentID}/shifts/${shift._id}`)
         this.refreshShifts()
     }
 
