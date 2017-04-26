@@ -21,7 +21,7 @@ const app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 
-const devMode = (config.environment !== 'production');
+const devMode = (config.environment == 'dev');
 const SPARK_HOST = process.env.SPARK_HOST || 'http://localhost:3000'
 const spartFacade = new SpartFacade(process.env.SPARK_HOST);
 
@@ -34,15 +34,6 @@ const handleStandardRequest = handler => (req, res) => {
         res.status(500).send(devMode ? e.toString() : 'Internal server error');
     })
 };
-
-// ///////////////////////////
-// Session
-// ///////////////////////////
-// const sess = {
-//     secret: 'secret',
-//     cookie: {}
-// };
-// app.use(session(sess));
 
 // ///////////////////////////
 // WEB middleware
