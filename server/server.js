@@ -38,11 +38,11 @@ const handleStandardRequest = handler => (req, res) => {
 // ///////////////////////////
 // Session
 // ///////////////////////////
-const sess = {
-    secret: 'secret',
-    cookie: {}
-};
-app.use(session(sess));
+// const sess = {
+//     secret: 'secret',
+//     cookie: {}
+// };
+// app.use(session(sess));
 
 // ///////////////////////////
 // WEB middleware
