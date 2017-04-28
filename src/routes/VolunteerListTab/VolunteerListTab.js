@@ -1,70 +1,70 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import axios from 'axios';
-import update from 'immutability-helper';
-
-import FilterComponent from '../../components/FilterComponent/FilterComponent';
-
-import TableComponent from '../../components/TableComponent/TableComponent';
+import React, {Component} from "react";
+import axios from "axios";
+import update from "immutability-helper";
+import FilterComponent from "../../components/FilterComponent/FilterComponent";
+import TableComponent from "../../components/TableComponent/TableComponent";
 
 export default class VolunteerListTab extends Component {
-    state = {
-        volunteers:[],
-        roles:[],
-        departments:[],
-        filters: {
-            filterText: '',
-            department: null,
-            role: null,
-            gotTicket: null,
-            isProduction: null
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            volunteers: [],
+            roles: [],
+            departments: [],
+            filters: {
+                filterText: '',
+                department: null,
+                role: null,
+                gotTicket: null,
+                isProduction: null
+            }
         }
     }
 
-    componentDidMount(){
-        this.fetchRoles();
+    componentWillMount() {
         this.fetchDepartments();
         this.fetchVolunteers();
+        this.fetchRoles();
     }
 
     logNetworkError = (err) => {
-        if(err.response){
+        if (err.response) {
             console.log('Data', err.response.data);
             console.log('Status', err.response.status);
             console.log('Headers', err.response.headers);
         }
-        else console.log('Error',err.message);
+        else console.log('Error', err.message);
     }
 
     fetchVolunteers = () => {
         axios.get('/api/v1/volunteers/')
-        .then((res) => this.setState({volunteers:res.data}))
-        .catch(this.logNetworkError);
-    }
-
-    fetchRoles = () => {
-         axios.get('/api/v1/roles')
-        .then((res) => this.setState({roles:res.data}))
-        .catch(this.logNetworkError);
+            .then((res) => this.setState({volunteers: res.data}))
+            .catch(this.logNetworkError);
     }
 
     fetchDepartments = () => {
-         axios.get('/api/v1/departments')
-        .then((res) => this.setState({departments:res.data}))
-        .catch(this.logNetworkError);
+        axios.get('/api/v1/departments')
+            .then((res) => this.setState({departments: res.data}))
+            .catch(this.logNetworkError);
     }
 
-    handleRowDelete = (department,profile_id) => {
+    fetchRoles() {
+        this.setState({roles: document.userDetails.roles});
+    }
+
+    handleRowDelete = (department, profile_id) => {
         console.log('VolunteerListTab.handleRowDelete');
 
         axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
-        .then(this.fetchVolunteers)
-        .catch(this.logNetworkError);
+            .then(this.fetchVolunteers)
+            .catch(this.logNetworkError);
     }
 
     handleRowChange = (department, profile_id, diff) => {
         axios
-            .put(`/api/v1/departments/${department}/volunteers/${profile_id}`,diff)
+            .put(`/api/v1/departments/${department}/volunteers/${profile_id}`, diff)
             .then(this.fetchVolunteers)
             .catch(this.logNetworkError);
     }
@@ -74,10 +74,10 @@ export default class VolunteerListTab extends Component {
     }
 
     handleFilterInput = (filterName, value) => {
-         const mergeValue = {
-             filters: {
-                $merge:{
-                    [filterName]:value
+        const mergeValue = {
+            filters: {
+                $merge: {
+                    [filterName]: value
                 }
             }
         };
@@ -97,7 +97,7 @@ export default class VolunteerListTab extends Component {
         // add volunteers
         console.log(`posting to api/v1/departments/${departmentId}/volunteers`);
         axios
-            .post(`/api/v1/departments/${departmentId}/volunteers`, { role, is_production, emails })
+            .post(`/api/v1/departments/${departmentId}/volunteers`, {role, is_production, emails})
             .then(() => console.log('request to server succeeded'))
             .catch(() => console.log('error communicating with server'));
     }
@@ -108,26 +108,26 @@ export default class VolunteerListTab extends Component {
 
 //TODO get roles stucture from server side
     render() {
-        const { filters, volunteers, roles, departments } = this.state;
+        const {filters, volunteers, roles, departments} = this.state;
         return (
             <div className="volunteer-list-tab-component">
                 <div className="container card">
                     <FilterComponent
-                    filters={filters}
-                    onFilterTextInput={this.handleFilterTextInput}
-                    onFilterInput={this.handleFilterInput}
-                    roles={roles}
-                    departments={departments}
-                    onSuccess={this.fetchVolunteers} />
+                        filters={filters}
+                        onFilterTextInput={this.handleFilterTextInput}
+                        onFilterInput={this.handleFilterInput}
+                        roles={roles}
+                        departments={departments}
+                        onSuccess={this.fetchVolunteers}/>
                 </div>
                 <div className="container card container">
-                    <TableComponent 
-                    volunteers= {volunteers} 
-                    filters={filters}
-                    roles={roles}
-                    departments={departments}
-                    onRowDelete= {this.handleRowDelete}
-                    onRowChange= {this.handleRowChange}/>
+                    <TableComponent
+                        volunteers={volunteers}
+                        filters={filters}
+                        roles={roles}
+                        departments={departments}
+                        onRowDelete={this.handleRowDelete}
+                        onRowChange={this.handleRowChange}/>
                 </div>
             </div>
         );

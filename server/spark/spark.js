@@ -1,64 +1,66 @@
-const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
-const axios = require('axios')
-const _ = require('lodash')
+const axios = require('axios');
+const _ = require('lodash');
 
 
 class SparkFacade {
 
-  constructor(baseUrl = 'http://localhost:3000') {
-    this.baseUrl = baseUrl;
-  }
-  
-  volenteers() {
-    return this.fetchSpark('/volunteers/volunteers').then(data => (
-      data.map(item => _.assign({profile_id: item.user_id, phone: item.phone_number},
-        _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id']))
-      )
-    ));
-  }
+    constructor(baseUrl = 'http://localhost:3000') {
+        this.baseUrl = baseUrl;
+    }
 
-  departments() {
-    return this.fetchSpark('/volunteers/departments/')
-               .then(depts => depts.map(n => _.assign({name: n.name_en}, n)));
-  }
+    volunteers(token) {
+        return this.fetchSpark('/volunteers/volunteers', {headers: {'Authorization': `Bearer ${token}`}}).then(data => (
+            data.map(item => _.assign({profile_id: item.user_id, phone: item.phone_number},
+                _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id']))
+            )
+        ));
+    }
 
-  roles() {
-    return this.fetchSpark('/volunteers/roles/');
-  }
+    departments(token) {
+        return this.fetchSpark('/volunteers/departments', {headers: {'Authorization': `Bearer ${token}`}})
+            .then(depts => depts.map(n => _.assign({name: n.name_en}, n)));
+    }
 
-  volunteersByDepartment(departmentId) {
-    return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers/`).then(data => (
-      data.map(item => _.assign({profile_id: item.user_id, phone: item.phone_number},
-        _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id']))
-      )
-    ));
-  }
+    userDetails(token) {
+        return this.fetchSpark('/volunteers/me', {headers: {'Authorization': `Bearer ${token}`}});
+    }
 
-  addVolunteers(departmentId, volunteers) {
-    return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers`,
-                           {method: 'post', data: volunteers});
-  }
+    volunteersByDepartment(token, departmentId) {
+        return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers/`,
+            {headers: {'Authorization': `Bearer ${token}`}}).then(data => (
+            data.map(item => _.assign({profile_id: item.user_id, phone: item.phone_number},
+                _.pick(item, ['department_id', 'email', 'first_name', 'last_name', 'got_ticket', 'is_production', 'role_id']))
+            )
+        ));
+    }
 
-  updateVolunteer(departmentId, volunteerId, volunteer) {
-    return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers/${volunteerId}`,
-      {
-        method: 'put',
-        data: volunteer
-      }).then(data => _.pick(data, ['status']))
-  }
+    addVolunteers(token, departmentId, volunteers) {
+        return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers`,
+            {headers: {'Authorization': `Bearer ${token}`}, method: 'post', data: volunteers});
+    }
 
-  deleteVolunteer(departmentId, volunteerId) {
-    return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers/${volunteerId}/`, {
-      method: 'delete'
-    }).then(data => _.pick(data, ['status']))  }
+    updateVolunteer(token, departmentId, volunteerId, volunteer) {
+        return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers/${volunteerId}`,
+            {
+                headers: {'Authorization': `Bearer ${token}`},
+                method: 'put',
+                data: volunteer
+            }).then(data => _.pick(data, ['status']))
+    }
 
-  // private
-  fetchSpark(path, options) {
-    return axios(`${this.baseUrl}${path}`, options).then(r => r.data);
-  }
+    deleteVolunteer(token, departmentId, volunteerId) {
+        return this.fetchSpark(`/volunteers/departments/${departmentId}/volunteers/${volunteerId}/`, {
+            headers: {'Authorization': `Bearer ${token}`}, method: 'delete'
+        }).then(data => _.pick(data, ['status']))
+    }
+
+    // private
+    fetchSpark(path, options) {
+        return axios(`${this.baseUrl}${path}`, options).then(r => r.data);
+    }
 }
 
 module.exports = SparkFacade;

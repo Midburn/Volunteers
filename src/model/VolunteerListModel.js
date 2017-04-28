@@ -4,7 +4,6 @@ import axios from 'axios';
 function VolunteerListModel() {
     extendObservable(this, {
         volunteers:[],
-        roles:[],
         departments:[],
         filters: {
             filterText: '',
@@ -37,10 +36,6 @@ function VolunteerListModel() {
 
     this.fetchVolunteers = tryNetworkRequest(async () => {
         this.volunteers = (await axios.get('/api/v1/volunteers/')).data
-    })
-
-    this.fetchRoles = tryNetworkRequest(async () => {
-        this.roles = (await axios.get('/api/v1/roles')).data
     })
 
     this.fetchDepartments = tryNetworkRequest(async () => {
@@ -77,7 +72,6 @@ function VolunteerListModel() {
 
     this.init = () => {
         this.fetchDepartments()
-        this.fetchRoles()
         this.fetchVolunteers()
     }
 
