@@ -2,28 +2,26 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
-//const fs = require('fs');
 const React = require('react');
-const ReactDOMServer = require('react-dom/server');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 const webpackConfig = require("../webpack.config.js");
 const authHelper = require('./authHelper.js');
-const config = require('../config.js');
 const http = require('http');
 const axios = require('axios');
 const _ = require('lodash');
 const SpartFacade = require('./spark/spark');
 const mongoose = require('mongoose');
 
+// Load environment variables default values
+require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
-
-const devMode = (config.environment == 'dev');
-const SPARK_HOST = process.env.SPARK_HOST || 'http://localhost:3000'
-const spartFacade = new SpartFacade(process.env.SPARK_HOST);
+const devMode = (process.env.ENVIRONMENT == 'debug');
+const SPARK_HOST = process.env.SPARK_HOST;
+const spartFacade = new SpartFacade(SPARK_HOST);
 
 const fetchSpark = (path, options) => axios(`${SPARK_HOST}${path}`, options).then(r => r.data);
 
@@ -38,21 +36,6 @@ const handleStandardRequest = handler => (req, res) => {
 // ///////////////////////////
 // WEB middleware
 // ///////////////////////////
-
-function getUserFromSession(req, res, next) {
-    const session = req.session;
-    if (!session || !session.userDetails) {
-        res.status(401).json({
-            error: 'Unauthorized'
-        });
-    }
-    else {
-        req.user = session.userDetails;
-        next();
-    }
-}
-
-app.use('/api', getUserFromSession);
 app.use((err, req, res, next) => {
     console.log(err);
     return res.status(500).json({error: err});
@@ -67,26 +50,7 @@ app.use('/api/v1', require('./routes/shifts'));
 app.use('/static', express.static(path.join(__dirname, '../public/')));
 
 function servePage(req, res) {
-    const token = req.query.token;
-
-    // TODO: when spark auth api will be deployed, check if production
-    req.session.token = token;
-    req.session.userDetails = {
-        email: 'user@mail.com',
-        firstName: 'user',
-        lastName: 'user',
-        roles: {
-            '0': '0'
-        }
-    };
     res.sendFile(path.join(__dirname, '../src/index.html'));
-    return;
-
-    authHelper.GetUserAuth(token, res, (userDetails) => {
-        req.session.token = token;
-        req.session.userDetails = userDetails;
-        res.sendFile(path.join(__dirname, '../src/index.html'));
-    });
 }
 
 /////////////////////////////
@@ -102,11 +66,7 @@ app.get('/api/v1/volunteers/me', function (req, res) {
         "permission": 1,
         "department_id": 0
     }]);
-})
-
-function sendError(res) {
-    res.status(500).send('Internal Server Error. Problem reading from backend server. Wrong status code or content-type.')
-}
+});
 
 
 //READ DEPARTMENTS
@@ -154,6 +114,7 @@ const sanitizeShift = body => _.assign({volunteers: _.filter(body.volunteers, v 
 // webpack-dev-server
 /////////////////////////////
 if (devMode) {
+
     webpackConfig.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
     const compiler = webpack(webpackConfig);
     const server = new webpackDevServer(compiler, {
@@ -180,11 +141,11 @@ app.get('*', (req, res, next) => {
 /////////////////////////////
 // Mongoose
 /////////////////////////////
-mongoose.connect(config.mongoUrl);
+mongoose.connect(process.env.DB_URL);
 mongoose.Promise = Promise;
 
-const server = app.listen(config.port, function () {
-    const host = server.address().address
-    const port = server.address().port
+const server = app.listen(process.env.PORT, function () {
+    const host = server.address().address;
+    const port = server.address().port;
     console.log("Listening at http://%s:%s", host, port)
 })
