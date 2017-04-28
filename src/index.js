@@ -1,41 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import axios from 'axios';
+import React from "react";
+import ReactDOM from "react-dom";
+import {AppContainer} from "react-hot-loader";
+import App from "./routes/App";
+import ComingSoon from "./components/ComingSoon/ComingSoon";
+import axios from "axios";
 
-import { AppContainer } from 'react-hot-loader';
-
-import App from './routes/App'
-import ComingSoon from './components/ComingSoon/ComingSoon'
-
-const fetchUserData = async function() {
+async function fetchUserDetails() {
     try {
-      const resp = await axios.get('/api/v1/volunteers/me', {credentials: 'include'});
-      console.log(resp);
-      if(resp.data.length > 0){
+        const response = await axios.get('/api/v1/volunteers/me', {credentials: 'include'});
+        document.userDetails = response.data;
+
         render(App);
-      } else {
-        render(ComingSoon);
-      }
-    } catch(error) {
-      console.log(error);
-      render(ComingSoon);
     }
-};
+    catch(err) {
+        console.log(err);
+        render(ComingSoon);
+    }
+}
 
 const render = (Component) => {
-  ReactDOM.render(
-    <AppContainer>
-      <Component/>
-    </AppContainer>,
-    document.getElementById('root')
-  );
+    ReactDOM.render(
+        <AppContainer>
+            <Component />
+        </AppContainer>,
+        document.getElementById('root')
+    );
 };
 
-//render(App);
-fetchUserData();
+fetchUserDetails();
 
 if (module.hot) {
-  module.hot.accept('./routes/App', () => {
-    render(App)
-  });
+    module.hot.accept('./routes/App', () => {
+        render(App)
+    });
 }
