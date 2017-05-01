@@ -38,20 +38,16 @@ app.use((req, res, next) => {
 });
 
 app.get('/volunteers', function (req, res) {
-    const token = jwt.sign({email: 'shaytidhar@gmail.com'},
+    const token = jwt.sign({email: 'shaytidhar@gmail.com', id: 1},
         'secret',
         {expiresIn: '3h'});
 
     res.redirect(`http://127.0.0.1:8080?token=${token}`);
 });
 
-app.get('/volunteers/me', function (req, res) {
-    res.json({
-        email: 'shaytidhar@gmail.com',
-        userId: 'id',
-        firstName: 'Shay',
-        lastName: 'Tidhar',
-        roles: [
+app.get('/volunteers/:userId/roles', function (req, res) {
+    res.json(
+        [
             {
                 "permission": 4,
                 "department_id": 2
@@ -61,7 +57,7 @@ app.get('/volunteers/me', function (req, res) {
                 "department_id": 0
             }
         ]
-    });
+    );
 });
 
 

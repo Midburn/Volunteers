@@ -17,28 +17,30 @@ const handleSparkProxy = handler => (req, res) => {
     })
 };
 
-router.get('/api/v1/volunteers/me', handleSparkProxy(req => sparkFacade.userDetails(req.token)));
+// READ VOLUNTEER ROLES
+router.get('/volunteers/roles/me', handleSparkProxy(req =>
+    sparkFacade.rolesByUser(req.token, req.userDetails.id)));
 
 //READ DEPARTMENTS
-router.get('/api/v1/departments',
+router.get('/departments',
     handleSparkProxy(req =>
         sparkFacade.departments(req.token)));
 
 //READ ROLES
-router.get('/api/v1/roles',
+router.get('/roles',
     handleSparkProxy(req =>
         sparkFacade.roles(req.token)));
 
 //READ ALL VOLUNTEERINGS - READ
-router.get('/api/v1/volunteers', handleSparkProxy(req => sparkFacade.volunteers(req.token)));
+router.get('/volunteers', handleSparkProxy(req => sparkFacade.volunteers(req.token)));
 
 //READ ALL VOLUNTEERS IN SPECIFIC DEPARTMENT
-router.get('/api/v1/departments/:dId/volunteers',
+router.get('/departments/:dId/volunteers',
     handleSparkProxy(req =>
         sparkFacade.volunteersByDepartment(req.token, req.params.dId)));
 
 //POST MULTIPLE VOLUNTEERINGS - CREATE
-router.post('/api/v1/departments/:dId/volunteers/', handleSparkProxy(req =>
+router.post('/departments/:dId/volunteers/', handleSparkProxy(req =>
     sparkFacade.addVolunteers(req.token, req.params.dId, req.body.emails.map(email => ({
         email,
         role_id: req.body.role,
@@ -46,12 +48,12 @@ router.post('/api/v1/departments/:dId/volunteers/', handleSparkProxy(req =>
     })))));
 
 //PUT SINGLE VOLUNTEERING - UPDATE
-router.put('/api/v1/departments/:dId/volunteers/:uid',
+router.put('/departments/:dId/volunteers/:uid',
     handleSparkProxy(req =>
         sparkFacade.updateVolunteer(req.token, req.params.dId, req.params.uid, _.pick(req.body, ['role_id', 'is_production']))));
 
 //DELETE SINGLUE VOLUNTEERING - REMOVE
-router.delete('/api/v1/departments/:dId/volunteers/:uid',
+router.delete('/departments/:dId/volunteers/:uid',
     handleSparkProxy(req =>
         sparkFacade.deleteVolunteer(req.token, req.params.dId, req.params.uid)));
 
