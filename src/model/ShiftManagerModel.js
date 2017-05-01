@@ -1,4 +1,3 @@
-
 import {extendObservable, reaction} from 'mobx';
 import moment from 'moment';
 import axios from 'axios'
@@ -7,7 +6,7 @@ import _ from 'lodash'
 const createGuid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (
     (r => c == 'x' ? r : (r & 0x3 | 0x8))(Math.random() * 16 | 0).toString(16)
 ));
-const  getNameById = (collection, id, dfault = "All") => (obj => obj ? obj.name : dfault)(collection.find(d => d.id === id));
+const getNameById = (collection, id, dfault = "All") => (obj => obj ? obj.name : dfault)(collection.find(d => d.id === id));
 function ShiftManagerModel() {
     extendObservable(this, {
         departmentID: null,
@@ -52,7 +51,7 @@ function ShiftManagerModel() {
         }, _.pick(shift, ['title', 'color']))
     }
 
-    this.submitShift = async () => {
+    this.submitShift = async() => {
         if (!this.currentShift) {
             return
         }
@@ -61,7 +60,7 @@ function ShiftManagerModel() {
             const method = this.currentShift.isNew ? 'post' : 'put'
             await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift._id}`,
                 {credentials: 'include', data: transformShift(this.currentShift), method}
-                )
+            )
 
             await this.refreshShifts()
             const id = this.currentShift._id
@@ -73,11 +72,15 @@ function ShiftManagerModel() {
         }
     }
 
-    this.createShift = () => {
+    this.createShift = (startDate, endDate) => {
+        if (!this.departmentID) {
+            return null;
+        }
+
         this.currentShift = {
             _id: createGuid(),
-            startDate: moment(this.date).startOf('hour').add(1, 'hours'),
-            endDate: moment(this.date).startOf('hour').add(2, 'hours'),
+            startDate: startDate || moment(this.date).startOf('hour').add(1, 'hours'),
+            endDate: endDate || moment(this.date).startOf('hour').add(2, 'hours'),
             title: "New Shift",
             isNew: true,
             color: "#CCCCCC",
@@ -91,7 +94,7 @@ function ShiftManagerModel() {
     }
 
     this.editShift = shift => {
-       this.currentShift = shift;
+        this.currentShift = shift;
     }
 
     reaction(() => this.departmentID, async dept => {

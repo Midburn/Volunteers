@@ -51,7 +51,7 @@ export default class VolunteerListTab extends Component {
     }
 
     fetchRoles() {
-        this.setState({roles: document.userDetails.roles});
+        this.setState({roles: document.roles});
     }
 
     handleRowDelete = (department, profile_id) => {

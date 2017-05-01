@@ -33,7 +33,7 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
         </FormGroup>
         <FormGroup controlId="date">
             <ControlLabel>Date</ControlLabel>
-            <DatePicker value={moment(shift.startDate).format()} onChange={date => changeDate(shift, date)} />
+            <DatePicker value={moment(shift.startDate).format()} dateFormat="DD/MM/YYYY" onChange={date => changeDate(shift, date)} />
         </FormGroup>
         <FormGroup controlId="startTime">
             <ControlLabel>Start Time</ControlLabel>
@@ -65,7 +65,7 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
             </Table>
             <DropdownButton id="addVolunteerToShift" title="Add" key="add">
                 {_.difference(departmentVolunteers, shift.volunteers).map(v => 
-                    <MenuItem onSelect={() => shift.volunteers = [...shift.volunteers, v] }>{v.first_name} {v.last_name}</MenuItem>
+                    <MenuItem key={v.profile_id} onSelect={() => shift.volunteers = [...shift.volunteers, v] }>{v.first_name} {v.last_name}</MenuItem>
                 )}
             </DropdownButton>
         </FormGroup>

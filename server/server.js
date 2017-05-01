@@ -38,8 +38,9 @@ app.use((req, res, next) => {
     }
 
     try {
-        jwt.verify(token, 'secret');
+        const userDetails = jwt.verify(token, 'secret');
         req.token = token;
+        req.userDetails = userDetails;
 
         next();
     }
@@ -59,7 +60,7 @@ app.use((err, req, res, next) => {
 /////////////////////////////
 // APIS
 /////////////////////////////
-app.use(require('./routes/spark'));
+app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
 
 /////////////////////////////
@@ -74,7 +75,7 @@ function servePage(req, res) {
 app.use(express.static('public'));
 
 app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/')) {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/static/')) {
         next();
     } else {
         return servePage(req, res);
@@ -95,7 +96,7 @@ if (devMode) {
         stats: true
     });
     server.listen(9090);
-    app.get('/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
+    app.get('/static/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 }
 
 /////////////////////////////

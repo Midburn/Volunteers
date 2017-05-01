@@ -7,26 +7,26 @@ const ShiftManagerHeader = observer(({shiftManagerModel}) => (
     <div className="shift-manager-header">
         <div className="shift-manager-header">
             <ButtonToolbar>
-                <DropdownButton title={shiftManagerModel.departmentID ? `Department: ${shiftManagerModel.departmentName}` : 'Select Department'} value={shiftManagerModel.departmentID || 0}>
-                    {shiftManagerModel.departments.map(({id, name}) => <MenuItem onSelect={() => shiftManagerModel.departmentID = id}>{name}</MenuItem>)}
+                <DropdownButton id="departments" title={shiftManagerModel.departmentID ? `Department: ${shiftManagerModel.departmentName}` : 'Select Department'} value={shiftManagerModel.departmentID || 0}>
+                    {shiftManagerModel.departments.map(({id, name}) => <MenuItem key={id} onSelect={() => shiftManagerModel.departmentID = id}>{name}</MenuItem>)}
                 </DropdownButton>
 
-                <OverlayTrigger placement="top" overlay={<Tooltip>Create session</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="create-session">Create session</Tooltip>}>
                     <Button bsStyle="primary" key="create" onClick={shiftManagerModel.createShift} className="glyphicon glyphicon-plus" />
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip>Daily View</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="daily-view">Daily View</Tooltip>}>
                     <Button key="daily" onClick={() => shiftManagerModel.weekView = false}  className="glyphicon glyphicon-resize-full" />
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip>Weekly View</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="weekly-view">Weekly View</Tooltip>}>
                     <Button key="weekly" onClick={() => shiftManagerModel.weekView = true} className="glyphicon glyphicon-resize-small" />
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip>Previous</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="previous">Previous</Tooltip>}>
                     <Button key="prev" onClick={() => shiftManagerModel.date = moment(shiftManagerModel.date).subtract(1, shiftManagerModel.weekView ? 'weeks' : 'days')} className="glyphicon glyphicon-menu-left" />
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip>Next</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="next">Next</Tooltip>}>
                     <Button key="next" onClick={() => shiftManagerModel.date = moment(shiftManagerModel.date).add(1, shiftManagerModel.weekView ? 'weeks' : 'days')} className="glyphicon glyphicon-menu-right" />
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip>Today</Tooltip>}>
+                <OverlayTrigger placement="top" overlay={<Tooltip id="today">Today</Tooltip>}>
                     <Button key="today" onClick={() => shiftManagerModel.date = moment(new Date).startOf('day')} className="glyphicon glyphicon-time" />
                 </OverlayTrigger>
 

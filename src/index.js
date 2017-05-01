@@ -5,10 +5,10 @@ import App from "./routes/App";
 import ComingSoon from "./components/ComingSoon/ComingSoon";
 import axios from "axios";
 
-async function fetchUserDetails() {
+async function fetchUserRoles() {
     try {
-        const response = await axios.get('/api/v1/volunteers/me', {credentials: 'include'});
-        document.userDetails = response.data;
+        const response = await axios.get('/api/v1/volunteers/roles/me', {credentials: 'include'});
+        document.roles = response.data;
 
         render(App);
     }
@@ -27,7 +27,7 @@ const render = (Component) => {
     );
 };
 
-fetchUserDetails();
+fetchUserRoles();
 
 if (module.hot) {
     module.hot.accept('./routes/App', () => {
