@@ -1,0 +1,47 @@
+.shift-manager {
+    overflow: scroll;
+    min-height: 500px;
+    min-height: 968px;
+    .header {
+        height: 30px;
+        background: darkblue;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .row-header {
+        .hour-header {
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #EEEEEE;
+        }
+        vertical-align: middle;
+    }
+    .shift-manager-header {
+        display: flex;
+    }
+
+    input[type="color"] {
+        width: 50px;
+    }
+
+    .shift-manager-roster {
+        display: flex;
+        min-height: 800px;
+        margin: 10px;
+        border: 1px solid grey;
+
+        .day-view {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+
+            .table {
+                flex: 1;
+            }
+        }
+    }
+}
