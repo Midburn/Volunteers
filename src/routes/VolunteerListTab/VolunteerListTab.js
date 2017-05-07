@@ -51,7 +51,9 @@ export default class VolunteerListTab extends Component {
     }
 
     fetchRoles() {
-        this.setState({roles: document.roles});
+        axios.get('/api/v1/roles')
+            .then((res) => this.setState({roles: res.data}))
+            .catch(this.logNetworkError);
     }
 
     handleRowDelete = (department, profile_id) => {
@@ -106,7 +108,6 @@ export default class VolunteerListTab extends Component {
         console.error('not implemented');
     }
 
-//TODO get roles stucture from server side
     render() {
         const {filters, volunteers, roles, departments} = this.state;
         return (

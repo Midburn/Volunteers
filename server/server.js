@@ -20,25 +20,27 @@ app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
 
 const devMode = (process.env.ENVIRONMENT == 'debug');
+const SPARK_HOST = process.env.SPARK_HOST;
+const JWT_KEY = process.env.JWT_KEY;
+const SECRET= process.env.SECRET;
 
 /////////////////////////////
 // WEB middleware
 /////////////////////////////
 app.use((req, res, next) => {
 
-    if (req.path === '/' && req.query.token) {
-        res.clearCookie('jwt');
-        res.cookie('jwt', req.query.token);
+    if (req.path === '/login') {
+        return next();
     }
 
-    const token = req.cookies && req.cookies.jwt;
+    const token = req.cookies && req.cookies[JWT_KEY];
 
     if (!token) {
-        return res.redirect(process.env.SPARK_HOST);
+        return res.redirect(SPARK_HOST);
     }
 
     try {
-        const userDetails = jwt.verify(token, 'secret');
+        const userDetails = jwt.verify(token, SECRET);
         req.token = token;
         req.userDetails = userDetails;
 
@@ -46,8 +48,8 @@ app.use((req, res, next) => {
     }
     catch (err) {
         console.log(err);
-        res.clearCookie('jwt');
-        return res.redirect(process.env.SPARK_HOST);
+        res.clearCookie(JWT_KEY);
+        return res.redirect(SPARK_HOST);
     }
 });
 
@@ -62,6 +64,26 @@ app.use((err, req, res, next) => {
 /////////////////////////////
 app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
+app.use('/login', (req, res) => {
+
+    const token = req.query.token;
+
+    if (!token) {
+        res.status(401).json({error: 'No token was given'});
+    }
+
+    res.clearCookie(JWT_KEY);
+
+    try {
+        jwt.verify(token, SECRET);
+        res.cookie(JWT_KEY, token);
+        res.redirect('/');
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({error: 'Invalid token'});
+    }
+});
 
 /////////////////////////////
 // WEB
