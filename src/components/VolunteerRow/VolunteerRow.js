@@ -20,7 +20,6 @@ export default class VolunteerRow extends Component {
     }
 
     handleSubmit = (diff) => {
-        console.log(diff);
         //TODO BUG
         //TODO either row is updated on every submit and then no need for diff merge or an additional send to server phase is added
         this.props.onRowChange(this.props.volunteer.department_id, this.props.volunteer.profile_id, diff);//TODO include department id in model
@@ -44,15 +43,10 @@ export default class VolunteerRow extends Component {
             }
         }
 
-        console.log('couldnt find')
-        console.log(this.props.departments)
-        console.log(this.props.volunteer.department_id)
-
         return 'Unknown'
     }
 
     roleName = () => {
-        console.log(this.props.roles)
         if (!this.props.roles) {
             return ''
         }
@@ -69,7 +63,6 @@ export default class VolunteerRow extends Component {
 
     
     render() {
-        console.log(this.props.volunteer)
         if (!this.props.volunteer){
             return null;
         }

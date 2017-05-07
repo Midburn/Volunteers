@@ -29,7 +29,7 @@ router.get('/departments',
 //READ ROLES
 router.get('/roles',
     handleSparkProxy(req =>
-        sparkFacade.roles(req.token)));
+        sparkFacade.allRoles(req.token)));
 
 //READ ALL VOLUNTEERINGS - READ
 router.get('/volunteers', handleSparkProxy(req => sparkFacade.volunteers(req.token)));

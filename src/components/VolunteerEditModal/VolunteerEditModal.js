@@ -36,7 +36,6 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     handleInputChange(field,event){
-        console.log('VolunteerEditModal.handleInputChange');
         let converter = new DropdownConverter();
 
         let val= event.target.value;
@@ -50,13 +49,11 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     handleSubmit(){
-        console.log('VolunteerEditModal.handleSubmit');
         let diff = Object.keys(this.state.volunteer).reduce((acc,cur)=>{
             if (this.state.volunteer[cur]!==undefined && this.state.volunteer[cur]!==this.props.volunteer[cur])
                 acc[cur] = this.state.volunteer[cur];
                 return acc;
         },{});
-        console.log(diff);
 
         this.handleReset();
         this.props.onSubmit(diff)
@@ -75,9 +72,7 @@ export default class VolunteerEditModal extends React.Component{
     }
 
     render(){
-        console.log('VolunteerEditModal.render');
         let displayedVolunteer = this.calcDisplayedVolunteer();
-        console.log(displayedVolunteer);
 
         return (
             <Modal show={this.props.show} onHide={this.handleCancel}>

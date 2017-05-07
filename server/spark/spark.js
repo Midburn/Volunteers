@@ -24,6 +24,10 @@ class SparkFacade {
             .then(depts => depts.map(n => _.assign({name: n.name_en}, n)));
     }
 
+    allRoles(token) {
+        return this.fetchSpark('/volunteers/roles', {headers: {'Authorization': `Bearer ${token}`}});
+    }
+
     rolesByUser(token, userId) {
         return this.fetchSpark(`/volunteers/${userId}/roles`, {headers: {'Authorization': `Bearer ${token}`}});
     }

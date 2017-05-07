@@ -29,7 +29,6 @@ export default class VolunteerAddModal extends Component{
     }
 
     handleChange = (field, event) => {
-        console.log(`VolunteerAddModal.handleInputChange. field ${field}`);
         let converter = new DropdownConverter();
         let val = event.target.value;
 
@@ -38,8 +37,6 @@ export default class VolunteerAddModal extends Component{
     }
 
     handleSubmit = () => {
-        console.log(`VolunteerAddModal.handleSubmit: state:${this.state}`);
-        
         let emails = this.splitEmailString(this.state.email);
         if (emails.length == 0) {
             this.state.errorTexts = ['Please enter an email address']
@@ -87,14 +84,9 @@ export default class VolunteerAddModal extends Component{
                 this.state.isButtonEnabled = true
                 this.setState(this.state)
             });
-        // let emails = this.splitEmailString(this.state.email);
-        // console.log(`VolunteerAddModal.handleSubmit: role:${this.state.role}, department:${this.state.department}, emails:${emails}`);
-        // this.props.onSubmit(this.state.department,this.state.role,this.state.production,emails);
-        // this.handleClose();
     }
 
     handleServerResponse = (response) => {
-        console.log(response)
         var errors = []
         var successCounter = 0
 
@@ -129,14 +121,10 @@ export default class VolunteerAddModal extends Component{
     }
 
     splitEmailString = (emailStr) => {
-        console.log(`emails string:${emailStr}`)
         var emailArr = emailStr.split(/\r|\n/).map((email) => {return email.trim()})
         emailArr = emailArr.filter((email) => { return email != '' }); 
 
-        return emailArr
-        // let filteredArr = emailArr.filter(this.validateEmail);
-        // console.log((emailArr.length - filteredArr.length) + ' emails were incorrect');
-        // return filteredArr;
+        return emailArr;
     }
 
     testLastEmail = (email) => {

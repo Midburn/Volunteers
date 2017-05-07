@@ -46,7 +46,6 @@ export default class TableComponent extends Component {
     }
 
     roleName = (role_id) => {
-        console.log(this.props.roles)
         if (!this.props.roles) {
             return ''
         }
