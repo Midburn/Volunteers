@@ -6,12 +6,14 @@ Midburn's volunteers module.
 ### Installation
 
 clone repo
-run `nvm use`
-run `npm install`
+1. run `npm install`
+2. install and run mongodb locally
 
-run mongodb locally
-
+Run with spark staging:
 run `npm start`
+
+Run with local mock spark:
+run `npm run local`
 
 
 ### Workflow
