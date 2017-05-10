@@ -12,7 +12,7 @@ const ShiftManagerHeader = observer(({shiftManagerModel}) => (
                 </DropdownButton>
 
                 <OverlayTrigger placement="top" overlay={<Tooltip id="create-session">Create session</Tooltip>}>
-                    <Button bsStyle="primary" key="create" onClick={shiftManagerModel.createShift} className="glyphicon glyphicon-plus" />
+                    <Button bsStyle="primary" key="create" onClick={() => shiftManagerModel.createShift()} className="glyphicon glyphicon-plus" />
                 </OverlayTrigger>
                 <OverlayTrigger placement="top" overlay={<Tooltip id="daily-view">Daily View</Tooltip>}>
                     <Button key="daily" onClick={() => shiftManagerModel.weekView = false}  className="glyphicon glyphicon-resize-full" />
