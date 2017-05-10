@@ -5,7 +5,6 @@ const React = require('react');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 const webpackConfig = require("../webpack.config.js");
-const authHelper = require('./authHelper.js');
 const http = require('http');
 const axios = require('axios');
 const mongoose = require('mongoose');
@@ -22,7 +21,7 @@ app.use(bodyParser.json()); // for parsing application/json
 const devMode = (process.env.ENVIRONMENT == 'debug');
 const SPARK_HOST = process.env.SPARK_HOST;
 const JWT_KEY = process.env.JWT_KEY;
-const SECRET= process.env.SECRET;
+const SECRET = process.env.SECRET;
 
 /////////////////////////////
 // WEB middleware
@@ -64,9 +63,18 @@ app.use((err, req, res, next) => {
 /////////////////////////////
 app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
+
 app.use('/login', (req, res) => {
 
-    const token = req.query.token;
+    let token = req.query.token;
+    if (!token && devMode && process.env.LOCAL_SPARK === 'true') {
+        token = jwt.sign({
+            "id": 1,
+            "email": "user@midburn.org",
+            "iat": (new Date() / 1000) + 24*60*60,
+            "exp": (new Date() / 1000) + 24*60*60
+        }, process.env.SECRET);
+    }
 
     if (!token) {
         res.status(401).json({error: 'No token was given'});
@@ -104,9 +112,9 @@ app.get('*', (req, res, next) => {
     }
 });
 
-/////////////////////////////
-// webpack-dev-server
-/////////////////////////////
+////////////////////////////////////////////
+// Dev Mode (webpack-dev-server, spark mock
+////////////////////////////////////////////
 if (devMode) {
 
     webpackConfig.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
@@ -119,6 +127,10 @@ if (devMode) {
     });
     server.listen(9090);
     app.get('/static/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
+
+    if (process.env.LOCAL_SPARK === 'true') {
+        require('./spark/sparkMock')
+    }
 }
 
 /////////////////////////////

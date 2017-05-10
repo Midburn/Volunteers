@@ -48,7 +48,8 @@
   "scripts": {
     "start": "node server/server.js",
     "build": "webpack",
-    "test": "mocha"
+    "test": "mocha",
+    "local": "LOCAL_SPARK=true node server/server.js"
   },
   "repository": {
     "type": "git",
