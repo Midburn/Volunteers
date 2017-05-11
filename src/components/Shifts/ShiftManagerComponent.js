@@ -10,7 +10,7 @@ import ShiftCalendar from './ShiftCalendar';
 const ShiftManagerComponent = observer(({shiftManagerModel}) =>(
     <div className="shift-manager">
         <ShiftManagerHeader key="header" shiftManagerModel={shiftManagerModel} />
-        <ShiftCalendar shiftManagerModel={shiftManagerModel} />
+        {shiftManagerModel.departmentID && <ShiftCalendar shiftManagerModel={shiftManagerModel} />}
         <ShiftModal key="modal"
             shift={shiftManagerModel.currentShift}
             departmentVolunteers={shiftManagerModel.volunteers}

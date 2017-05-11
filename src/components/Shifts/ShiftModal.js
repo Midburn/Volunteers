@@ -3,6 +3,7 @@ import React from 'react'
 import moment from 'moment'
 import {Modal, FormGroup, ControlLabel, FormControl, Button, Table, DropdownButton, MenuItem} from 'react-bootstrap'
 import DatePicker from 'react-bootstrap-date-picker'
+import {Typeahead} from 'react-bootstrap-typeahead'
 import _ from 'lodash'
 
 const asHour = d => moment(d).format('H:mm')
@@ -56,18 +57,23 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
             <ControlLabel>Volunteers</ControlLabel>
             <Table striped bordered condensed hover key="table">
                 <tbody>
-                {shift.volunteers.map((v, i) => 
-                    <tr>
-                        <td>{`${v.first_name} ${v.last_name}`}</td>
-                        <td><Button onClick={() => shift.volunteers = _.without(shift.volunteers, v)}>Delete</Button></td>
+                {_.compact(shift.volunteers).map((v, i) => 
+                    <tr key={i}>
+                        <td width="100%" key={1}>{`${v.first_name} ${v.last_name}`}</td>
+                        <td key={2}><Button onClick={() => shift.volunteers = _.without(shift.volunteers, v)}>Delete</Button></td>
                     </tr>)}
                 </tbody>
             </Table>
-            <DropdownButton id="addVolunteerToShift" title="Add" key="add">
-                {_.difference(departmentVolunteers, shift.volunteers).map(v => 
-                    <MenuItem key={v.profile_id} onSelect={() => shift.volunteers = [...shift.volunteers, v] }>{v.first_name} {v.last_name}</MenuItem>
-                )}
-            </DropdownButton>
+            <Typeahead id="addVolunteerToShift" placeholder="Add" 
+                labelKey={(v) => v.first_name + ' ' + v.last_name}
+                ref={(th) => this.typeahead = th }
+                onChange={([v]) => {
+                    if (v) {
+                        shift.volunteers = [...shift.volunteers, v];
+                        this.typeahead.getInstance().clear();
+                    }
+                }}
+                options={_.difference(departmentVolunteers, shift.volunteers)} />
         </FormGroup>
 
         </Modal.Body>
