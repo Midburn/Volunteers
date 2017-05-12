@@ -2,24 +2,28 @@ import React from 'react';
 import {observer} from 'mobx-react';
 import moment from 'moment'
 import {ListGroup, ListGroupItem, DropdownButton, MenuItem, Button} from 'react-bootstrap'
+import Header from "../Header/Header";
 
 require ('./TimeClock.scss');
 
 const TimeClockComponent = observer(({shiftManagerModel}) =>(
     <div className="time-clock">
+        <Header />    
         {shiftManagerModel.currentShift ? <div className="shift-details">
-            <nav className="navbar navbar-default">
             <div className="container-fluid">
-                <div className="navbar-header">
-                <Button className="navbar-brand glyphicon glyphicon-chevron-left" href="#" onClick={() => shiftManagerModel.currentShift = null} />
-                {shiftManagerModel.currentShift.title}, {moment(shiftManagerModel.currentShift.startDate).calendar()}
-                </div>
+                    <ul className="breadcrumb">
+                        <li>
+                        <a href="#" onClick={() => shiftManagerModel.currentShift = null}>{shiftManagerModel.departmentName}</a>
+                    </li>
+                        <li className="active">
+                    {shiftManagerModel.currentShift.title}, {moment(shiftManagerModel.currentShift.startDate).calendar()}
+                    </li>
+                </ul>
             </div>
-            </nav>          
             <ListGroup>
                 <ListGroupItem>
                 {_.compact(shiftManagerModel.currentShift.volunteers).map(v => 
-                <div className="checkbox" key={v.profile_id}>
+                <div className="form-group" key={v.profile_id}>
                     <label>
                         <input checked={_.includes(shiftManagerModel.currentShift.reported, '' + v.profile_id)}
                             type="checkbox" value={'' + v.profile_id} 
@@ -43,6 +47,7 @@ const TimeClockComponent = observer(({shiftManagerModel}) =>(
             <ListGroup>
                 {shiftManagerModel.filteredShifts.sort().map(shift => 
                     <ListGroupItem key={shift.id} onClick={() => shiftManagerModel.currentShift = shift}>
+                        <span className="badge">{_.size(shift.volunteers)}</span>
                         {shift.title}, {moment(shift.startDate).calendar()}
                     </ListGroupItem>
                 )}
