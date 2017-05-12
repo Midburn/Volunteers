@@ -16,6 +16,10 @@
     margin-left: -160px; /* Half the width */
 }
 
+h3 {
+    text-align: center;
+}
+
 .loader {
     border: 8px solid #f3f3f3; /* Light grey */
     border-top: 8px solid #3498db; /* Blue */

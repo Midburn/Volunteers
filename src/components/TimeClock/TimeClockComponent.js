@@ -10,16 +10,14 @@ const TimeClockComponent = observer(({shiftManagerModel}) =>(
     <div className="time-clock">
         <Header />    
         {shiftManagerModel.currentShift ? <div className="shift-details">
-            <div className="container-fluid">
                     <ul className="breadcrumb">
                         <li>
                         <a href="#" onClick={() => shiftManagerModel.currentShift = null}>{shiftManagerModel.departmentName}</a>
                     </li>
-                        <li className="active">
-                    {shiftManagerModel.currentShift.title}, {moment(shiftManagerModel.currentShift.startDate).calendar()}
+                    <li className="active">
+                        {shiftManagerModel.currentShift.title}, {moment(shiftManagerModel.currentShift.startDate).calendar()}
                     </li>
                 </ul>
-            </div>
             <ListGroup>
                 <ListGroupItem>
                 {_.compact(shiftManagerModel.currentShift.volunteers).map(v => 

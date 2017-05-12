@@ -8,9 +8,9 @@ class Header extends React.Component{
     return (
       <div>
         <div>
-          <h1>
+          <h3>
             <Link to="/">Volunteers - Shift Management</Link>
-          </h1>
+          </h3>
         </div>
         <div>
           <Navigation />
