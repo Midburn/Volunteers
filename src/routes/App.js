@@ -10,7 +10,7 @@ class App extends React.Component {
         return (
             <Router>
                 <div>
-                    <Route exact path="/" component={VolunteerListTab}/>
+                    <Route exact path="/" component={TimeClock}/>
                     <Route path="/volunteer-list-tab" component={VolunteerListTab}/>
                     <Route path="/shift-manager" component={ShiftManager}/>
                     <Route path="/time-clock" component={TimeClock}/>

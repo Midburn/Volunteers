@@ -37,19 +37,19 @@ export default class VolunteerListTab extends Component {
             console.log('Headers', err.response.headers);
         }
         else console.log('Error', err.message);
-    }
+    };
 
     fetchVolunteers = () => {
         axios.get('/api/v1/volunteers/')
             .then((res) => this.setState({volunteers: res.data}))
             .catch(this.logNetworkError);
-    }
+    };
 
     fetchDepartments = () => {
         axios.get('/api/v1/departments')
             .then((res) => this.setState({departments: res.data}))
             .catch(this.logNetworkError);
-    }
+    };
 
     fetchRoles() {
         axios.get('/api/v1/roles')
@@ -57,24 +57,23 @@ export default class VolunteerListTab extends Component {
             .catch(this.logNetworkError);
     }
 
-    handleRowDelete = (department, profile_id) => {
-        console.log('VolunteerListTab.handleRowDelete');
+    handleVolunteerDelete = (profile_id, department) => {
 
         axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
             .then(this.fetchVolunteers)
             .catch(this.logNetworkError);
-    }
+    };
 
-    handleRowChange = (department, profile_id, diff) => {
+    handleRoleChange = (profileId, departmentId, roleId) => {
         axios
-            .put(`/api/v1/departments/${department}/volunteers/${profile_id}`, diff)
+            .put(`/api/v1/departments/${departmentId}/volunteers/${profileId}`, {role_id: roleId})
             .then(this.fetchVolunteers)
             .catch(this.logNetworkError);
-    }
+    };
 
     handleFilterTextInput = (filterText) => {
         this.handleFilterInput('filterText', filterText);
-    }
+    };
 
     handleFilterInput = (filterName, value) => {
         const mergeValue = {
@@ -85,35 +84,13 @@ export default class VolunteerListTab extends Component {
             }
         };
         this.setState((previousState) => update(previousState, mergeValue));
-    }
-
-    handleAddVolunteers = (department, role, is_production, emails) => {
-        console.log(`VolunteerListTab.handleAddVolunteeers: department:${department}, role:${role}, emails:${emails}`);
-        // TODO - convert department to department id
-        let departmentId = department;
-        // TODO - create a request to test emails validity
-        if (emails.length < 1) {
-            console.log('no volunteers to add');
-            return;
-        }
-
-        // add volunteers
-        console.log(`posting to api/v1/departments/${departmentId}/volunteers`);
-        axios
-            .post(`/api/v1/departments/${departmentId}/volunteers`, {role, is_production, emails})
-            .then(() => console.log('request to server succeeded'))
-            .catch(() => console.log('error communicating with server'));
-    }
-
-    createVolunteer(volunteers) {
-        console.error('not implemented');
-    }
+    };
 
     render() {
         const {filters, volunteers, roles, departments} = this.state;
         return (
             <div className="volunteer-list-tab-component">
-            <Header />
+                <Header />
                 <div className="container card">
                     <FilterComponent
                         filters={filters}
@@ -129,8 +106,8 @@ export default class VolunteerListTab extends Component {
                         filters={filters}
                         roles={roles}
                         departments={departments}
-                        onRowDelete={this.handleRowDelete}
-                        onRowChange={this.handleRowChange}/>
+                        onRowDelete={this.handleVolunteerDelete}
+                        onRowChange={this.handleRoleChange}/>
                 </div>
             </div>
         );

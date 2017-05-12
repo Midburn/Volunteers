@@ -22,9 +22,18 @@ router.get('/volunteers/roles/me', handleSparkProxy(req =>
     sparkFacade.rolesByUser(req.token, req.userDetails.id)));
 
 //READ DEPARTMENTS
-router.get('/departments',
-    handleSparkProxy(req =>
-        sparkFacade.departments(req.token)));
+router.get('/departments', co.wrap(function*(req, res) {
+    const roles = yield sparkFacade.rolesByUser(req.token, req.userDetails.id);
+    const departments = yield sparkFacade.departments(req.token);
+
+    const isAdmin = roles.find(role => role.permission === 1);
+
+    if (isAdmin) {
+        return res.json(departments);
+    }
+
+    res.json(departments.filter(department => roles.find(role => role.department_id === department.id)));
+}));
 
 //READ ROLES
 router.get('/roles',

@@ -126,7 +126,6 @@ function ShiftManagerModel() {
         .value()
 
     reaction(() => [this.shifts, this.searchText, this.dateRange, this.volunteers], ([shifts, searchText, [startDate, endDate], volunteers]) => {
-        console.log(toJS(shifts))
         this.filteredShifts = _.map(shifts,
             (shift, id) =>
                 _.defaults({id, volunteers: _.compact(shift.volunteers).map(v => _.find(volunteers, {profile_id: +v}))}, shift)
