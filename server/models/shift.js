@@ -9,7 +9,8 @@ const shiftSchema = new Schema({
     comment: String,
     startDate: Date,
     endDate: Date,
-    volunteers: [String]
+    volunteers: [String],
+    reported: [String]
 }, {_id: false});
 
 const Shift = mongoose.model('Shift', shiftSchema);

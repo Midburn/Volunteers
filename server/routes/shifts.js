@@ -22,7 +22,8 @@ router.post('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req,
         'departmentId': departmentId,
         'startDate': req.body.startDate,
         'endDate': req.body.endDate,
-        'volunteers': req.body.volunteers
+        'volunteers': req.body.volunteers,
+        'reported': req.body.reported || []
     });
 
     yield shift.save();
@@ -39,7 +40,8 @@ router.put('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, 
         'color': req.body.color,
         'startDate': req.body.startDate,
         'endDate': req.body.endDate,
-        'volunteers': req.body.volunteers
+        'volunteers': req.body.volunteers,
+        'reported': req.body.reported || []
     };
 
     const shift = yield Shift.findOne({_id: shiftId, departmentId: departmentId});

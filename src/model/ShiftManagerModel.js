@@ -1,4 +1,4 @@
-import {extendObservable, reaction} from 'mobx';
+import {extendObservable, reaction, toJS} from 'mobx';
 import moment from 'moment';
 import axios from 'axios'
 import _ from 'lodash'
@@ -47,11 +47,11 @@ function ShiftManagerModel() {
         return _.assign({
             startDate: moment(shift.startDate).format(),
             endDate: moment(shift.endDate).format(),
-            volunteers: shift.volunteers.map(v => v.profile_id)
-        }, _.pick(shift, ['title', 'color']))
+            volunteers: _.compact(shift.volunteers.map(v => _.isObject(v) ? +v.profile_id : +v))
+        }, _.pick(shift, ['title', 'color', 'reported']))
     }
 
-    this.submitShift = async() => {
+    this.submitShift = async({close}) => {
         if (!this.currentShift) {
             return
         }
@@ -64,8 +64,10 @@ function ShiftManagerModel() {
 
             await this.refreshShifts()
             const id = this.currentShift._id
-            this.currentShift = null
-            this.focusedShift = id
+            if (close) {
+                this.currentShift = null
+                this.focusedShift = id
+            }
             return id
         } catch (e) {
             this.editError = e.message
@@ -123,12 +125,13 @@ function ShiftManagerModel() {
         .map(s => s.toLowerCase())
         .value()
 
-    reaction(() => [this.shifts, this.searchText, this.dateRange], ([shifts, searchText, [startDate, endDate]]) => {
-
+    reaction(() => [this.shifts, this.searchText, this.dateRange, this.volunteers], ([shifts, searchText, [startDate, endDate], volunteers]) => {
+        console.log(toJS(shifts))
         this.filteredShifts = _.map(shifts,
             (shift, id) =>
-                _.defaults({id, volunteers: shift.volunteers.map(v => _.find(this.volunteers, {profile_id: v}))}, shift)
+                _.defaults({id, volunteers: _.compact(shift.volunteers).map(v => _.find(volunteers, {profile_id: +v}))}, shift)
         );
+
 
     })
 
