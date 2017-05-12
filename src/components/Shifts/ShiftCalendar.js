@@ -17,7 +17,7 @@ const Event = ({event: {shift, onEdit, onDelete}}) =>
 			{shift.title}
 		</strong>
 		<p>	{shift.volunteers.length} volunteers</p>
-		<div className="toolbar">
+		<div className="toolbar" style={{position: 'absolute', right: 0, top: 0}}>
 			<Button bsSize="xsmall" onClick={() => onEdit(shift)} className="glyphicon glyphicon-edit"/>
 			<Button bsSize="xsmall" onClick={() => onDelete(shift)} className="glyphicon glyphicon-trash"/>
 		</div>
