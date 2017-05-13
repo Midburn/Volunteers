@@ -1,16 +1,19 @@
-import {observer} from "mobx-react"
-import React from 'react'
-import moment from 'moment'
-import {Modal, FormGroup, ControlLabel, FormControl, Button, Table, DropdownButton, MenuItem} from 'react-bootstrap'
-import DatePicker from 'react-bootstrap-date-picker'
-import {Typeahead} from 'react-bootstrap-typeahead'
-import _ from 'lodash'
+import {observer} from "mobx-react";
+import React from 'react';
+import moment from 'moment';
+import {Modal, FormGroup, ControlLabel, FormControl, Button, Table, DropdownButton, MenuItem} from 'react-bootstrap';
+import DatePicker from 'react-bootstrap-date-picker';
+import {Typeahead} from 'react-bootstrap-typeahead';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+import _ from 'lodash';
 
 const asHour = d => moment(d).format('H:mm')
 
-const getHours = (date) => 
+const getHours = (date) =>
     new Array(48).fill(0).map(
-        (v, i) => (d => <option value={moment(d).format()} key={d}>{asHour(d)}</option>)(moment(date).startOf('day').add(i * 30, 'minutes'))) 
+        (v, i) => (d => <option value={moment(d).format()}
+                                key={d}>{asHour(d)}</option>)(moment(date).startOf('day').add(i * 30, 'minutes')))
 
 function changeDate(shift, date) {
     const diff = moment(date).startOf('day').diff(moment(shift.startDate).startOf('day'), 'minutes')
@@ -20,68 +23,69 @@ function changeDate(shift, date) {
 
 const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) => (
     shift ? <Modal onHide={onCancel} show={true}>
-        <Modal.Header>
-            <Modal.Title>{shift.isNew ? 'Create Shift' : "Edit Shift"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <FormGroup controlId="title">
-            <ControlLabel>Title</ControlLabel>
-            <FormControl componentClass="textarea" rows="1" onChange={e => shift.title = e.target.value} value={shift.title} className="form-control"/>
-        </FormGroup>
-        <FormGroup controlId="color">
-            <ControlLabel>Color</ControlLabel>
-            <input type="color" onChange={e => shift.color = e.target.value} value={shift.color} className="form-control"/>
-        </FormGroup>
-        <FormGroup controlId="date">
-            <ControlLabel>Date</ControlLabel>
-            <DatePicker value={moment(shift.startDate).format()} dateFormat="DD/MM/YYYY" onChange={date => changeDate(shift, date)} />
-        </FormGroup>
-        <FormGroup controlId="startTime">
-            <ControlLabel>Start Time</ControlLabel>
-            <FormControl componentClass="select" onChange={e => shift.startDate = moment(e.target.value)}
-                value={moment(shift.startDate).format()}
-                className="form-control" >
-                    {getHours(shift.startDate)}
-            </FormControl>
-        </FormGroup>
-        <FormGroup controlId="endTime">
-            <ControlLabel>End Time</ControlLabel>
-            <FormControl componentClass="select" onChange={e => shift.endDate = moment(e.target.value)}
-                value={moment(shift.endDate).format()}
-                className="form-control" >
-                    {getHours(shift.endDate)}
-            </FormControl>
-        </FormGroup>
+            <Modal.Header>
+                <Modal.Title>{shift.isNew ? 'Create Shift' : "Edit Shift"}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <FormGroup controlId="title">
+                    <ControlLabel>Title</ControlLabel>
+                    <FormControl componentClass="textarea" rows="1" onChange={e => shift.title = e.target.value}
+                                 value={shift.title} className="form-control"/>
+                </FormGroup>
+                <FormGroup controlId="color">
+                    <ControlLabel>Color</ControlLabel>
+                    <input type="color" onChange={e => shift.color = e.target.value} value={shift.color}
+                           className="form-control"/>
+                </FormGroup>
+                <FormGroup controlId="date">
+                    <ControlLabel>Date</ControlLabel>
+                    <DatePicker value={moment(shift.startDate).format()} dateFormat="DD/MM/YYYY"
+                                onChange={date => changeDate(shift, date)}/>
+                </FormGroup>
+                <FormGroup controlId="startTime">
+                    <ControlLabel>Start Time</ControlLabel>
+                    <FormControl componentClass="select" onChange={e => shift.startDate = moment(e.target.value)}
+                                 value={moment(shift.startDate).format()}
+                                 className="form-control">
+                        {getHours(shift.startDate)}
+                    </FormControl>
+                </FormGroup>
+                <FormGroup controlId="endTime">
+                    <ControlLabel>End Time</ControlLabel>
+                    <FormControl componentClass="select" onChange={e => shift.endDate = moment(e.target.value)}
+                                 value={moment(shift.endDate).format()}
+                                 className="form-control">
+                        {getHours(shift.endDate)}
+                    </FormControl>
+                </FormGroup>
 
-        <FormGroup controlId="volunteers">
-            <ControlLabel>Volunteers</ControlLabel>
-            <Table striped bordered condensed hover key="table">
-                <tbody>
-                {_.compact(shift.volunteers).map((v, i) => 
-                    <tr key={i}>
-                        <td width="100%" key={1}>{`${v.first_name} ${v.last_name}`}</td>
-                        <td key={2}><Button onClick={() => shift.volunteers = _.without(shift.volunteers, v)}>Delete</Button></td>
-                    </tr>)}
-                </tbody>
-            </Table>
-            <Typeahead id="addVolunteerToShift" placeholder="Add" 
-                labelKey={(v) => v.first_name + ' ' + v.last_name}
-                ref={(th) => this.typeahead = th }
-                onChange={([v]) => {
-                    if (v) {
-                        shift.volunteers = [...shift.volunteers, v];
-                        this.typeahead.getInstance().clear();
-                    }
-                }}
-                options={_.difference(departmentVolunteers, shift.volunteers)} />
-        </FormGroup>
+                <FormGroup controlId="volunteers">
+                    <ControlLabel>Volunteers</ControlLabel>
+                    <Select multi simpleValue
+                            value={shift.volunteers && Object.keys(shift.volunteers).join(',')}
+                            options={departmentVolunteers.map(volunteer => ({
+                                value: volunteer.profile_id.toString(),
+                                label: `${volunteer.first_name} ${volunteer.last_name}`,
+                                email: volunteer.email
+                            }))}
+                            onChange={selectedVolunteerProfileIds => shift.volunteers =
+                                selectedVolunteerProfileIds.split(',').reduce((acc, profileId, index) => {
 
-        </Modal.Body>
-        <Modal.Footer>
-            <Button onClick={onSubmit}>OK</Button>
-            <Button onClick={onCancel}>Cancel</Button>
-        </Modal.Footer>
-    </Modal>: null
+                                    acc[profileId] = _.get(shift, ['volunteers', profileId], {
+                                        isCheckedIn: null,
+                                        comment: ''
+                                    });
+                                    return acc;
+                                }, {})}
+                            filterOption={(object, filter) => Object.keys(object).some((element, index, array) => object[element].includes(filter))}/>
+                </FormGroup>
+
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={onSubmit}>OK</Button>
+                <Button onClick={onCancel}>Cancel</Button>
+            </Modal.Footer>
+        </Modal> : null
 ))
 
 export default ShiftModal

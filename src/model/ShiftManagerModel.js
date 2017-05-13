@@ -47,8 +47,7 @@ function ShiftManagerModel() {
         return _.assign({
             startDate: moment(shift.startDate).format(),
             endDate: moment(shift.endDate).format(),
-            volunteers: _.compact(shift.volunteers.map(v => _.isObject(v) ? +v.profile_id : +v))
-        }, _.pick(shift, ['title', 'color', 'reported']))
+            volunteers: shift.volunteers}, _.pick(shift, ['title', 'color', 'reported']))
     }
 
     this.submitShift = async({close}) => {
@@ -60,7 +59,7 @@ function ShiftManagerModel() {
             const method = this.currentShift.isNew ? 'post' : 'put'
             await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift._id}`,
                 {credentials: 'include', data: transformShift(this.currentShift), method}
-            )
+            );
 
             await this.refreshShifts()
             const id = this.currentShift._id
@@ -73,6 +72,10 @@ function ShiftManagerModel() {
             this.editError = e.message
         }
     }
+
+    this.checkInVolunteer = (profileId, checkinTime, comment) => {
+console.log(profileId, checkinTime, comment)
+    };
 
     this.createShift = (startDate, endDate) => {
         if (!this.departmentID) {
@@ -128,7 +131,7 @@ function ShiftManagerModel() {
     reaction(() => [this.shifts, this.searchText, this.dateRange, this.volunteers], ([shifts, searchText, [startDate, endDate], volunteers]) => {
         this.filteredShifts = _.map(shifts,
             (shift, id) =>
-                _.defaults({id, volunteers: _.compact(shift.volunteers).map(v => _.find(volunteers, {profile_id: +v}))}, shift)
+                _.defaults({id, volunteers: shift.volunteers}, shift)
         );
 
 

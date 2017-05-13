@@ -1,5 +1,15 @@
 .time-clock {
-    .dropdown, .dropdown-toggle {
-        width: 100%;
-    }
+  .dropdown, .dropdown-toggle {
+    width: 100%;
+  }
+
+  input[type="text"] {
+    float: right;
+  }
+
+  .shift-color {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+  }
 }

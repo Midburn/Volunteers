@@ -9,7 +9,7 @@ const shiftSchema = new Schema({
     comment: String,
     startDate: Date,
     endDate: Date,
-    volunteers: [String],
+    volunteers: {},
     reported: [String]
 }, {_id: false});
 
