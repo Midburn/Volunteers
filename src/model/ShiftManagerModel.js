@@ -102,6 +102,12 @@ console.log(profileId, checkinTime, comment)
         this.currentShift = shift;
     }
 
+    reaction(() => this.departments, async depts => {
+        if (depts.length) {
+            this.departmentID = depts[0].id;
+        }
+    })
+
     reaction(() => this.departmentID, async dept => {
         // Can optimize by connecting with volunteer-list model
         this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
