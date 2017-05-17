@@ -20,6 +20,7 @@ app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(compression()); // compress all responses
 
+
 const devMode = (process.env.ENVIRONMENT == 'debug');
 const SPARK_HOST = process.env.SPARK_HOST;
 const JWT_KEY = process.env.JWT_KEY;

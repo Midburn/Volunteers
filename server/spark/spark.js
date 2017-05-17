@@ -23,9 +23,13 @@ class SparkFacade {
     return this.fetchSpark('/volunteers/roles', {headers: this.authHeader(token)});
   }
 
-  rolesByUser(token, userId) {
-    return this.fetchSpark(`/volunteers/${userId}/roles`, this.authHeader(token));
+  rolesByUser(token, userEmail) {
+    return this.fetchSpark(`/volunteers/user_roles?email=${userEmail}`, this.authHeader(token));
   }
+
+  // rolesByUser(token, userId) {
+  //   return this.fetchSpark(`/volunteers/${userId}/roles`, this.authHeader(token));
+  // }
 
   volunteers(token) {
     let volunteers;

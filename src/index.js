@@ -18,7 +18,8 @@ async function fetchUserRoles() {
     }
     catch(err) {
         console.log(err);
-        render(ComingSoon);
+        
+        render(<ComingSoon err={err} />);
     }
 }
 
