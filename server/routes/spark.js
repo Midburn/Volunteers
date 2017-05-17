@@ -19,7 +19,7 @@ const handleSparkProxy = handler => (req, res) => {
 
 // READ VOLUNTEER ROLES
 router.get('/volunteers/roles/me', handleSparkProxy(req =>
-    sparkFacade.rolesByUser(req.token, req.userDetails.id)));
+    sparkFacade.rolesByUser(req.token, req.userDetails.email)));
 
 //READ DEPARTMENTS
 router.get('/departments', co.wrap(function*(req, res) {

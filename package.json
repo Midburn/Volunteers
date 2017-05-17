@@ -52,7 +52,7 @@
     "webpack-dev-server": "^2.1.0-beta.0"
   },
   "scripts": {
-    "start": "node server/server.js > logs.log 2> errors.log",
+    "start": "node server/server.js",
     "build": "webpack",
     "test": "mocha",
     "local": "LOCAL_SPARK=true node server/server.js"
