@@ -31,7 +31,7 @@ class SparkFacade {
     }
 
     rolesByUser(token, userId) {
-        return this.fetchSpark(`/volunteers/${userId}/roles`, {headers: this.authHeader(token)});
+        return this.fetchSpark(`/volunteers/${userId}/roles`, this.authHeader(token));
     }
 
     volunteersByDepartment(token, departmentId) {
@@ -69,7 +69,7 @@ class SparkFacade {
     }
 
     authHeader(token) {
-        return {'Cookie': `${SessionCookieName}=${token}`};
+      return {'Cookie': `${SessionCookieName}=${token}`};
     }
 }
 
