@@ -12,7 +12,7 @@ if [ "$TRAVIS_REPO_SLUG" = "Midburn/Volunteers" ]; then
 			rm -f stage_machine.key
 			exit $RC
 		elif [ "$TRAVIS_BRANCH" = "master" ]; then
-			echo "Deploying to staging server from master branch"
+			echo "Deploying to production server from master branch"
 			echo -e $SSH_KEY | base64 -d > production_machine.key
 			chmod 400 production_machine.key
 			ssh -o StrictHostKeyChecking=no -i production_machine.key "${PRODUCTION_SERVER}" "cd volunteers && git pull -r && npm install && npm run build && pm2 restart all" 2>/dev/null
