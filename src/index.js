@@ -10,19 +10,9 @@ async function fetchUserRoles() {
     try {
         const response = await axios.get('/api/v1/volunteers/roles/me', {credentials: 'include'});
         if(response.data.length > 0){
-            const isAdmin = response.data.some( (item) => item.permission < 2)
-            if (isAdmin) {
-                document.roles = response.data;
-                render(App);
-                return;
-            }
 
-            const isShiftManager = response.data.some( (item) => item.permission < 4)
-            if (isShiftManager) {
                 document.roles = response.data;
-                render(TimeClock);
-                return;  
-            }
+                return render(App);
         }
         render(ComingSoon);
     }
