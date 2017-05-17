@@ -10,6 +10,7 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const compression = require('compression');
 
 // Load environment variables default values
 require('dotenv').config();
@@ -17,6 +18,7 @@ require('dotenv').config();
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
+app.use(compression()); // compress all responses
 
 const devMode = (process.env.ENVIRONMENT == 'debug');
 const SPARK_HOST = process.env.SPARK_HOST;
