@@ -66,5 +66,10 @@ router.delete('/departments/:dId/volunteers/:uid',
     handleSparkProxy(req =>
         sparkFacade.deleteVolunteer(req.token, req.params.dId, req.params.uid)));
 
+//DELETE VOLUNTEERS CACHE
+router.delete('/cache/volunteers',
+    handleSparkProxy(req =>
+        sparkFacade.deleteVolunteersCache()));
+
 
 module.exports = router;
