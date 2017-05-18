@@ -1,4 +1,8 @@
 .shift-manager {
+    .rbc-selected {
+        z-index: 3;
+    }
+
     overflow: scroll;
     min-height: 500px;
     min-height: 968px;
