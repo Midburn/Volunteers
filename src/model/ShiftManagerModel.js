@@ -35,7 +35,7 @@ function ShiftManagerModel() {
 
     this.initDepartments = async() => {
         const resp = await axios('/api/v1/departments', {credentials: 'include'})
-        this.departments = resp.data
+        this.departments = resp.data.sort((a, b)=> a.name.localeCompare(b.name));
     }
 
     this.refreshShifts = async() => {
@@ -47,7 +47,7 @@ function ShiftManagerModel() {
         return _.assign({
             startDate: moment(shift.startDate).format(),
             endDate: moment(shift.endDate).format(),
-            volunteers: shift.volunteers}, _.pick(shift, ['title', 'color', 'reported']))
+            volunteers: shift.volunteers}, _.pick(shift, ['title', 'color', 'reported', 'comment']))
     }
 
     this.submitShift = async({close}) => {
