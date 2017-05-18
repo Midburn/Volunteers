@@ -80,7 +80,7 @@ app.use('/login', (req, res) => {
     }
 
     if (!token) {
-        res.status(401).json({error: 'No token was given'});
+        return res.status(401).json({error: 'No token was given'});
     }
 
     res.clearCookie(JWT_KEY);
