@@ -23,13 +23,20 @@ router.get('/volunteers/roles/me', handleSparkProxy(req =>
 
 //READ DEPARTMENTS
 router.get('/departments', co.wrap(function*(req, res) {
-    const roles = yield sparkFacade.rolesByUser(req.token, req.userDetails.id);
-    const departments = yield sparkFacade.departments(req.token);
 
-    const isAdmin = roles.find(role => role.permission === 1);
+    try {
+      const roles = yield sparkFacade.rolesByUser(req.token, req.userDetails.email);
+      const departments = yield sparkFacade.departments(req.token);
 
-    if (isAdmin) {
+      const isAdmin = roles.find(role => role.permission === 1);
+
+      if (isAdmin) {
         return res.json(departments);
+      }
+    }
+    catch(e) {
+        console.log(e);
+        return res.status(500).json({error: "Internal server error"});
     }
 
     res.json(departments.filter(department => roles.find(role => role.department_id === department.id)));
