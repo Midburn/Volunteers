@@ -61,7 +61,7 @@ export default class VolunteerListTab extends Component {
 
   fetchDepartments = () => {
     axios.get('/api/v1/departments')
-      .then((res) => this.setState({departments: res.data}))
+      .then((res) => this.setState({departments: res.data.sort((a, b)=> a.name.localeCompare(b.name))}))
       .catch(this.logNetworkError);
   };
 

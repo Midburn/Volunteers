@@ -18,6 +18,7 @@ router.post('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req,
     const shift = new Shift({
         '_id': shiftId,
         'title': req.body.title,
+        'comment': req.body.comment,
         'color': req.body.color,
         'departmentId': departmentId,
         'startDate': req.body.startDate,
@@ -37,6 +38,7 @@ router.put('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, 
 
     const updatedShift = {
         'title': req.body.title,
+        'comment': req.body.comment,
         'color': req.body.color,
         'startDate': req.body.startDate,
         'endDate': req.body.endDate,

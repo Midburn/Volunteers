@@ -3,6 +3,12 @@
     width: 100%;
   }
 
+  .shift-comment {
+    width: 100%;
+    text-align: right;
+    border: 1px solid darkgray;
+  }
+
   input[type="text"] {
     border: 1px solid darkgray;
     float: right;
