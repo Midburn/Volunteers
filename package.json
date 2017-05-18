@@ -54,7 +54,7 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "build": "webpack",
+    "build": "webpack --config webpack.prod.config.js",
     "test": "mocha",
     "local": "LOCAL_SPARK=true node server/server.js"
   },
