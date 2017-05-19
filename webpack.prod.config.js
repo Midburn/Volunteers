@@ -1,5 +1,6 @@
 const {resolve} = require('path');
 const webpack = require('webpack');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   entry: ['babel-polyfill',
@@ -9,6 +10,15 @@ module.exports = {
     filename: 'bundle.js',
     path: resolve(__dirname, 'public'),
     publicPath: 'http://localhost:9090/'
+  },
+  externals: {
+    react: 'React',
+    lodash: '_',
+    mobx: 'mobx',
+    moment: 'moment',
+    axios: 'axios',
+    'react-dom': 'ReactDOM',
+    'react-bootstrap': 'ReactBootstrap'
   },
   module: {
     loaders: [
@@ -43,6 +53,7 @@ module.exports = {
         NODE_ENV: JSON.stringify('production')
       }
     }),
+//    new BundleAnalyzerPlugin(),
     new webpack.optimize.UglifyJsPlugin()
   ]
 };
