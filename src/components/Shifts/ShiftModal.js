@@ -80,7 +80,8 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
                       });
                       return acc;
                     }, {})}
-                  filterOption={(object, filter) => Object.keys(object).some((element, index, array) => object[element].includes(filter))}/>
+                  filterOption={(object, filter) => Object.keys(object).some((element, index, array) => object[element].toLowerCase().includes(filter))
+                  }/>
         </FormGroup>
 
       </Modal.Body>

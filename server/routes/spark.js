@@ -24,6 +24,7 @@ router.get('/volunteers/roles/me', handleSparkProxy(req =>
 //READ DEPARTMENTS
 router.get('/departments', co.wrap(function*(req, res) {
 
+  const departmentsToExclude = [16, 10];
   let departments;
 
   try {
@@ -33,7 +34,7 @@ router.get('/departments', co.wrap(function*(req, res) {
     const isAdmin = roles.find(role => role.permission === 1);
 
     if (isAdmin) {
-      return res.json(departments);
+      return res.json(departments.filter(department => departmentsToExclude.indexOf(department.id) === -1));
     }
 
     res.json(departments.filter(department => roles.find(role => role.department_id === department.id)));
