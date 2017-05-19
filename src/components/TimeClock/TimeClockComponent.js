@@ -54,37 +54,34 @@ const TimeClockComponent = observer(({shiftManagerModel}) => {
                 value={shiftManagerModel.currentShift.comment}
                 onChange={event => {
                   shiftManagerModel.currentShift.comment = event.target.value;
-                  setTimeout(() => {
-                    shiftManagerModel.submitShift({close: false});
-                  }, 1000)
                 }}/>
       <ListGroup>
-        <ListGroupItem>
+        <ListGroupItem bsClass="volunteers-list">
+          <Button onClick={e =>
+            shiftManagerModel.submitShift({close: false})}>Save
+          </Button>
           {Object.keys(shiftManagerModel.currentShift.volunteers).map(volunteerId => {
             const volunteer = shiftManagerModel.currentShift.volunteers[volunteerId];
 
             return <div className="form-group" key={volunteerId}>
               <label>
+                {volunteerDisplayMap[volunteerId]}
                 <input
                   type="checkbox" defaultChecked={!!volunteer.isCheckedIn}
                   onChange={event => {
                     volunteer.isCheckedIn = volunteer.isCheckedIn ? null : new Date();
-                    setTimeout(() => {
-                      shiftManagerModel.submitShift({close: false});
-                    }, 1000)
                   }}/>
-                {volunteerDisplayMap[volunteerId]}
               </label>
               <input type="text"
                      value={volunteer.comment}
                      onChange={event => {
                        volunteer.comment = event.target.value;
-                       setTimeout(() => {
-                         shiftManagerModel.submitShift({close: false});
-                       }, 1000)
                      }}/>
             </div>;
           })}
+          <Button onClick={e =>
+            shiftManagerModel.submitShift({close: false})}>Save
+          </Button>
         </ListGroupItem>
       </ListGroup>
     </div>
