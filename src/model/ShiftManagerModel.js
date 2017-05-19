@@ -20,6 +20,7 @@ function ShiftManagerModel() {
         currentShift: null,
         shifts: {},
         filteredShifts: [],
+        slicedShifts: [],
         focusedShift: null,
         volunteers: [],
         editError: "",
@@ -44,6 +45,9 @@ function ShiftManagerModel() {
     }
 
     function transformShift(shift) {
+        if (moment(shift.endDate).isBefore(shift.startDate)) {
+            shift.endDate = moment(shift.endDate).add(1, 'days');l
+        }
         return _.assign({
             startDate: moment(shift.startDate).format(),
             endDate: moment(shift.endDate).format(),
@@ -99,12 +103,13 @@ console.log(profileId, checkinTime, comment)
     }
 
     this.editShift = shift => {
-        this.currentShift = shift;
+        this.currentShift = shift.shift || shift;
     }
 
     reaction(() => this.departments, async depts => {
-        if (depts.length) {
-            this.departmentID = depts[0].id;
+        this.departmentID = this.departmentID || localStorage.getItem('currentDepartment') || depts[0];
+        if (!_.find(depts, this.departmentID)) {
+            this.departmentID = _.first(depts);
         }
     })
 
@@ -139,8 +144,17 @@ console.log(profileId, checkinTime, comment)
             (shift, id) =>
                 _.defaults({id, volunteers: shift.volunteers}, shift)
         );
+    })
 
+    reaction(() => [this.filteredShifts], ([shifts]) =>  {
+        this.slicedShifts = _.reduce(shifts, (sliced, shift) => {
+            const breakpoint = moment(shift.endDate).startOf('day');
+            if (breakpoint.isSame(moment(shift.startDate).startOf('day'))) {
+                return [...sliced, shift];
+            }
 
+            return [...sliced, _.defaults({endDate: moment(breakpoint).add(-1, 'minute'), shift}, shift), _.defaults({startDate: breakpoint, shift}, shift)];
+        }, []);
     })
 
     this.initDepartments()
