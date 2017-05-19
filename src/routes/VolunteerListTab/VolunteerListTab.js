@@ -1,9 +1,9 @@
-import React, {Component} from "react";
-import axios from "axios";
-import update from "immutability-helper";
-import FilterComponent from "../../components/FilterComponent/FilterComponent";
-import TableComponent from "../../components/TableComponent/TableComponent";
-import Header from "../../components/Header/Header";
+import React, {Component} from 'react';
+import axios from 'axios';
+import update from 'immutability-helper';
+import FilterComponent from '../../components/FilterComponent/FilterComponent';
+import TableComponent from '../../components/TableComponent/TableComponent';
+import Header from '../../components/Header/Header';
 
 export default class VolunteerListTab extends Component {
 
@@ -61,13 +61,24 @@ export default class VolunteerListTab extends Component {
 
   fetchDepartments = () => {
     axios.get('/api/v1/departments')
-      .then((res) => this.setState({departments: res.data.sort((a, b)=> a.name.localeCompare(b.name))}))
+      .then((res) => {
+        const departments = res.data.sort((a, b) => a.name.localeCompare(b.name));
+        const {filters} = this.state;
+        filters.department = departments && departments[0].id.toString();
+        this.setState({
+          filters: filters,
+          departments: departments
+        });
+      })
       .catch(this.logNetworkError);
   };
 
   fetchRoles() {
     axios.get('/api/v1/roles')
-      .then((res) => this.setState({roles: res.data}))
+      .then((res) => {
+        const roles = res.data;
+        this.setState({roles: roles});
+      })
       .catch(this.logNetworkError);
   }
 

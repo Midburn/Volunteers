@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 export default class DropDownFilter extends React.Component {
     constructor(props) {
@@ -12,7 +13,11 @@ export default class DropDownFilter extends React.Component {
     }
 
     render() {
-        const filter = this.props.myFilter || undefined;
+        if (!this.props.options) {
+            return null;
+        }
+
+      const filter = this.props.myFilter || undefined;
         const options = [
             <option value={'all'} key={'all'}>
                 All

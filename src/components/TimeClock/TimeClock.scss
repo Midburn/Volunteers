@@ -3,15 +3,38 @@
     width: 100%;
   }
 
+  .volunteers-list {
+    display: flex;
+    flex-direction: column;
+
+    .form-group {
+      width: 100%;
+      margin: 10px 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+
+      label {
+        margin-left: 5px;
+
+        input {
+          margin-left: 5px;
+        }
+      }
+
+      input[type="text"] {
+        border: 1px solid darkgray;
+        text-align: right;
+        flex-grow: 1;
+      }
+    }
+  }
+
   .shift-comment {
     width: 100%;
     text-align: right;
     border: 1px solid darkgray;
-  }
-
-  input[type="text"] {
-    border: 1px solid darkgray;
-    float: right;
   }
 
   .shift-color {
