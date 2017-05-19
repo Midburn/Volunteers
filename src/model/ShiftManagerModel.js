@@ -107,9 +107,9 @@ console.log(profileId, checkinTime, comment)
     }
 
     reaction(() => this.departments, async depts => {
-        this.departmentID = this.departmentID || localStorage.getItem('currentDepartment') || depts[0];
-        if (!_.find(depts, this.departmentID)) {
-            this.departmentID = _.first(depts);
+        this.departmentID = this.departmentID || +localStorage.getItem('currentDepartment');
+        if (!this.departmentID || !depts.find(d => d.id === this.departmentID)) {
+            this.departmentID = _.size(depts) && _.first(depts).id;
         }
     })
 
@@ -117,6 +117,7 @@ console.log(profileId, checkinTime, comment)
         // Can optimize by connecting with volunteer-list model
         this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
         location.href = `#${dept}`
+        localStorage.setItem('currentDepartment', dept);
         this.refreshShifts()
     })
 
