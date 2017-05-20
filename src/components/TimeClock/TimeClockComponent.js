@@ -19,7 +19,7 @@ const TimeClockComponent = observer(({shiftManagerModel}) => {
                                                                        onSelect={() => shiftManagerModel.departmentID = id}>{name}</MenuItem>)}
         </DropdownButton>
         <ListGroup>
-          {shiftManagerModel.filteredShifts.sort().map(shift =>
+          {shiftManagerModel.filteredShifts.sort((a, b) => moment(a.startDate).unix() - moment(b.startDate).unix()).map(shift =>
             <ListGroupItem key={shift.id} onClick={() => shiftManagerModel.currentShift = shift}>
               <div className="shift-color" style={{backgroundColor: shift.color}}></div>
               <span
