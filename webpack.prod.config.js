@@ -1,9 +1,10 @@
 const {resolve} = require('path');
 const webpack = require('webpack');
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BabiliPlugin = require('babili-webpack-plugin');
 
 module.exports = {
-  entry: ['babel-polyfill',
+  entry: [
     './src/index.js'
   ],
   output: {
@@ -18,7 +19,8 @@ module.exports = {
     moment: 'moment',
     axios: 'axios',
     'react-dom': 'ReactDOM',
-    'react-bootstrap': 'ReactBootstrap'
+    'react-bootstrap': 'ReactBootstrap',
+    'react-bootstrap-typeahead': 'ReactBootstrapTypeahead'
   },
   module: {
     loaders: [
@@ -54,6 +56,6 @@ module.exports = {
       }
     }),
 //    new BundleAnalyzerPlugin(),
-    new webpack.optimize.UglifyJsPlugin()
+    new BabiliPlugin()
   ]
 };
