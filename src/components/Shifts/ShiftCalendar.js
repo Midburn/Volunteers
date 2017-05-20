@@ -11,6 +11,18 @@ BigCalendar.setLocalizer(
     BigCalendar.momentLocalizer(moment)
 );
 
+const eventStyleGetter = (event, start, end, isSelected) => {
+    return {
+        style: {
+            backgroundColor: event.shift.color,
+            borderRadius: '2px',
+            color: 'black',
+            border: '0px',
+            display: 'block'
+        }
+    };
+}
+
 const Event = ({event: {shift, onEdit, onDelete}}) =>
     <span>
 		<strong>
@@ -21,14 +33,13 @@ const Event = ({event: {shift, onEdit, onDelete}}) =>
 			<Button bsSize="xsmall" onClick={() => onEdit(shift)} className="glyphicon glyphicon-edit"/>
 			<Button bsSize="xsmall" onClick={() => onDelete(shift)} className="glyphicon glyphicon-trash"/>
 		</div>
-        <div className="shift-color" style={{backgroundColor: shift.color}}></div>
 	</span>;
 
 const views = ['week', 'day']
 export default observer(({
     shiftManagerModel: {
         date,
-        filteredShifts,
+        slicedShifts,
         weekView,
         editShift,
         deleteShift,
@@ -39,6 +50,7 @@ export default observer(({
         date={moment(date).toDate()}
         onNavigate={()=>{}}
         view={weekView ? 'week' : 'day'}
+        eventPropGetter={eventStyleGetter}
         onView={()=>{}}
         toolbar={false}
         selectable={true}
@@ -48,7 +60,7 @@ export default observer(({
         onSelectSlot={slotInfo => {
             createShift(slotInfo.start, slotInfo.end);
         }}
-        events={_.toArray(filteredShifts).map((shift) => ({
+        events={_.toArray(slicedShifts).map((shift) => ({
             start: new Date(shift.startDate),
             end: new Date(shift.endDate),
             shift,

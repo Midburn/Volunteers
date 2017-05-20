@@ -5,18 +5,14 @@ import {Button, ButtonToolbar, DropdownButton, MenuItem, Tooltip, OverlayTrigger
 
 const ShiftManagerHeader = observer(({shiftManagerModel}) => (
     <div className="shift-manager-header">
-        <div className="shift-manager-header">
-            <ButtonToolbar>
-                <DropdownButton id="departments" title={shiftManagerModel.departmentID ? `Department: ${shiftManagerModel.departmentName}` : 'Select Department'} value={shiftManagerModel.departmentID || 0}>
-                    {shiftManagerModel.departments.map(({id, name}) => <MenuItem key={id} onSelect={() => shiftManagerModel.departmentID = id}>{name}</MenuItem>)}
-                </DropdownButton>
+            <ButtonToolbar style={{display: 'flex', flex: 1}}>
                 {shiftManagerModel.departmentID &&<OverlayTrigger placement="top" overlay={<Tooltip id="create-session">Create session</Tooltip>}>
                     <Button bsStyle="primary" key="create" onClick={() => shiftManagerModel.createShift()} className="glyphicon glyphicon-plus" />
                 </OverlayTrigger>}
-                {shiftManagerModel.departmentID &&<OverlayTrigger placement="top" overlay={<Tooltip id="daily-view">Daily View</Tooltip>}>
+                {shiftManagerModel.departmentID && window.innerWidth > 600 && <OverlayTrigger placement="top" overlay={<Tooltip id="daily-view">Daily View</Tooltip>}>
                     <Button key="daily" onClick={() => shiftManagerModel.weekView = false}  className="glyphicon glyphicon-resize-full" />
                 </OverlayTrigger>}
-                {shiftManagerModel.departmentID &&<OverlayTrigger placement="top" overlay={<Tooltip id="weekly-view">Weekly View</Tooltip>}>
+                {shiftManagerModel.departmentID && window.innerWidth > 600 && <OverlayTrigger placement="top" overlay={<Tooltip id="weekly-view">Weekly View</Tooltip>}>
                     <Button key="weekly" onClick={() => shiftManagerModel.weekView = true} className="glyphicon glyphicon-resize-small" />
                 </OverlayTrigger>}
                 {shiftManagerModel.departmentID &&<OverlayTrigger placement="top" overlay={<Tooltip id="previous">Previous</Tooltip>}>
@@ -33,10 +29,6 @@ const ShiftManagerHeader = observer(({shiftManagerModel}) => (
                     shiftManagerModel.departmentID && shiftManagerModel.specialDates.map(({date, name}) => <Button key={name} onClick={() => shiftManagerModel.date = date} >{name}</Button>)
                 }
             </ButtonToolbar>
-            {shiftManagerModel.departmentID && <input key="search" className="form-control" placeholder="Search" style={{width: 200}} name="srch-term" id="srch-term" type="text"
-                onInput={e => shiftManagerModel.searchText = e.target.value}
-                value={shiftManagerModel.searchText} />}
-        </div>
     </div>
 ))
 
