@@ -16,7 +16,7 @@ function ShiftManagerModel() {
         },
 
         date: new Date(),
-        weekView: true,
+        weekView: window.innerWidth > 600,
         currentShift: null,
         shifts: {},
         filteredShifts: [],

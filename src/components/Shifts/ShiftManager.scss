@@ -1,10 +1,16 @@
 .shift-manager {
+    display: flex;
+    flex-direction: column;
     .rbc-selected {
         z-index: 3;
     }
 
     .rbc-row-segment {
         position: relative;
+    }
+
+    #departments {
+        width: 100%;
     }
 
     overflow: scroll;
