@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import VolunteerRow from '../VolunteerRow/VolunteerRow.js';
+import _ from 'lodash';
 
 // css requires
 require('./TableComponent.css');
@@ -20,10 +21,10 @@ export default class TableComponent extends Component {
     }
 
     meetsOptionsFilters(volunteer) {
-        return this.meetsCriterion(this.props.filters.department, volunteer.department_id.toString()) &&
-            this.meetsCriterion(this.props.filters.role, volunteer.role_id.toString()) &&
-            this.meetsCriterion(this.props.filters.gotTicket, volunteer.got_ticket.toString()) &&
-            this.meetsCriterion(this.props.filters.isProduction, volunteer.is_production.toString());
+        return this.meetsCriterion(this.props.filters.department, (volunteer.department_id || '').toString()) &&
+            this.meetsCriterion(this.props.filters.role, (volunteer.role_id || '').toString()) &&
+            this.meetsCriterion(this.props.filters.gotTicket, (volunteer.got_ticket || '').toString()) &&
+            this.meetsCriterion(this.props.filters.isProduction, (volunteer.is_production || '').toString());
     }
 
     meetsCriterion(critetion, value) {

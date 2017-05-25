@@ -2,15 +2,13 @@ import React from 'react';
 import {observer} from 'mobx-react';
 import moment from 'moment'
 import {ListGroup, ListGroupItem, DropdownButton, MenuItem, Button} from 'react-bootstrap'
-import Header from "../Header/Header";
 
 require('./TimeClock.scss');
 
 const TimeClockComponent = observer(({shiftManagerModel}) => {
 
   if (!shiftManagerModel.currentShift) {
-    return <div className="time-clock">
-      <Header />
+    return <div className="volunteers-list">
       <div className="shift-list">
         <DropdownButton id="departments"
                         title={shiftManagerModel.departmentID ? `Department: ${shiftManagerModel.departmentName}` : 'Select Department'}
@@ -38,8 +36,7 @@ const TimeClockComponent = observer(({shiftManagerModel}) => {
     return acc;
   }, {});
 
-  return <div className="time-clock">
-    <Header />
+  return <div className="volunteers-list">
     <div className="shift-details">
       <ul className="breadcrumb">
         <li>

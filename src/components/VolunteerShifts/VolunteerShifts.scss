@@ -1,0 +1,60 @@
+.volunteer-shifts {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0;
+
+  .department {
+   text-align: center;
+    background-color: black;
+    color: white;
+  }
+
+  .shift {
+    display: flex;
+    align-items: center;
+    border: 1px solid darkgray;
+    height: 50px;
+
+    &:not(:last-child) {
+      border-bottom: none;
+    }
+
+    &.passed {
+      opacity: 0.4;
+    }
+
+    & > div {
+      flex-grow: 0;
+      width: 50%;
+    }
+
+    & > .details {
+
+      display: flex;
+      align-items: center;
+
+      div {
+        flex-shrink: 0;
+      }
+
+      .title {
+        margin-right: 5px;
+      }
+
+      .shift-color {
+        display: inline-block;
+        margin: 0 10px;
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .comment {
+      direction: rtl;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+}

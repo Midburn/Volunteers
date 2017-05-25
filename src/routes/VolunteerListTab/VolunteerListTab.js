@@ -3,7 +3,6 @@ import axios from 'axios';
 import update from 'immutability-helper';
 import FilterComponent from '../../components/FilterComponent/FilterComponent';
 import TableComponent from '../../components/TableComponent/TableComponent';
-import Header from '../../components/Header/Header';
 
 export default class VolunteerListTab extends Component {
 
@@ -31,12 +30,7 @@ export default class VolunteerListTab extends Component {
   }
 
   logNetworkError = (err) => {
-    if (err.response) {
-      console.log('Data', err.response.data);
-      console.log('Status', err.response.status);
-      console.log('Headers', err.response.headers);
-    }
-    else console.log('Error', err.message);
+    console.log('Error fetching the data')
   };
 
   fetchVolunteers = () => {
@@ -115,7 +109,6 @@ export default class VolunteerListTab extends Component {
     const {filters, volunteers, roles, departments} = this.state;
     return (
       <div className="volunteer-list-tab-component">
-        <Header />
         <div className="container card">
           <FilterComponent
             filters={filters}

@@ -1,6 +1,5 @@
 import React from 'react';
 import {observer} from 'mobx-react';
-import Header from "../Header/Header";
 
 import ShiftManagerHeader from './ShiftManagerHeader'
 require ('./ShiftManager.scss');
@@ -11,7 +10,6 @@ import ShiftCalendar from './ShiftCalendar';
 
 const ShiftManagerComponent = observer(({shiftManagerModel}) =>(
     <div className="shift-manager">
-        <Header />    
         <DropdownButton id="departments"
                         title={shiftManagerModel.departmentID ? `Department: ${shiftManagerModel.departmentName}` : 'Select Department'}
                         value={shiftManagerModel.departmentID || 0}>
