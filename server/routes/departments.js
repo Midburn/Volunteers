@@ -78,7 +78,6 @@ router.get('/departments/me', co.wrap(function* (req, res) {
 
 
 router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
-    console.log('here1');
     const departmentId = req.params.departmentId;
 
     const department = yield Department.findOne({_id: departmentId, deleted: false});
@@ -107,9 +106,7 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
         'eventId': req.body.eventId,
         'tags': req.body.tags | [],
     });
-    console.log('here');
     yield departmentVolunteer.save();
-    console.log('here');
     return res.json(departmentVolunteer);
 }));
 
