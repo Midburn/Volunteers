@@ -28,30 +28,31 @@ const SECRET = process.env.SECRET;
 // WEB middleware
 /////////////////////////////
 app.use((req, res, next) => {
-    return next();
-    // if (req.path === '/login') {
-    //     return next();
-    // }
 
-    // const token = req.cookies && req.cookies[JWT_KEY];
+    if (req.path === '/login') {
+        return next();
+    }
 
-    // if (!token) {
-    //     return res.redirect(SPARK_HOST);
-    // }
+    const token = req.cookies && req.cookies[JWT_KEY];
 
-    // try {
-    //     const userDetails = jwt.verify(token, SECRET);
-    //     req.token = token;
-    //     req.userDetails = userDetails;
+    if (!token) {
+        return res.redirect(SPARK_HOST);
+    }
 
-    //     next();
-    // }
-    // catch (err) {
-    //     console.log(err);
-    //     res.clearCookie(JWT_KEY);
-    //     return res.redirect(SPARK_HOST);
-    // }
+    try {
+        const userDetails = jwt.verify(token, SECRET);
+        req.token = token;
+        req.userDetails = userDetails;
+
+        next();
+    }
+    catch (err) {
+        console.log(err);
+        res.clearCookie(JWT_KEY);
+        return res.redirect(SPARK_HOST);
+    }
 });
+
 
 app.use((err, req, res, next) => {
     console.log(err);
