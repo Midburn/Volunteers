@@ -34,7 +34,7 @@ export default class VolunteerListTab extends Component {
   };
 
   fetchVolunteers = () => {
-    const isAdmin = document.roles.some(role => role.permission === 1);
+    const isAdmin = document.roles.some(role => role.permission === 'admin');
 
     if (isAdmin) {
       return axios.get('/api/v1/volunteers/')

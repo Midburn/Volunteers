@@ -8,7 +8,7 @@ import Header from "../components/Header/Header";
 import ComingSoon from "../components/ComingSoon/ComingSoon";
 
 const routesConfig = {
-  '1': {
+  'admin': {
     routes: [
       {
         path: '/volunteer-list-tab',
@@ -72,7 +72,7 @@ const routesConfig = {
 class App extends React.Component {
 
   render() {
-    const role_id = Math.min(...document.roles.map(role => role.permission));
+    const role_id = document.roles[0].permission;
     const routes = routesConfig[role_id];
 
     if (!routes) {

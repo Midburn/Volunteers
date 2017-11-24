@@ -9,23 +9,17 @@ import axios from 'axios';
 
 async function fetchUserRoles() {
   try {
-    const response = await axios.get('/api/v1/volunteers/roles/me', {credentials: 'include'});
+    const response = await axios.get('/permissions/me', {credentials: 'include'});
     if (response.data.length > 0) {
-
       document.roles = response.data;
-
-      if (!document.roles.some(role => role.permission < 4)) {
-          return render(VolunteerShifts);
+      if (document.roles.find(role => role.permission === 'admin')) {
+        return render(App);        
       }
-
-      return render(App);
     }
-
-    return window.location('https://spark.midburn.org');
+    return render(<ComingSoon/>);
   }
   catch (err) {
     console.log(err);
-
     render(<ComingSoon err={err}/>);
   }
 }
