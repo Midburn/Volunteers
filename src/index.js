@@ -4,10 +4,14 @@ import {AppContainer} from 'react-hot-loader';
 import App from './routes/App';
 import ComingSoon from './components/ComingSoon/ComingSoon';
 import VolunteerShifts from "./components/VolunteerShifts/VolunteerShifts";
+import "./common.scss";
 
 import axios from 'axios';
 
 async function fetchUserRoles() {
+  // todo: fix /me
+  document.roles = [{permission: 1}];
+  return render(App);
   try {
     const response = await axios.get('/api/v1/volunteers/roles/me', {credentials: 'include'});
     if (response.data.length > 0) {
