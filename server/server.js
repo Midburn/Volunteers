@@ -5,8 +5,6 @@ const React = require('react');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 const webpackConfig = require("../webpack.config.js");
-const http = require('http');
-const axios = require('axios');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
@@ -68,7 +66,6 @@ app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
 
 app.use('/login', (req, res) => {
-
     let token = req.query.token;
     if (!token && devMode && process.env.LOCAL_SPARK === 'true') {
         token = jwt.sign({
@@ -144,5 +141,6 @@ mongoose.Promise = Promise;
 const server = app.listen(process.env.PORT, function () {
     const host = server.address().address;
     const port = server.address().port;
-    console.log("Listening at http://%s:%s", host, port)
+    console.log("Listening at http://%s:%s", host, port);
+    console.log(`Go to http://${host}:${port}/login`);
 });
