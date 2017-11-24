@@ -81,41 +81,41 @@ router.get('/departments/me', co.wrap(function* (req, res) {
 }));
 
 
-router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
-    const departmentId = req.params.departmentId;
+// router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
+//     const departmentId = req.params.departmentId;
 
-    const department = yield Department.findOne({_id: departmentId, deleted: false});
+//     const department = yield Department.findOne({_id: departmentId, deleted: false});
 
-    if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+//     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
-    const departmentVolunteers = yield DepartmentVolunteers.find({departmentId: departmentId, deleted: false})
+//     const departmentVolunteers = yield DepartmentVolunteers.find({departmentId: departmentId, deleted: false})
 
-    return res.json(departmentVolunteers);
-}));
+//     return res.json(departmentVolunteers);
+// }));
 
-//POST MULTIPLE VOLUNTEERINGS - CREATE
-router.post('/departments/:dId/volunteers/', co.wrap(function* (req, res) {
-    const departmentId = req.params.departmentId;
+// //POST MULTIPLE VOLUNTEERINGS - CREATE
+// router.post('/departments/:dId/volunteers/', co.wrap(function* (req, res) {
+//     const departmentId = req.params.departmentId;
 
-    const department = yield Department.findOne({_id: departmentId, deleted: false});
+//     const department = yield Department.findOne({_id: departmentId, deleted: false});
 
-    if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
-    const departmentVolunteerId = uuid();
-    const departmentVolunteer = new DepartmentVolunteers({
-        '_id': departmentVolunteerId,
-        'userId': req.body.userId,
-        'departmentId': departmentVolunteerId,
-        'roleId': req.body.roleId,
-        'isProduction': req.body.isProduction,
-        'modifiedDate': req.body.modifiedDate,
-        'eventId': req.body.deleted | false,
-        'tags': req.body.tags | [],
-    });
+//     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+//     const departmentVolunteerId = uuid();
+//     const departmentVolunteer = new DepartmentVolunteers({
+//         '_id': departmentVolunteerId,
+//         'userId': req.body.userId,
+//         'departmentId': departmentVolunteerId,
+//         'roleId': req.body.roleId,
+//         'isProduction': req.body.isProduction,
+//         'modifiedDate': req.body.modifiedDate,
+//         'eventId': req.body.deleted | false,
+//         'tags': req.body.tags | [],
+//     });
 
-    yield departmentVolunteer.save();
+//     yield departmentVolunteer.save();
 
-    return res.json(departmentVolunteer);
-}));
+//     return res.json(departmentVolunteer);
+// }));
 
 //PUT SINGLE VOLUNTEERING - UPDATE
 //TODO - implement

@@ -28,29 +28,29 @@ const SECRET = process.env.SECRET;
 // WEB middleware
 /////////////////////////////
 app.use((req, res, next) => {
+    return next();
+    // if (req.path === '/login') {
+    //     return next();
+    // }
 
-    if (req.path === '/login') {
-        return next();
-    }
+    // const token = req.cookies && req.cookies[JWT_KEY];
 
-    const token = req.cookies && req.cookies[JWT_KEY];
+    // if (!token) {
+    //     return res.redirect(SPARK_HOST);
+    // }
 
-    if (!token) {
-        return res.redirect(SPARK_HOST);
-    }
+    // try {
+    //     const userDetails = jwt.verify(token, SECRET);
+    //     req.token = token;
+    //     req.userDetails = userDetails;
 
-    try {
-        const userDetails = jwt.verify(token, SECRET);
-        req.token = token;
-        req.userDetails = userDetails;
-
-        next();
-    }
-    catch (err) {
-        console.log(err);
-        res.clearCookie(JWT_KEY);
-        return res.redirect(SPARK_HOST);
-    }
+    //     next();
+    // }
+    // catch (err) {
+    //     console.log(err);
+    //     res.clearCookie(JWT_KEY);
+    //     return res.redirect(SPARK_HOST);
+    // }
 });
 
 app.use((err, req, res, next) => {
@@ -61,9 +61,10 @@ app.use((err, req, res, next) => {
 
 /////////////////////////////
 // APIS
-/////////////////////////////
+/////////////////////////////\
 app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
+app.use('/api/v1', require('./routes/departments'));
 
 app.use('/login', (req, res) => {
     let token = req.query.token;
