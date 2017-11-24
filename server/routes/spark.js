@@ -17,9 +17,75 @@ const handleSparkProxy = handler => (req, res) => {
         })
 };
 
+<<<<<<< HEAD
 // GET VOLUNTEER
 router.get('/users', handleSparkProxy(req =>
     sparkFacade.getUserDetailByMails(req.token, req.body.emails)));
+=======
+// READ VOLUNTEER ROLES
+router.get('/volunteers/roles/me', handleSparkProxy(req =>
+  sparkFacade.rolesByUser(req.token, req.userDetails.email)));
+
+//READ DEPARTMENTS
+// router.get('/departments', co.wrap(function*(req, res) {
+//
+//   const departmentsToExclude = [16, 10];
+//   let departments;
+//
+//   try {
+//     const roles = yield sparkFacade.rolesByUser(req.token, req.userDetails.email);
+//     departments = yield sparkFacade.departments(req.token);
+//
+//     const isAdmin = roles.find(role => role.permission === 1);
+//
+//     if (isAdmin) {
+//       return res.json(departments.filter(department => departmentsToExclude.indexOf(department.id) === -1));
+//     }
+//
+//     res.json(departments.filter(department => roles.find(role => role.department_id === department.id)));
+//   }
+//   catch (e) {
+//     console.log(e);
+//     return res.status(500).json({error: "Internal server error"});
+//   }
+// }));
+
+//READ ROLES
+router.get('/roles',
+  handleSparkProxy(req =>
+    sparkFacade.allRoles(req.token)));
+
+//READ ALL VOLUNTEERINGS - READ
+router.get('/volunteers', handleSparkProxy(req => sparkFacade.volunteers(req.token)));
+//
+// //READ ALL VOLUNTEERS IN SPECIFIC DEPARTMENT
+// router.get('/departments/:dId/volunteers',
+//   handleSparkProxy(req =>
+//     sparkFacade.volunteersByDepartment(req.token, req.params.dId)));
+//
+// //POST MULTIPLE VOLUNTEERINGS - CREATE
+// router.post('/departments/:dId/volunteers/', handleSparkProxy(req =>
+//   sparkFacade.addVolunteers(req.token, req.params.dId, req.body.emails.map(email => ({
+//     email,
+//     role_id: req.body.role,
+//     is_production: req.body.is_production
+//   })))));
+
+//PUT SINGLE VOLUNTEERING - UPDATE
+router.put('/departments/:dId/volunteers/:uid',
+  handleSparkProxy(req =>
+    sparkFacade.updateVolunteer(req.token, req.params.dId, req.params.uid, _.pick(req.body, ['role_id', 'is_production']))));
+
+//DELETE SINGLUE VOLUNTEERING - REMOVE
+router.delete('/departments/:dId/volunteers/:uid',
+  handleSparkProxy(req =>
+    sparkFacade.deleteVolunteer(req.token, req.params.dId, req.params.uid)));
+
+//DELETE VOLUNTEERS CACHE
+router.delete('/cache/volunteers',
+  handleSparkProxy(req =>
+    sparkFacade.deleteVolunteersCache()));
+>>>>>>> implemented Department Model + DepartmentVolunteers Model
 
 // GET ALL EVENTS
 router.get('/events', handleSparkProxy(req =>

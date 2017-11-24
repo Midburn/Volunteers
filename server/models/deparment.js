@@ -5,7 +5,7 @@ const departmentSchema = new Schema({
     _id: String,
     nameEn: String,
     nameHe: String,
-    active: Boolean,
+    deleted: Boolean,
     tags: [String]
 }, {_id: false});
 
