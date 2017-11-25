@@ -14,6 +14,5 @@ const volunteersSchema = new Schema({
     tags: [String]
 }, {_id: false});
 
-const Volunteers = mongoose.model('Volunteer', volunteersSchema);
-
-module.exports = Volunteers;
+const Volunteer = mongoose.model('Volunteer', volunteersSchema);
+module.exports = Volunteer;
