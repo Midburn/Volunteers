@@ -31,7 +31,8 @@ router.post('/departments', co.wrap(function* (req, res) {
 
     yield department.save();
 
-    return res.json(department);
+    const departments = yield Department.find({deleted: false});
+    return res.json(departments);
 }));
 
 router.put('/departments/:departmentId', co.wrap(function* (req, res) {
