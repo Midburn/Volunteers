@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const departmentVolunteersSchema = new Schema({
+const volunteersSchema = new Schema({
     _id: String,
     userId: String,
     departmentId: String,
@@ -14,6 +14,6 @@ const departmentVolunteersSchema = new Schema({
     tags: [String]
 }, {_id: false});
 
-const DepartmentVolunteers = mongoose.model('DepartmentVolunteers', departmentVolunteersSchema);
+const Volunteers = mongoose.model('Volunteer', volunteersSchema);
 
-module.exports = DepartmentVolunteers;
+module.exports = Volunteers;

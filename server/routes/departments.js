@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Department = require('../models/deparment');
-const DepartmentVolunteers = require('../models/deparmentVolunteers');
+const Volunteer = require('../models/volunteer');
 
 const co = require('co');
 const _ = require('lodash');
@@ -84,7 +84,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
 
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
-    const departmentVolunteers = yield DepartmentVolunteers.find({departmentId: departmentId})
+    const departmentVolunteers = yield Volunteer.find({departmentId: departmentId, deleted: false});
 
     return res.json(departmentVolunteers);
 }));
@@ -95,19 +95,20 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
     const department = yield Department.findOne({_id: departmentId, deleted: false});
 
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
-    const departmentVolunteerId = uuid();
-    const departmentVolunteer = new DepartmentVolunteers({
-        '_id': departmentVolunteerId,
+    const volunteerId = uuid();
+    const volunteer = new Volunteer({
+        '_id': volunteerId,
         'userId': req.body.userId,
         'departmentId': departmentId,
         'roleId': req.body.roleId,
         'isProduction': req.body.isProduction,
         'modifiedDate': req.body.modifiedDate,
         'eventId': req.body.eventId,
+        'deleted': req.body.deleted | false,
         'tags': req.body.tags | [],
     });
-    yield departmentVolunteer.save();
-    return res.json(departmentVolunteer);
+    yield volunteer.save();
+    return res.json(volunteer);
 }));
 
 //PUT SINGLE VOLUNTEERING - UPDATE
