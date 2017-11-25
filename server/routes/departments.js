@@ -25,13 +25,18 @@ router.post('/departments', co.wrap(function* (req, res) {
         '_id': departmentId,
         'nameEn': req.body.nameEn,
         'nameHe': req.body.nameHe,
+        'websiteURL': req.body.websiteURL,
+        'facebookPageUrl': req.body.facebookPageUrl,
+        'twitterPageUrl': req.body.twitterPageUrl,
+        'imageUrl': req.body.imageUrl,
         'deleted': req.body.deleted || false,
         'tags': req.body.tags || []
     });
 
     yield department.save();
 
-    return res.json(department);
+    const departments = yield Department.find({deleted: false});
+    return res.json(departments);
 }));
 
 router.put('/departments/:departmentId', co.wrap(function* (req, res) {
@@ -40,6 +45,10 @@ router.put('/departments/:departmentId', co.wrap(function* (req, res) {
     const updatedDepartment = {
         'nameEn': req.body.nameEn,
         'nameHe': req.body.nameHe,
+        'websiteURL': req.body.websiteURL,
+        'facebookPageUrl': req.body.facebookPageUrl,
+        'twitterPageUrl': req.body.twitterPageUrl,
+        'imageUrl': req.body.imageUrl,
         'deleted': req.body.deleted,
         'tags': req.body.tags
     };
@@ -67,7 +76,8 @@ router.delete('/departments/:departmentId', co.wrap(function* (req, res) {
     department.deleted = true;
     yield department.save();
 
-    return res.json(department);
+    const departments = yield Department.find({deleted: false});
+    return res.json(departments);
 }));
 
 //TODO - IMPLEMENT
