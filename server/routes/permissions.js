@@ -3,22 +3,11 @@ const router = express.Router();
 const Admin = require('../models/Admin');
 const co = require('co');
 
-const isAdmin = req => {
-  const user_id = req.userDetails.email;
-  Admin.find({user_id: user_id})
-  .then(admin => !!admin)
-  .catch(error => false)
-};
 
-router.get('/', (req, res) => {
-  return res.json([{"error":"may"}]);
-})
-
-
-router.get('/me', co.wrap(function*(req, res) {
+router.get('/permissions/me', co.wrap(function*(req, res) {
   const user_id = req.userDetails.email;
   const admin = yield Admin.find({user_id: user_id});
-  if (admin || process.env.LOCAL_SPARK === 'true') {
+  if (admin.length || process.env.LOCAL_SPARK === 'true') {
     return res.json([{"permission":"admin"}]);
   }
 
@@ -26,51 +15,36 @@ router.get('/me', co.wrap(function*(req, res) {
   return [];
 }));
 
+router.get('/permissions/admins', co.wrap(function*(req, res) {
+  const user_id = req.userDetails.email;
+  const admin = yield Admin.find({user_id: user_id});
+  if (!admin.length && process.env.LOCAL_SPARK !== 'true') {
+    return res.status(403).json([{"error":"action is not allowed"}]);
+  }
 
-router.get('/admins'), (req, res) => {
-  return res.status(403).json([{"error":"action is not allowed"}]);
-  // isAdmin(req)
-  // .then(isAdmin => {
-  //   if (!isAdmin) {
-  //     return res.status(403).json([{"error":"action is not allowed"}]);
-  //   }
-    // const user_id = req.userDetails.email;
-    // Admin.find({})
-    // .then(admin => {
-    //   // TODO: maybe call spark and get some info?
-    //   return res.json(admins);
-    // })  
-    // .catch(error => {
-    //   return res.status(400)
-    // });
-  // })
-  // .catch(error => {
-  //   return res.status(400)
-  // });
-};
+  const admins = yield Admin.find({});
+  // TODO: maybe call spark and get some info?
+  return res.json(admins);
+}));
 
-// router.put('/admins'), (req, res) => {
-//   isAdmin(req)
-//   .then(isAdmin => {
-//     if (!isAdmin) {
-//       return res.status(403).json([{"error":"action is not allowed"}]);
-//     }
-//     const user_id = req.body.email;
-//     const admin = new Admin({
-//       '_id': shiftId,
-//       'userId': user_id
-//     });
-//     Admin.save()
-//     .then(() => {
-//       return res.json(admin)
-//     })
-//     .catch(error => {
-//       return res.status(400)
-//     });
-//   })
-//   .catch(error => {
-//     return res.status(400)
-//   });
-// };
+
+router.post('/permissions/admins', co.wrap(function*(req, res) {
+  const user_id = req.userDetails.email;
+  const admin = yield Admin.find({user_id: user_id});
+  if (!admin) {
+    return res.status(403).json([{"error":"action is not allowed"}]);
+  }
+
+  const newAdminId = req.body.user_id;
+  // TODO: call spark and validate email
+  // TODO: don't add the same email twice
+  
+  const newAdmin = new Admin({
+      '_id': uuid(),
+      'userId': newAdminId
+  });
+  yield newAdmin.save();
+  return res.json(newAdmin);
+}));
 
 module.exports = router;

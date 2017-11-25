@@ -67,7 +67,7 @@ app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
 app.use('/api/v1', require('./routes/departments'));
 app.use('/api/v1', require('./routes/volunteerRequests'));
-app.use('/permissions', require('./routes/permissions'));
+app.use('/api/v1', require('./routes/permissions'));
 
 app.use('/login', (req, res) => {
     let token = req.query.token;

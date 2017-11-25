@@ -9,11 +9,8 @@ import "./common.scss";
 import axios from 'axios';
 
 async function fetchUserRoles() {
-  // todo: fix /me
-  document.roles = [{permission: 1}];
-  return render(App);
   try {
-    const response = await axios.get('/permissions/me', {credentials: 'include'});
+    const response = await axios.get('api/v1/permissions/me', {credentials: 'include'});
     if (response.data.length > 0) {
       document.roles = response.data;
       if (document.roles.find(role => role.permission === 'admin')) {
