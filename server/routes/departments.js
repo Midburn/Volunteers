@@ -25,6 +25,10 @@ router.post('/departments', co.wrap(function* (req, res) {
         '_id': departmentId,
         'nameEn': req.body.nameEn,
         'nameHe': req.body.nameHe,
+        'websiteURL': req.body.websiteURL,
+        'facebookPageUrl': req.body.facebookPageUrl,
+        'twitterPageUrl': req.body.twitterPageUrl,
+        'imageUrl': req.body.imageUrl,
         'deleted': req.body.deleted || false,
         'tags': req.body.tags || []
     });
@@ -41,6 +45,10 @@ router.put('/departments/:departmentId', co.wrap(function* (req, res) {
     const updatedDepartment = {
         'nameEn': req.body.nameEn,
         'nameHe': req.body.nameHe,
+        'websiteURL': req.body.websiteURL,
+        'facebookPageUrl': req.body.facebookPageUrl,
+        'twitterPageUrl': req.body.twitterPageUrl,
+        'imageUrl': req.body.imageUrl,
         'deleted': req.body.deleted,
         'tags': req.body.tags
     };
