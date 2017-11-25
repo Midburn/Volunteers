@@ -21,6 +21,7 @@ const handleSparkProxy = handler => (req, res) => {
 router.get('/users', handleSparkProxy(req =>
     sparkFacade.getUserDetailByMails(req.token, req.body.emails)));
 
+
 // GET ALL EVENTS
 router.get('/events', handleSparkProxy(req =>
     sparkFacade.getAllEvents(req.token)));
