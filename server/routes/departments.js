@@ -76,7 +76,8 @@ router.delete('/departments/:departmentId', co.wrap(function* (req, res) {
     department.deleted = true;
     yield department.save();
 
-    return res.json(department);
+    const departments = yield Department.find({deleted: false});
+    return res.json(departments);
 }));
 
 //TODO - IMPLEMENT
