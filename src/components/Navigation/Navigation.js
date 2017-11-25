@@ -13,6 +13,7 @@ class Navigation extends React.Component{
           <li><Link to="/shift-manager">Shift Management</Link></li>
           <li><Link to="/time-clock">Time Clock</Link></li>
           <li><Link to="/my-shifts">My shifts</Link></li>
+          <li><Link to="/volunteer-requests">Requests</Link></li>
         </ul>
       </div>
     );

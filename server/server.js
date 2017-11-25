@@ -53,6 +53,7 @@ app.use((req, res, next) => {
     }
 });
 
+
 app.use((err, req, res, next) => {
     console.log(err);
     return res.status(500).json({error: err});
@@ -61,9 +62,11 @@ app.use((err, req, res, next) => {
 
 /////////////////////////////
 // APIS
-/////////////////////////////
+/////////////////////////////\
 app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
+app.use('/api/v1', require('./routes/departments'));
+app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/permissions', require('./routes/permissions'));
 
 app.use('/login', (req, res) => {
