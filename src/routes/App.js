@@ -7,6 +7,7 @@ import VolunteerShifts from "../components/VolunteerShifts/VolunteerShifts";
 import Header from "../components/Header/Header";
 import ComingSoon from "../components/ComingSoon/ComingSoon";
 import VolunteerRequest from "../components/VolunteerRequest/VolunteerRequest";
+import AdminView from "../components/Admin/AdminView";
 
 const routesConfig = {
     'admin': {
@@ -29,7 +30,11 @@ const routesConfig = {
             },
             {
                 path: "/volunteer-requests",
-                component: VolunteerRequest
+                component: VolunteerRequest  
+            },
+            {
+              path: "/admin",
+              component: AdminView
             }
         ],
         defaultComponent: VolunteerListTab
@@ -76,9 +81,9 @@ const routesConfig = {
 
 class App extends React.Component {
 
-  render() {
-    const role_id = document.roles[0].permission;
-    const routes = routesConfig[role_id];
+    render() {
+        const role_id = document.roles[0].permission;
+        const routes = routesConfig[role_id];
 
         if (!routes) {
             return <ComingSoon/>;
