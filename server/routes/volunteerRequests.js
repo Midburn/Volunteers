@@ -5,7 +5,7 @@ const co = require("co");
 const _ = require('lodash');
 
 router.get("/volunteer-requests", co.wrap(function* (req, res) {
-    const email = req.params.email;
+    const email = req.userDetails.email;
 
     const volunteerRequests = yield VolunteerRequest.find({email: email});
 
@@ -27,8 +27,9 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
 router.post("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
-    const email = req.body.email;
     const comment = req.body.comment;
+
+    const email = req.userDetails.email;
 
     const volunteerRequest = new VolunteerRequest({
         departmentId: departmentId,
@@ -46,9 +47,9 @@ router.post("/departments/:departmentId/events/:eventId/requests", co.wrap(funct
 router.put("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
-    const email = req.body.email;
     const approved = req.body.approved;
     const comment = req.body.comment;
+    const email = req.userDetails.email;
 
     const volunteerRequest = yield VolunteerRequest.findOne({
         userId: email,
@@ -67,7 +68,7 @@ router.put("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
 router.delete("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
-    const email = req.body.email;
+    const email = req.userDetails.email;
 
     const volunteerRequest = yield VolunteerRequest.findOne({
         userId: email,
