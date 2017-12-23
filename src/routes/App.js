@@ -1,5 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import * as Permissions from "../model/permissionsUtils"
 import VolunteerListTab from "./VolunteerListTab/VolunteerListTab";
 import ShiftManager from "./Shifts/ShiftManager";
 import TimeClock from "./TimeClock/TimeClock";
@@ -9,82 +10,41 @@ import ComingSoon from "../components/ComingSoon/ComingSoon";
 import VolunteerRequest from "../components/VolunteerRequest/VolunteerRequest";
 import AdminView from "../components/Admin/AdminView";
 
-const routesConfig = {
-    'admin': {
-        routes: [
-            {
-                path: '/volunteer-list-tab',
-                component: VolunteerListTab
-            },
-            {
-                path: '/shift-manager',
-                component: ShiftManager
-            },
-            {
-                path: '/time-clock',
-                component: TimeClock
-            },
-            {
-                path: '/my-shifts',
-                component: VolunteerShifts
-            },
-            {
-                path: "/volunteer-requests",
-                component: VolunteerRequest  
-            },
-            {
-              path: "/admin",
-              component: AdminView
-            }
-        ],
-        defaultComponent: VolunteerListTab
-    },
-    '2': {
-        routes: [
-            {
-                path: '/volunteer-list-tab',
-                component: VolunteerListTab
-            },
-            {
-                path: '/shift-manager',
-                component: ShiftManager
-            },
-            {
-                path: '/time-clock',
-                component: TimeClock
-            },
-            {
-                path: '/my-shifts',
-                component: VolunteerShifts
-            }
-        ],
-        defaultComponent: VolunteerListTab
-    },
-    '3': {
-        routes: [
-            {
-                path: '/shift-manager',
-                component: ShiftManager
-            },
-            {
-                path: '/time-clock',
-                component: TimeClock
-            },
-            {
-                path: '/my-shifts',
-                component: VolunteerShifts
-            }
-        ],
-        defaultComponent: VolunteerShifts
-    }
-};
-
 class App extends React.Component {
 
-    render() {
-        const role_id = document.roles[0].permission;
-        const routes = routesConfig[role_id];
+  routes = roles => {
+    const routes = [];
+    const isAdmin = Permissions.isAdmin();
+    const isManager = Permissions.isManager();
+    const isVolunteer = Permissions.isVolunteer();
 
+    routes.push({ name:'Join', path:'/volunteer-requests',component: VolunteerRequest });
+
+    if (isAdmin || isManager) {
+      routes.push({ name:'Volunteer List', path: '/volunteer-list-tab',component: VolunteerListTab });
+    }
+
+    // if (isAdmin || isManager) {
+    //   routes.push({ name:'Shifts Managment', path: '/shift-manager',component: ShiftManager });
+    // }
+
+    // if (isAdmin || isManager) {
+    //   routes.push({ name:'Shifts Managment', path: '/time-clock',component: TimeClock });
+    // }
+
+    // if (isAdmin || isManager || isVolunteer) {
+    //   routes.push({ name:'My Shifts', path: '/my-shifts',component: VolunteerShifts });
+    // }
+
+    if (isAdmin || isManager) {
+      routes.push({ name:'Admin', path:'/admin',component: AdminView });
+    }
+
+    return routes;
+  }
+
+    render() {
+        const routes = this.routes(document.roles)
         if (!routes) {
             return <ComingSoon/>;
         }
@@ -92,12 +52,12 @@ class App extends React.Component {
         return (
             <Router>
                 <div>
-                    <Header/>
+                    <Header routes={routes}/>
                     <Switch>
-                        {routes['routes'].map(route =>
+                        {routes.map(route =>
                             <Route key={route.path} exact path={route.path} component={route.component}/>
                         )}
-                        <Route component={routes['defaultComponent']}/>
+                        <Route component={routes[0].component}/>
                     </Switch>
                 </div>
             </Router>

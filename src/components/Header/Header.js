@@ -7,7 +7,7 @@ class Header extends React.Component {
     return (
       <div style={{display: 'flex'}}>
           <a href="https://spark.midburn.org"><img height="40" src="https://spark.midburn.org/images/midburn_logo_120.png" /></a>
-        <Navigation />
+        <Navigation routes={this.props.routes}/>
       </div>
     );
   }

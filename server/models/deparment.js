@@ -3,12 +3,18 @@ const Schema = mongoose.Schema;
 
 const departmentSchema = new Schema({
     _id: String,
-    nameEn: String,
-    nameHe: String,
-    websiteURL: String,
-    facebookPageUrl: String,
-    twitterPageUrl: String,
-    imageUrl: String,
+    basicInfo: {
+      nameEn: String,
+      nameHe: String,
+      descriptionEn: String,
+      descriptionHe: String,
+      imageUrl: String
+    },
+    requestForm: [{
+      question : String,
+      questionType : String,
+      options: [String]
+    }],
     deleted: Boolean,
     tags: [String]
 }, {_id: false});
