@@ -40,3 +40,13 @@ docker-compose up -d --build
 ```
 
 Volunteers is available at http://localhost:8000/login
+
+
+### Setting up the continuous deployment
+
+The continuous deployment requires the following secrets:
+
+`secret-midburn-k8s-ops.json` - private key used to connect to the [midburn-k8s environment](https://github.com/Midburn/midburn-k8s)
+* GitHub authenticatin token for a [machine user](https://developer.github.com/v3/guides/managing-deploy-keys/#machine-users) - used to update image values in the k8s environment
+
+See [sk8s continuous deployment](https://github.com/orihoch/sk8s#continuous-deployment) for more details.
