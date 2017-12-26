@@ -9,6 +9,13 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const compression = require('compression');
+const co = require('co');
+const permissionsUtils = require('./utils/permissions');
+/////////////////////////////
+// Mongoose
+/////////////////////////////
+mongoose.connect(process.env.DB_URL);
+mongoose.Promise = Promise;
 
 // Load environment variables default values
 require('dotenv').config();
@@ -27,7 +34,7 @@ const SECRET = process.env.SECRET;
 /////////////////////////////
 // WEB middleware
 /////////////////////////////
-app.use((req, res, next) => {
+app.use(co.wrap(function* (req, res, next) {
 
     if (req.path === '/login') {
         return next();
@@ -43,6 +50,7 @@ app.use((req, res, next) => {
         const userDetails = jwt.verify(token, SECRET);
         req.token = token;
         req.userDetails = userDetails;
+        req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
 
         next();
     }
@@ -51,7 +59,7 @@ app.use((req, res, next) => {
         res.clearCookie(JWT_KEY);
         return res.redirect(SPARK_HOST);
     }
-});
+}));
 
 
 app.use((err, req, res, next) => {
@@ -75,8 +83,8 @@ app.use('/login', (req, res) => {
         token = jwt.sign({
             "id": 1,
             "email": "user@midburn.org",
-            "iat": (new Date() / 1000) + 24*60*60,
-            "exp": (new Date() / 1000) + 24*60*60
+            "iat": (new Date() / 1000) + 24 * 60 * 60,
+            "exp": (new Date() / 1000) + 24 * 60 * 60
         }, process.env.SECRET);
     }
 
