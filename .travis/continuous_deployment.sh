@@ -4,7 +4,7 @@ if [ "${DEPLOY_ENVIRONMENT}" != "" ] && [ "${TRAVIS_PULL_REQUEST}" == "false" ] 
    [ "${TRAVIS_BRANCH}" == "${DEPLOY_BRANCH}" ] &&\
    [ "${TRAVIS_COMMIT_MESSAGE}" != "" ] && ! echo "${TRAVIS_COMMIT_MESSAGE}" | grep -- --no-deploy && [ "${TRAVIS_COMMIT}" != "" ]
 then
-    openssl aes-256-cbc -K $encrypted_dbb52b0422d4_key -iv $encrypted_dbb52b0422d4_iv -in secret-midburn-k8s-ops.jsonenc -out secret-midburn-k8s-ops.json -d
+    openssl aes-256-cbc -K $encrypted_dbb52b0422d4_key -iv $encrypted_dbb52b0422d4_iv -in secret-midburn-k8s-ops.json.enc -out secret-midburn-k8s-ops.json -d
     OPS_REPO_SLUG="Midburn/midburn-k8s"
     OPS_REPO_BRANCH="master"
     wget https://raw.githubusercontent.com/${OPS_REPO_SLUG}/${OPS_REPO_BRANCH}/run_docker_ops.sh
