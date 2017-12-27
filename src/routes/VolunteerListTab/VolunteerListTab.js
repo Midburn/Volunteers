@@ -1,132 +1,182 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import update from 'immutability-helper';
-import FilterComponent from '../../components/FilterComponent/FilterComponent';
-import TableComponent from '../../components/TableComponent/TableComponent';
+import { Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image } from 'react-bootstrap'
+import * as Permissions from "../../model/permissionsUtils"
+import VolunteerAddModal from "../../components/VolunteerAddModal/VolunteerAddModal"
+
+require('./VolunteerListTab.css');
+
+const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 export default class VolunteerListTab extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       volunteers: [],
-      roles: [],
+      visibleVolunteers: [],
+      numberOfRequests: 0,
+
       departments: [],
-      filters: {
-        filterText: '',
-        department: null,
-        role: null,
-        gotTicket: null,
-        isProduction: null
-      }
+
+      filter: {
+        search: '',
+        departmentId: null
+      },
+
+      showAddModal: false
     }
   }
 
   componentWillMount() {
     this.fetchDepartments();
-    this.fetchVolunteers();
-    this.fetchRoles();
   }
-
-  logNetworkError = (err) => {
-    console.log('Error fetching the data')
-  };
-
-  fetchVolunteers = () => {
-    const isAdmin = document.roles.some(role => role.permission === 'admin');
-
-    if (isAdmin) {
-      return axios.get('/api/v1/volunteers/')
-        .then((res) => this.setState({volunteers: res.data}))
-        .catch(this.logNetworkError);
-    }
-
-    const permittedDepartments = document.roles.map(role => role.department_id);
-    for (let index = 0; index < permittedDepartments.length; index++) {
-      axios.get(`/api/v1/departments/${permittedDepartments[index]}/volunteers`)
-        .then((res) => {
-          let updatedVolunteers = this.state.volunteers.slice().concat(res.data);
-          this.setState({volunteers: updatedVolunteers})
-        })
-        .catch(this.logNetworkError);
-    }
-  };
 
   fetchDepartments = () => {
-    axios.get('/api/v1/departments')
-      .then((res) => {
-        const departments = res.data.sort((a, b) => a.name.localeCompare(b.name));
-        const {filters} = this.state;
-        filters.department = departments && departments[0].id.toString();
-        this.setState({
-          filters: filters,
-          departments: departments
-        });
-      })
-      .catch(this.logNetworkError);
-  };
-
-  fetchRoles() {
-    axios.get('/api/v1/roles')
-      .then((res) => {
-        const roles = res.data;
-        this.setState({roles: roles});
-      })
-      .catch(this.logNetworkError);
+    axios.get("/api/v1/departments")
+    .then(res => {
+      const departments = res.data;
+      this.state.departments = departments.filter(department => 
+          Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id));
+      this.state.filter.departmentId = departments && departments[0]._id;
+      this.setState(this.state);
+      this.fetchVolunteers();
+    })
   }
 
-  handleVolunteerDelete = (profile_id, department) => {
+  fetchVolunteers = () => {
+    this.state.volunteers = [];
+    this.state.numberOfRequests = this.state.departments.length;
+    this.setState(this.state);
+    for (let i = 0; i<this.state.departments.length; i++) {
+      const departmentId = this.state.departments[i]._id;
+      axios.get(`/api/v1/departments/${departmentId}/volunteers`)
+      .then(res => {
+        this.state.volunteers = this.state.volunteers.concat(res.data);
+        this.state.numberOfRequests--;
+        this.setState(this.state);
+        this.updateVisibleVolunteers();
+      })
+      .catch(_ => {
+        this.state.numberOfRequests--;
+        this.setState(this.state);
+      });
+    }
+  }
 
-    axios.delete(`/api/v1/departments/${department}/volunteers/${profile_id}`)
-      .then(this.fetchVolunteers)
-      .catch(this.logNetworkError);
-  };
+  updateVisibleVolunteers = _ => {
+    const searchTerm = this.state.filter.search.toLowerCase().trim();
 
-  handleRoleChange = (profileId, departmentId, roleId) => {
-    axios
-      .put(`/api/v1/departments/${departmentId}/volunteers/${profileId}`, {role_id: roleId})
-      .then(this.fetchVolunteers)
-      .catch(this.logNetworkError);
-  };
+    this.state.visibleVolunteers = this.state.volunteers.filter(volunteer => {
+      if (this.state.filter.departmentId && this.state.filter.departmentId !== volunteer.departmentId) {
+        return false;
+      }
 
-  handleFilterTextInput = (filterText) => {
-    this.handleFilterInput('filterText', filterText);
-  };
-
-  handleFilterInput = (filterName, value) => {
-    const mergeValue = {
-      filters: {
-        $merge: {
-          [filterName]: value
+      
+      if (searchTerm) {
+        const match = volunteer.userId.toLowerCase().indexOf(searchTerm) > -1 || 
+                      (volunteer.firstName && volunteer.firstName.toLowerCase().indexOf(searchTerm) > -1) ||
+                      (volunteer.lastName && volunteer.lastName.toLowerCase().indexOf(searchTerm) > -1);
+        if (!match) {
+          return false;
         }
       }
-    };
-    this.setState((previousState) => update(previousState, mergeValue));
+
+      return true;
+    })
+    this.setState(this.state);
+  }
+
+  searchChanged = event => {
+    this.state.filter.search = event.target.value;
+    this.setState(this.state);
+    this.updateVisibleVolunteers();
   };
 
+  onSelectDepartment = (eventKey, event) => {
+    if (eventKey === 'all') {
+      this.state.filter.departmentId = '';
+    } else {
+      this.state.filter.departmentId = eventKey;
+    }
+    this.setState(this.state);
+    this.updateVisibleVolunteers();
+  }
+
+  showAddModal = _ => {
+    this.state.showAddModal = true;
+    this.setState(this.state);
+  }
+
+  hideAddModal = _ => {
+    this.state.showAddModal = false;
+    this.setState(this.state);
+  }
+
   render() {
-    const {filters, volunteers, roles, departments} = this.state;
+    const {filter, volunteers, departments} = this.state;
+    const department = departments.find(department => department._id === filter.departmentId);
+    const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : DEFAULT_LOGO;
+    const title = department ? `${department.basicInfo.nameEn} Volunteers` : 'All Volunteers';
     return (
       <div className="volunteer-list-tab-component">
         <div className="container card">
-          <FilterComponent
-            filters={filters}
-            onFilterTextInput={this.handleFilterTextInput}
-            onFilterInput={this.handleFilterInput}
-            roles={roles}
-            departments={departments}
-            onSuccess={this.fetchVolunteers}/>
+          <Image src={logoImage} className="volunteer-list-department-logo"></Image>
+          <h1 className="volunteers-title">{title}</h1>
+          {this.state.departments.length > 1 &&
+          <Dropdown className="volunteer-department-dropdown" id="departments-dropdown" onSelect={this.onSelectDepartment}>
+            <Dropdown.Toggle/>
+            <Dropdown.Menu>
+              {departments.map(department => 
+                <MenuItem key={department._id} eventKey={department._id}
+                          active={this.state.filter.departmentId === department._id}>
+                  {department.basicInfo.nameEn}
+                </MenuItem>
+              )}
+              <MenuItem divider/>
+              <MenuItem eventKey="all" active={!this.state.filter.departmentId}>All</MenuItem>
+            </Dropdown.Menu>
+          </Dropdown>}
+          <Button bsStyle="primary" className="add-volunteers-button" 
+                  onClick={this.showAddModal}>Add Volunteers</Button>
+          <FormControl type="text" className="search-volunteer"
+                      value={this.state.filter.search} onChange={this.searchChanged} 
+                      placeholder="Search by user's first name, last name or email"/>
+
+          {this.state.numberOfRequests > 0 ? 
+            <div className="no-volunteers">Loading</div>
+          : this.state.visibleVolunteers.length === 0 ? 
+          <div className="no-volunteers">No Volunteers</div>
+          :
+            <ListGroup className="volunteer-list-group">
+              <ListGroupItem className="volunteer-list-group-item-header">
+                {!this.state.filter.departmentId &&
+                  <span className="ellipsis-text flex2">Department</span>
+                }
+                <span className="ellipsis-text flex3">Email</span>
+                <span className="ellipsis-text flex2">First Name</span>
+                <span className="ellipsis-text flex2">Last Name</span>
+                <span className="ellipsis-text flex1">Role</span>
+                <span className="ellipsis-text flex1">Yearly</span>
+              </ListGroupItem>
+              {this.state.visibleVolunteers.map(volunteer => 
+              <ListGroupItem key={volunteer._id} className="volunteer-list-group-item">
+                {!this.state.filter.departmentId &&
+                  <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
+                }
+                <span className="ellipsis-text flex3">{volunteer.userId}</span>
+                <span className="ellipsis-text flex2">{volunteer.firstName ? volunteer.firstName : 'No Data'}</span>
+                <span className="ellipsis-text flex2">{volunteer.lastName ? volunteer.lastName : 'No Data'}</span>
+                <span className="ellipsis-text flex1">{volunteer.permission}</span>
+                <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
+              </ListGroupItem>
+              )}
+            </ListGroup>}
         </div>
-        <div className="container card container">
-          <TableComponent
-            volunteers={volunteers}
-            filters={filters}
-            roles={roles}
-            departments={departments}
-            onRowDelete={this.handleVolunteerDelete}
-            onRowChange={this.handleRoleChange}/>
-        </div>
+        <VolunteerAddModal show={this.state.showAddModal} departmentId={this.state.filter.departmentId}
+                          departments={this.state.departments} onHide={this.hideAddModal} 
+                          onSuccess={this.fetchVolunteers}/>
       </div>
     );
   }

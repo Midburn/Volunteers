@@ -21,7 +21,7 @@ class App extends React.Component {
     routes.push({ name:'Join', path:'/volunteer-requests',component: VolunteerRequest });
 
     if (isAdmin || isManager) {
-      routes.push({ name:'Volunteer List', path: '/volunteer-list-tab',component: VolunteerListTab });
+      routes.push({ name:'Volunteers', path: '/volunteer-list-tab',component: VolunteerListTab });
     }
 
     // if (isAdmin || isManager) {

@@ -1,215 +1,177 @@
 import React, { Component } from 'react';
-import {Modal, OverlayTrigger, Button, FormControl, FormGroup, ControlLabel, Checkbox, HelpBlock } from 'react-bootstrap';
+import {Modal, Button, FormControl, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 import update from 'immutability-helper';
 import axios from 'axios';
 
-import DropdownFilter from '../DropdownFilter/DropdownFilter.js';
-import DropdownConverter from '../../DropdownConverter.js';
-
 require('./VolunteerAddModal.css')
 
-export default class VolunteerAddModal extends Component{
-    state = {
-        email: '',
-        department: -1,
-        role: 4,
-        production: false,
-        errorTexts: [],
-        isButtonEnabled: true
-    }
-    
-    componentWillReceiveProps() {
-        if (this.props.departments.length > 0 && this.state.department == -1) {
-            this.setState((state)=>update(state, {department:{$set:this.props.departments[0].id}}))
-        }
-    }
+export default class VolunteerAddModal extends Component {
+  constructor(props) {
+    super(props);
+    this.onEnter()
+  }
 
-    getInputChangeHandler = (field) => {
-        return (event) => this.handleChange(field,event);
-    }
+  onEnter = _ => {
+    const departmentId = this.props.departmentId ? this.props.departmentId : 
+      (this.props.departments && this.props.departments.length ? this.props.departments[0]._id : '')
+    this.state = {
+      departmentId: departmentId,
+      permission: 'volunteer',
+      yearly: 'false',
+      emails: [],
 
-    handleChange = (field, event) => {
-        let converter = new DropdownConverter();
-        let val = event.target.value;
-
-        this.state.errorTexts = []
-        this.setState( (state) => update(state, {$merge:{[field]: converter.convertFromDisplay(val)}} ));
+      status: [],
+      isButtonEnabled: true
     }
 
-    handleSubmit = () => {
-        let emails = this.splitEmailString(this.state.email);
-        if (emails.length == 0) {
-            this.state.errorTexts = ['Please enter an email address']
-            this.setState(this.state)
-            return;
-        }
+    this.setState(this.state);
+  }
 
-        var invalidEmails = []
-        emails.forEach((email) => {
-            if (!this.validateEmail(email)) {
-                invalidEmails.push(email)
-            }  
-        })
+  handleOptionsChange = event => {    
+    const field = event.target.id;
+    this.state[field] = event.target.value
+    this.setState(this.state);
+  }
 
-        if (invalidEmails.length > 0) {
-            this.state.errorTexts = invalidEmails.map((email) => {return `Error: ${email} - Invalid email`})
-            this.setState(this.state)
-            return;
-        }
+  handleEmailsChange = event => {
+    this.state.emails = [];
+    const emails = event.target.value.split(/\r|\n/);
+    emails.forEach(email => {
+      const cleanEmail = email.replace(new RegExp(',', 'g'), '').trim();
+      if (cleanEmail){
+        this.state.emails.push(cleanEmail);
+      }
+    })
+    this.setState(this.state);
+  }
 
-        // add volunteers
-        let department = this.state.department
-        let role = this.state.role
-        let production = this.state.production
+  isValidEmail = (email) => {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
 
-        this.state.errorTexts = ['Adding... ']
-        this.state.isButtonEnabled = false
+  handleSubmit = () => {
+    if (!this.state.emails.length) {
+        this.state.status = ['Please enter at least one email address']
         this.setState(this.state)
-
-
-        axios.post(`/api/v1/departments/${department}/volunteers`,
-            {
-                role: role,
-                is_production: production,
-                emails: emails
-            })
-            .then(response => {
-                this.state.isButtonEnabled = true
-                this.props.onSuccess() 
-                this.setState(this.state)
-                this.handleServerResponse(response)
-            })
-            .catch(error => {
-                this.state.errorTexts = ['Server Error']
-                this.state.isButtonEnabled = true
-                this.setState(this.state)
-            });
+        return;
     }
 
-    handleServerResponse = (response) => {
-        var errors = []
-        var successCounter = 0
-
-        response.data.forEach(({email, status}) => {
-            if (status != 'OK') {
-                errors.push(`Error: ${email} - ${status}`)
-            } else {
-                successCounter += 1
-            }
-        })
-
-        var text = []
-        if (successCounter > 1) {
-            text.push(`${successCounter} volunteers were added successfully`)
-        } else if (successCounter == 1) {
-            text.push(`1 volunteer was added successfully`)
-        }
-        text = text.concat(errors)
-
-        this.state.errorTexts = text
+    var invalidEmails = []
+    this.state.emails.forEach((email) => {
+        if (!this.isValidEmail(email)) {
+            invalidEmails.push(email)
+        }  
+    })
+    if (invalidEmails.length) {
+        this.state.status = invalidEmails.map((email) => {return `Error: ${email} - Invalid email`})
         this.setState(this.state)
+        return;
     }
+
+    // add volunteers
+    this.state.status = ['Adding... ']
+    this.state.isButtonEnabled = false
+    this.setState(this.state)
+    axios.post(`/api/v1/departments/${this.state.departmentId}/volunteers`,
+    {
+        permission: this.state.permission,
+        yearly: this.state.yearly === 'true' ? true : false,
+        emails: this.state.emails
+    })
+    .then(response => {
+        this.state.isButtonEnabled = true
+        this.setState(this.state)
+        this.handleServerResponse(response)
+        // this.props.onSuccess() 
+    })
+    .catch(error => {
+        this.state.status = ['Server Error']
+        this.state.isButtonEnabled = true
+        this.setState(this.state)
+    });
+  }
     
-    handleClose = () => {
-        // Close modal
-        this.props.onHide();
-    }
-
-    validateEmail = (email) => {
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    }
-
-    splitEmailString = (emailStr) => {
-        var emailArr = emailStr.split(/\r|\n/).map((email) => {return email.trim()})
-        emailArr = emailArr.filter((email) => { return email != '' }); 
-
-        return emailArr;
-    }
-
-    testLastEmail = (email) => {
-        let emailArr = email.split(',');
-        return this.validateEmail(emailArr[emailArr.length - 2]);
-    }
-
-    getRolesOptions = () => {
-        if (this.props.roles == undefined || this.props.roles.length == 0) {
-            return <option value="" key="">Loading..</option>
+  handleServerResponse = response => {
+    var errors = []
+    var successCounter = 0
+    response.data.forEach(({email, status}) => {
+        if (status != 'OK') {
+            errors.push(`Error: ${email} - ${status}`)
+        } else {
+            successCounter += 1
         }
+    })
 
-        return this.props.roles.map(({name, id}) => 
-            <option value={id} key={name}>{name}</option>
-        )
+    var text = []
+    if (successCounter > 1) {
+        text.push(`${successCounter} volunteers were added successfully`)
+    } else if (successCounter == 1) {
+        text.push(`1 volunteer was added successfully`)
     }
+    text = text.concat(errors)
 
-    getDepartmentOptions = () => {
-        if (this.props.departments == undefined || this.props.departments.length == 0) {
-            return <option value="" key="">Loading..</option>
-        }
+    this.state.status = text
+    this.setState(this.state)
 
-        return this.props.departments.map(({name, id}) => 
-            <option value={id} key={name}>{name}</option>
-        )
-    }
+    if (successCounter > 0) {
+      this.props.onSuccess()
+    } 
+  }
+    
+  onHide = () => {
+    this.props.onHide()
+  }
 
-    getErrorText = () => (
-        <ul>{this.state.errorTexts.map((text, index) => <li key={`li-${index}`}>{text}</li>)}</ul>
+  render(){
+    return (
+      <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Add Volunteers</Modal.Title>
+        </Modal.Header>
+        
+        <Modal.Body>
+          <div className="add-volunteer-options">
+            {this.props.departments.length > 1 &&
+            <FormGroup className="add-volunteer-form-group" controlId="departmentId">
+              <ControlLabel>Department</ControlLabel>
+              <FormControl componentClass="select" onChange={this.handleOptionsChange} value={this.state.departmentId}>
+                {this.props.departments.map(department => 
+                  <option key={department._id} value={department._id}>{department.basicInfo.nameEn}</option>
+                )}
+              </FormControl>
+            </FormGroup>}
+            <FormGroup className="add-volunteer-form-group" controlId="permission">
+              <ControlLabel>Role</ControlLabel>
+              <FormControl componentClass="select" onChange ={this.handleOptionsChange} value={this.state.permission}>
+                <option value='manager'>Manager</option>
+                <option value='volunteer'>Volunteer</option>
+              </FormControl>
+              <HelpBlock>Managers can edit all the department info and add volunteers</HelpBlock>
+            </FormGroup>
+            <FormGroup className="add-volunteer-form-group" controlId="yearly">
+              <ControlLabel>Yearly Volunteer</ControlLabel>
+              <FormControl componentClass="select" onChange = {this.handleOptionsChange} value={this.state.yearly}>
+                <option value='true'>Yes</option>
+                <option value='false'>No</option>
+              </FormControl>
+              <HelpBlock>Yearly volunteers are production volunteers</HelpBlock>
+            </FormGroup>
+          </div>
+          <FormGroup controlId="emails">
+              <ControlLabel>User Email</ControlLabel>
+              <FormControl className="add-volunteer-emails" componentClass="textarea" onChange={this.handleEmailsChange}
+                  placeholder="Please enter email addresses - one in each line"></FormControl>
+          </FormGroup>
+          {this.state.status.length > 0 &&
+          <ul>{this.state.status.map((text, index) => <li key={`li-${index}`}>{text}</li>)}</ul>}
+        </Modal.Body>
+          
+        <Modal.Footer>
+          <Button onClick={this.onHide}>Close</Button>
+          <Button bsStyle="primary" onClick={this.handleSubmit} disabled={!this.state.isButtonEnabled}>Add Volunteers</Button>
+        </Modal.Footer>
+      </Modal>
     )
-
-    render(){
-        let converter = new DropdownConverter();
-
-        return (
-            <Modal show={this.props.show} onHide={this.handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add new volunteer</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-
-                    <FormGroup controlId="Department">
-                        <ControlLabel>Department</ControlLabel>
-                        <FormControl componentClass="select" onChange={this.getInputChangeHandler('department')}
-                            value={this.state.department}
-                            className="form-control" >
-                                {this.getDepartmentOptions()}
-                        </FormControl>
-                    </FormGroup>
-
-                    <FormGroup controlId="Role">
-                        <ControlLabel>Role</ControlLabel>
-                        <FormControl componentClass="select" onChange ={this.getInputChangeHandler('role')}
-                            value={this.state.role}
-                            className="form-control" >
-                                {this.getRolesOptions()}
-                        </FormControl>
-                    </FormGroup>
-
-                    <FormGroup controlId="Production">
-                        <ControlLabel>Production</ControlLabel>
-                        <FormControl componentClass="select" onChange ={this.getInputChangeHandler('production')}
-                            value={converter.convertToDisplay(this.state.production)}
-                            className="form-control" >
-                                {
-                                    ['Yes', 'No'].map(
-                                    (option)=> <option value={option} key={option}>{option}</option>
-                                    )    
-                                }
-                        </FormControl>
-                    </FormGroup>
-
-                    <FormGroup controlId="email">
-                        <ControlLabel>User Email</ControlLabel>
-                        <FormControl componentClass="textarea" onChange={this.getInputChangeHandler('email')}
-                            value={this.state.email}
-                            className="form-control" placeholder="Please enter all volunteer emails - one in each line"></FormControl>
-                    </FormGroup>
-                    {this.getErrorText()}
-                </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={this.handleClose}>Close</Button>
-                <Button bsStyle="primary" onClick={this.handleSubmit} disabled={!this.state.isButtonEnabled}>Add Volunteer</Button>
-            </Modal.Footer>
-            </Modal>
-        )
-    }
+  }
 }

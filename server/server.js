@@ -69,6 +69,7 @@ app.use((err, req, res, next) => {
 app.use('/api/v1', require('./routes/spark'));
 app.use('/api/v1', require('./routes/shifts'));
 app.use('/api/v1', require('./routes/departments'));
+app.use('/api/v1', require('./routes/volunteers'));
 app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/api/v1', require('./routes/permissions'));
 
