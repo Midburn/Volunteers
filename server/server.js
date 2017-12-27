@@ -11,11 +11,6 @@ const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const co = require('co');
 const permissionsUtils = require('./utils/permissions');
-/////////////////////////////
-// Mongoose
-/////////////////////////////
-mongoose.connect(process.env.DB_URL);
-mongoose.Promise = Promise;
 
 // Load environment variables default values
 require('dotenv').config();
