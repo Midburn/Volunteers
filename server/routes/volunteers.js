@@ -6,6 +6,7 @@ const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
 
+// Get all volunteers for department
 router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
   const departmentId = req.params.departmentId;
   const department = yield Department.findOne({_id: departmentId, deleted: false});
@@ -20,7 +21,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
   return res.json(departmentVolunteers);
 }));
 
-
+// Add multiple volunteers to department
 router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const department = yield Department.findOne({_id: departmentId, deleted: false});
@@ -66,5 +67,35 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
     return res.json(responses);
 }));
 
+// Update one volunteer in department
+router.put('/departments/:departmentId/volunteer/:volunteerId', co.wrap(function* (req, res) {
+  const departmentId = req.params.departmentId;
+  const volunteerId = req.params.volunteerId;
+  const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
+  if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
+
+  // TODO: check permission
+
+  const updatedVolunteer = req.body;
+  for (const key in updatedVolunteer) {
+      if (updatedVolunteer.hasOwnProperty(key)) volunteer[key] = updatedVolunteer[key];
+  }
+  yield volunteer.save();
+  return res.json(volunteer);
+}));
+
+// Delete one volunteer in department
+router.delete('/departments/:departmentId/volunteer/:volunteerId', co.wrap(function* (req, res) {
+  const departmentId = req.params.departmentId;
+  const volunteerId = req.params.volunteerId;
+  const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
+  if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
+
+  // TODO: check permission
+
+  volunteer.deleted = true;
+  yield volunteer.save();
+  return res.json({status: "done"});
+}));
 
 module.exports = router;

@@ -55,6 +55,10 @@
   display: flex;
 }
 
+.volunteer-list-group-item:focus{
+  outline: none;
+}
+
 .ellipsis-text {
   text-overflow: ellipsis;
   overflow: hidden;

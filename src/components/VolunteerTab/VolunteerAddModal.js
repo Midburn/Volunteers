@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Modal, Button, FormControl, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
-import update from 'immutability-helper';
 import axios from 'axios';
 
 require('./VolunteerAddModal.css')
@@ -83,7 +82,6 @@ export default class VolunteerAddModal extends Component {
         this.state.isButtonEnabled = true
         this.setState(this.state)
         this.handleServerResponse(response)
-        // this.props.onSuccess() 
     })
     .catch(error => {
         this.state.status = ['Server Error']
@@ -147,7 +145,7 @@ export default class VolunteerAddModal extends Component {
                 <option value='manager'>Manager</option>
                 <option value='volunteer'>Volunteer</option>
               </FormControl>
-              <HelpBlock>Managers can edit all the department info and add volunteers</HelpBlock>
+              <HelpBlock>Managers can edit the department info and add volunteers</HelpBlock>
             </FormGroup>
             <FormGroup className="add-volunteer-form-group" controlId="yearly">
               <ControlLabel>Yearly Volunteer</ControlLabel>
@@ -166,11 +164,6 @@ export default class VolunteerAddModal extends Component {
           {this.state.status.length > 0 &&
           <ul>{this.state.status.map((text, index) => <li key={`li-${index}`}>{text}</li>)}</ul>}
         </Modal.Body>
-          
-        <Modal.Footer>
-          <Button onClick={this.onHide}>Close</Button>
-          <Button bsStyle="primary" onClick={this.handleSubmit} disabled={!this.state.isButtonEnabled}>Add Volunteers</Button>
-        </Modal.Footer>
       </Modal>
     )
   }

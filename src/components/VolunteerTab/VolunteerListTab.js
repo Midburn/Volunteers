@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image } from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
 import VolunteerAddModal from "./VolunteerAddModal"
+import VolunteerEditModal from "./VolunteerEditModal"
 
 require('./VolunteerListTab.css');
 
@@ -24,7 +25,8 @@ export default class VolunteerListTab extends Component {
         departmentId: null
       },
 
-      showAddModal: false
+      showAddModal: false,
+      editModalVolunteer: ''
     }
   }
 
@@ -113,6 +115,16 @@ export default class VolunteerListTab extends Component {
     this.setState(this.state);
   }
 
+  showEditModal = volunteerId => _ => {
+    this.state.editModalVolunteer = this.state.visibleVolunteers.find(volunteer => volunteer._id === volunteerId);
+    this.setState(this.state);
+  }
+
+  hideEditModal = _ => {
+    this.state.editModalVolunteer = null;
+    this.setState(this.state);
+  }
+
   render() {
     const {filter, volunteers, departments} = this.state;
     const department = departments.find(department => department._id === filter.departmentId);
@@ -160,7 +172,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex1">Yearly</span>
               </ListGroupItem>
               {this.state.visibleVolunteers.map(volunteer => 
-              <ListGroupItem key={volunteer._id} className="volunteer-list-group-item">
+              <ListGroupItem key={volunteer._id} className="volunteer-list-group-item" onClick={this.showEditModal(volunteer._id)}>
                 {!this.state.filter.departmentId &&
                   <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
                 }
@@ -176,6 +188,8 @@ export default class VolunteerListTab extends Component {
         <VolunteerAddModal show={this.state.showAddModal} departmentId={this.state.filter.departmentId}
                           departments={this.state.departments} onHide={this.hideAddModal} 
                           onSuccess={this.fetchVolunteers}/>
+        <VolunteerEditModal show={!!this.state.editModalVolunteer} volunteer={this.state.editModalVolunteer}
+                          onHide={this.hideEditModal} onSuccess={this.fetchVolunteers}/>
       </div>
     );
   }
