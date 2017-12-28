@@ -15,10 +15,11 @@ then
     ! ./run_docker_ops.sh "${DEPLOY_ENVIRONMENT}" "
         cd /ops
         ! ./helm_update_values.sh '${B64_UPDATE_VALUES}' '${HELM_UPDATE_COMMIT_MESSAGE}' '${K8S_OPS_GITHUB_REPO_TOKEN}' '${OPS_REPO_SLUG}' '${OPS_REPO_BRANCH}' \
-            && echo 'failed helm update values' && exit 1
+            && echo 'failed helm update values' && exit 1;
+        ! kubectl set image deployment/volunteers volunteers=${IMAGE_TAG} && echo 'failed to patch deployment' && exit 1;
         cd /volunteers;
-          ! gcloud container builds submit --tag $IMAGE_TAG . \
-            && echo 'failed to build volunteers image' && exit 1
+        ! gcloud container builds submit --tag $IMAGE_TAG . \
+            && echo 'failed to build volunteers image' && exit 1;
         exit 0
       " "" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "" "-v `pwd`:/volunteers" \
         && echo 'failed to run docker ops' && exit 1
