@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import update from 'immutability-helper';
 import { Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image } from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
-import VolunteerAddModal from "../../components/VolunteerAddModal/VolunteerAddModal"
+import VolunteerAddModal from "./VolunteerAddModal"
 
 require('./VolunteerListTab.css');
 

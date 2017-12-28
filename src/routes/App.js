@@ -1,7 +1,7 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import * as Permissions from "../model/permissionsUtils"
-import VolunteerListTab from "./VolunteerListTab/VolunteerListTab";
+import VolunteerListTab from "../components/VolunteerTab/VolunteerListTab";
 import ShiftManager from "./Shifts/ShiftManager";
 import TimeClock from "./TimeClock/TimeClock";
 import VolunteerShifts from "../components/VolunteerShifts/VolunteerShifts";
