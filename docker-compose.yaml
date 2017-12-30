@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+
+  db:
+    image: mongo
+    ports:
+    - "27017:27017"
+
+  adminer:
+    depends_on:
+    - db
+    image: adminer
+    ports:
+    - "8080:8080"
+
+  app:
+    depends_on:
+    - db
+    build: .
+    image: midburn-volunteers
+    ports:
+    - "3000:3000"
+    - "8000:8000"
+    environment:
+    - ENVIRONMENT=debug
+    - PORT=8000
+    - DB_URL=mongodb://db/volunteers
+    - SPARK_HOST=http://localhost:3000
+    - SECRET=secret
+    - JWT_KEY=authToken
+    - LOCAL_SPARK=true
