@@ -9,9 +9,12 @@ export default class JoinFormPreview extends Component {
   }
 
   render() {
-    const basicInfo = this.props.department.basicInfo;
+    const {questions, basicInfo} = this.props;
     const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
-    const questions = this.props.department.requestForm;
+
+    if (questions.length === 0) {
+      return <div>Nothing to show</div>
+    }
 
     return (
       <div style={{whiteSpace:'pre-wrap' ,minHeight:50}}>
