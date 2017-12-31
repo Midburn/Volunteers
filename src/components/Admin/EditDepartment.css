@@ -39,3 +39,18 @@
   margin-top: 10px;
 }
 
+.edit-department-status-checkbox {
+  margin-top: 20px;
+  display: block;
+}
+
+.edit-department-status-checkbox.disabled {
+  color: #929090;
+}
+
+.edit-department-delete {
+  margin-top: 15px;
+}
+
+
+

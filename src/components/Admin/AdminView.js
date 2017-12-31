@@ -93,11 +93,12 @@ export default class AdminView extends Component {
           {this.state.departments.map(department => {
             const basicInfo = department.basicInfo;
             const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
+            const active = department.status.active
             return (
             <ListGroupItem key={department._id} style={{minHeight:80}}>
               <Image src={departmentLogo} className="admin-department-logo"></Image>
               <div>
-                <h4 className="admin-title">{basicInfo.nameEn} - {basicInfo.nameHe}</h4>
+                <h4 className={`admin-title ${!active ? 'admin-title-inactive' : ''}`}>{basicInfo.nameEn} - {basicInfo.nameHe}</h4>
                 {(Permissions.isAdmin() ||  Permissions.isManagerOfDepartment(department._id))&&
                   <Button bsStyle="link" className="admin-edit-button"
                             onClick={this.editDepartment(department._id)}>Edit</Button>}

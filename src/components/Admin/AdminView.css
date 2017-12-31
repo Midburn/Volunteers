@@ -16,6 +16,9 @@
   margin-top: 20px;
 }
 
+.admin-title-inactive {
+  color: #9ca1a7
+}
 .admin-department-logo {
   width:60px;
   height:60px;

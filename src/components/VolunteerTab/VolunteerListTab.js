@@ -39,8 +39,9 @@ export default class VolunteerListTab extends Component {
     .then(res => {
       const departments = res.data;
       this.state.departments = departments.filter(department => 
-          Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id));
-      this.state.filter.departmentId = departments && departments[0]._id;
+          department.status.active &&
+          (Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id)));
+      this.state.filter.departmentId = this.state.departments && this.state.departments[0]._id;
       this.setState(this.state);
       this.fetchVolunteers();
     })
