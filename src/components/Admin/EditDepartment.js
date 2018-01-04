@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 // import axios from 'axios';
 import {Modal, Image, Tabs, Tab ,Button,
   Form, FormGroup, FormControl, ControlLabel, HelpBlock, Checkbox} from 'react-bootstrap'
@@ -9,10 +9,10 @@ import JoinFormPreview from './JoinFormPreview';
 const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 export default class EditDepartment extends Component {
-  constructor(props) {
-    super(props);
-    this.onEnter();
-  }
+    constructor(props) {
+        super(props);
+        this.onEnter();
+    }
 
   onEnter = _ => {
     this.state = { 
@@ -224,7 +224,7 @@ export default class EditDepartment extends Component {
                 <div style={{marginTop: 20}}>
                   <Button bsStyle="link" className="edit-department-preview"
                           onClick={this.hidePreview}>Back</Button>
-                  <JoinFormPreview department={this.state.department}/>
+                  <JoinFormPreview questions={this.state.department.requestForm}/>
                 </div>
                 ) : ( 
                 <div style={{marginTop: 20}}>

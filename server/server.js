@@ -72,6 +72,7 @@ app.use('/api/v1', require('./routes/departments'));
 app.use('/api/v1', require('./routes/volunteers'));
 app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/api/v1', require('./routes/permissions'));
+app.use('/api/v1', require('./routes/departmentForms'));
 
 app.use('/login', (req, res) => {
     let token = req.query.token;

@@ -1,83 +1,87 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import axios from 'axios';
-import {Button, Image, ListGroup, ListGroupItem, Modal, FormControl} from 'react-bootstrap'
-import update from 'immutability-helper';
+import {Button, FormControl, Image, ListGroup, ListGroupItem, Modal} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
 import EditDepartment from './EditDepartment';
-require('./AdminView.css')
+import FormEditor from "../FormEditor/FormEditor";
+
+require('./AdminView.css');
 
 const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 export default class AdminView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { 
-      departments: [],
-      showEditDepartmentModal: false,
-      departmentToEdit: null,
+    constructor(props) {
+        super(props);
 
-      admins: [],
-      showAddAdminModal: false,
-      newAdminEmailInput: null
+        this.state = {
+            departments: [],
+            showEditDepartmentModal: false,
+            departmentToEdit: null,
+
+            admins: [],
+            showAddAdminModal: false,
+            newAdminEmailInput: null,
+            generalForm: []
+        };
+
+        this.handleOnFormSave = this.handleOnFormSave.bind(this);
+    }
+
+    refreshData() {
+        axios.get("/api/v1/departments")
+            .then(res => this.setState({departments: res.data}));
+        axios.get("/api/v1/permissions/admins")
+            .then(res => this.setState({admins: res.data}));
+        axios.get("/api/v1/form")
+            .then(res => this.setState({generalForm: res.data}));
     };
-  }
 
-  refreshData = _ => {
-    axios.get("/api/v1/departments")
-    .then(res => {
-      const departments = res.data;
-      this.state.departments = departments;
-      this.setState(this.state);
-    })
-    axios.get("/api/v1/permissions/admins")
-    .then(res => {
-      const admins = res.data;
-      this.state.admins = admins;
-      this.setState(this.state);
-    })
-  }
+    addDepartment = _ => {
+        this.state.departmentToEdit = null;
+        this.state.showEditDepartmentModal = true;
+        this.setState(this.state);
+    };
 
-  addDepartment = _ => {
-    this.state.departmentToEdit = null;
-    this.state.showEditDepartmentModal = true;
-    this.setState(this.state);
-  }
+    editDepartment = departmentId => _ => {
+        this.state.departmentToEdit = this.state.departments.find(department => department._id === departmentId);
+        this.state.showEditDepartmentModal = true;
+        this.setState(this.state);
+    };
 
-  editDepartment = departmentId => _ => {
-    this.state.departmentToEdit = this.state.departments.find(department => department._id == departmentId);
-    this.state.showEditDepartmentModal = true;
-    this.setState(this.state);
-  }
+    hideEditDepartmentModal = _ => {
+        this.state.showEditDepartmentModal = false;
+        this.setState(this.state);
+        this.refreshData();
+    };
 
-  hideEditDepartmentModal = _ => {
-    this.state.showEditDepartmentModal = false;
-    this.setState(this.state);
-    this.refreshData();
-  }
+    showAddAdmin = _ => {
+        this.state.showAddAdminModal = true;
+        this.setState(this.state);
+    };
 
-  showAddAdmin =_ => {
-    this.state.showAddAdminModal = true;
-    this.setState(this.state);
-  }
+    addAdmin = _ => {
+        axios.post("/api/v1/permissions/admins", {userId: this.state.newAdminEmailInput.value})
+            .then(res => {
+                this.state.newAdminEmailInput.value = '';
+                this.state.showAddAdminModal = false;
+                this.setState(this.state);
+                this.refreshData();
+            })
+    };
 
-  addAdmin = _ => {
-    axios.post("/api/v1/permissions/admins", {userId: this.state.newAdminEmailInput.value})
-    .then(res => {
-      this.state.newAdminEmailInput.value = '';
-      this.state.showAddAdminModal = false;
-      this.setState(this.state);
-      this.refreshData();
-    })
-  }
+    hideAddAdmin = _ => {
+        this.state.showAddAdminModal = false;
+        this.setState(this.state);
+    };
 
-  hideAddAdmin = _ => {
-    this.state.showAddAdminModal = false;
-    this.setState(this.state);
-  }
+    handleOnFormSave(form) {
+        axios.post("/api/v1/form", {form})
+            .then(res => this.setState({generalForm: res.data}))
+    }
 
-  componentDidMount() {
-    this.refreshData();
-  };
+    componentDidMount() {
+        this.refreshData();
+    };
 
   render() {
     return (

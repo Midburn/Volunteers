@@ -32,7 +32,7 @@ function VolunteerRequestModel() {
 
         const requestStatus = {};
 
-        for (let index = 0; index < requests.data.length; index++) {
+        for (let index = 0; index < requests.length; index++) {
             requestStatus[requests.data[index]["departmentId"]] = requests.data[index]["approved"]
         }
 
