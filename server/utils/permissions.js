@@ -11,11 +11,10 @@ module.exports = {
         if (admin && admin.length) {
             permissions.push({permission: "admin"});
         }
-
-        // TODO: read manager & volunteer permissions
+        
         const userVolunteeringDepartments = yield Volunteer.find({userId: userId, deleted: false});
         userVolunteeringDepartments.forEach(function (volunteer) {
-            permissions.push({permission: volunteer.roleId, departmentId: volunteer.departmentId});
+            permissions.push({permission: volunteer.permission, departmentId: volunteer.departmentId});
         });
 
         return permissions;

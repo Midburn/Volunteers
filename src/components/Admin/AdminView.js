@@ -83,78 +83,61 @@ export default class AdminView extends Component {
         this.refreshData();
     };
 
-    render() {
-        const {generalForm} = this.state;
+  render() {
+    return (
+      <div className="admin-view">
+        <EditDepartment show={this.state.showEditDepartmentModal}
+                        onHide={this.hideEditDepartmentModal}
+                        department={this.state.departmentToEdit}/>
+        <div className="card container">
+          <h1 className="admin-departments">Departments</h1>
+          {Permissions.isAdmin() &&
+            <Button bsStyle="primary" className="admin-add-button" onClick={this.addDepartment}>Add Department</Button>}
+          <ListGroup className="admin-department-list">
+          {this.state.departments.map(department => {
+            const basicInfo = department.basicInfo;
+            const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
+            const active = department.status.active
+            return (
+            <ListGroupItem key={department._id} style={{minHeight:80}}>
+              <Image src={departmentLogo} className="admin-department-logo"></Image>
+              <div>
+                <h4 className={`admin-title ${!active ? 'admin-title-inactive' : ''}`}>{basicInfo.nameEn} - {basicInfo.nameHe}</h4>
+                {(Permissions.isAdmin() ||  Permissions.isManagerOfDepartment(department._id))&&
+                  <Button bsStyle="link" className="admin-edit-button"
+                            onClick={this.editDepartment(department._id)}>Edit</Button>}
+              </div>
+            </ListGroupItem>
+          )})}
+          </ListGroup>
+        </div>
 
-        return (
-            <div className="admin-view">
-                <EditDepartment show={this.state.showEditDepartmentModal}
-                                onHide={this.hideEditDepartmentModal}
-                                department={this.state.departmentToEdit}/>
-                <div className="card container">
-                    <h1 className="admin-departments">Departments</h1>
-                    {Permissions.isAdmin() &&
-                    <Button bsStyle="primary" className="admin-add-button" onClick={this.addDepartment}>Add
-                        Department</Button>}
-                    <ListGroup className="admin-department-list">
-                        {this.state.departments.map(department => {
-                            const basicInfo = department.basicInfo;
-                            const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
-                            return (
-                                <ListGroupItem key={department._id} style={{minHeight: 80}}>
-                                    <Image src={departmentLogo} className="admin-department-logo"/>
-                                    <div>
-                                        <h4 className="admin-title">{basicInfo.nameEn} - {basicInfo.nameHe}</h4>
-                                        {(Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id)) &&
-                                        <Button bsStyle="link" className="admin-edit-button"
-                                                onClick={this.editDepartment(department._id)}>Edit</Button>}
-                                    </div>
-                                </ListGroupItem>
-                            )
-                        })}
-                    </ListGroup>
-                </div>
+        {Permissions.isAdmin() &&
+        <div className="card container">
+          <h1 className="admin-departments">Admins</h1>
+          {Permissions.isAdmin() &&
+            <Button bsStyle="primary" className="admin-add-button" onClick={this.showAddAdmin}>Add Admin</Button>}
+          <ListGroup className="admin-department-list">
+          {this.state.admins.map(admin => {
+            const adminTitle = `${admin.firstName} ${admin.lastName}`;
+            const adminEmail = admin.userId;
+            return (
+            <ListGroupItem key={admin._id} header={adminTitle}>{adminEmail}</ListGroupItem>
+          )})}
+          </ListGroup>
+        </div>
+        }
 
-                {Permissions.isAdmin() &&
-                <div className="card container">
-                    <h1 className="admin-departments">Admins</h1>
-                    {Permissions.isAdmin() &&
-                    <Button bsStyle="primary" className="admin-add-button" onClick={this.showAddAdmin}>Add
-                        Admin</Button>}
-                    <ListGroup className="admin-department-list">
-                        {this.state.admins.map(admin => {
-                            const adminTitle = `${admin.firstName} ${admin.lastName}`;
-                            const adminEmail = admin.userId;
-                            return (
-                                <ListGroupItem key={admin._id} header={adminTitle}>{adminEmail}</ListGroupItem>
-                            )
-                        })}
-                    </ListGroup>
-                </div>
-                }
-
-                {Permissions.isAdmin() &&
-                <div className="card container">
-                    <h1 className="admin-general-form">General Volunteer Form</h1>
-                    <FormEditor showPreview
-                                questions={generalForm}
-                                onSave={this.handleOnFormSave}
-                    />
-                </div>
-                }
-
-                <Modal show={this.state.showAddAdminModal}>
-                    <Modal.Header><Modal.Title>Add Admin</Modal.Title></Modal.Header>
-                    <Modal.Body>
-                        <FormControl inputRef={input => this.state.newAdminEmailInput = input} type="text"
-                                     placeholder="Enter email"/>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={this.hideAddAdmin}>Close</Button>
-                        <Button bsStyle="primary" onClick={this.addAdmin}>Add</Button>
-                    </Modal.Footer>
-                </Modal>
-            </div>
-        )
-    }
+        <Modal show={this.state.showAddAdminModal}>
+          <Modal.Header><Modal.Title>Add Admin</Modal.Title></Modal.Header>
+          <Modal.Body>
+            <FormControl inputRef={input => this.state.newAdminEmailInput = input} type="text" placeholder="Enter email"/>  
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.hideAddAdmin}>Close</Button>
+            <Button bsStyle="primary" onClick={this.addAdmin}>Add</Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    )}
 }

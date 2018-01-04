@@ -79,7 +79,7 @@ class FormEditor extends react.Component {
                         onClick={() => this.togglePreviewMode(false)}>
                     Edit
                 </Button>
-                <JoinFormPreview questions={questions} basicInfo={{}}/>
+                <JoinFormPreview questions={questions}/>
             </div>;
         }
 

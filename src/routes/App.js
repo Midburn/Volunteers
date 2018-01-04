@@ -1,7 +1,7 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import * as Permissions from "../model/permissionsUtils"
-import VolunteerListTab from "./VolunteerListTab/VolunteerListTab";
+import VolunteerListTab from "../components/VolunteerTab/VolunteerListTab";
 import ShiftManager from "./Shifts/ShiftManager";
 import TimeClock from "./TimeClock/TimeClock";
 import VolunteerShifts from "../components/VolunteerShifts/VolunteerShifts";
@@ -21,7 +21,7 @@ class App extends React.Component {
     routes.push({ name:'Join', path:'/volunteer-requests',component: VolunteerRequest });
 
     if (isAdmin || isManager) {
-      routes.push({ name:'Volunteer List', path: '/volunteer-list-tab',component: VolunteerListTab });
+      routes.push({ name:'Volunteers', path: '/volunteer-list-tab',component: VolunteerListTab });
     }
 
     // if (isAdmin || isManager) {

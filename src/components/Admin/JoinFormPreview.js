@@ -9,8 +9,7 @@ export default class JoinFormPreview extends Component {
   }
 
   render() {
-    const {questions, basicInfo} = this.props;
-    const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
+    const {questions} = this.props;
 
     if (questions.length === 0) {
       return <div>Nothing to show</div>
@@ -40,16 +39,16 @@ export default class JoinFormPreview extends Component {
             {question.questionType === 'radio' && (
             <FormGroup>
               <ControlLabel>{question.question}</ControlLabel>
-              {question.options.map(option => option.trim() &&
-                <Radio name={`radio-${index}`}>{option}</Radio>
+              {question.options.map((option, i) => option.trim() &&
+                <Radio key={i} name={`radio-${index}`}>{option}</Radio>
               )}
             </FormGroup>
             )}
             {question.questionType === 'checkboxes' && (
             <FormGroup>
               <ControlLabel>{question.question}</ControlLabel>
-              {question.options.map(option => option.trim() &&
-                <Checkbox>{option}</Checkbox>
+              {question.options.map((option, i) => option.trim() &&
+                <Checkbox key={i}>{option}</Checkbox>
               )}
             </FormGroup>
             )}

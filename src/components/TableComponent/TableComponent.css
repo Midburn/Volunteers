@@ -1,8 +1,0 @@
-.table-component .table {
-    table-layout:fixed;
-}
-
-.table-component .table td, .table th {
-  word-wrap:break-word;
-  word-break:break-all;
-}

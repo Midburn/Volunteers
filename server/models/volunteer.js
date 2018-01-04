@@ -6,10 +6,9 @@ const volunteersSchema = new Schema({
     userId: String,
     departmentId: String,
     eventId: String,
-    roleId: String,
-    isProduction: Boolean,
+    permission: String,
+    yearly: Boolean,
     comment: String,
-    modifiedDate: Date,
     deleted: Boolean,
     tags: [String]
 }, {_id: false});

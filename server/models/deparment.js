@@ -15,6 +15,11 @@ const departmentSchema = new Schema({
       questionType : String,
       options: [String]
     }],
+    status: {
+      active: Boolean,
+      visibleToJoin: Boolean,
+      availableToJoin: Boolean
+    },
     deleted: Boolean,
     tags: [String]
 }, {_id: false});
