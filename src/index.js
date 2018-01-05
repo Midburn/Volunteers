@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AppContainer} from 'react-hot-loader';
 import App from './routes/App';
 import ComingSoon from './components/ComingSoon/ComingSoon';
 import "./common.scss";
 
 import axios from 'axios';
+import {AppContainer} from "react-hot-loader";
 
 async function fetchUserRoles() {
     try {

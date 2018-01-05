@@ -4,7 +4,6 @@ const webpackConfig = require("../webpack.config.js");
 const path = require('path');
 
 function init(app) {
-  webpackConfig.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
   const compiler = webpack(webpackConfig);
   const server = new webpackDevServer(compiler, {
     contentBase: path.resolve(__dirname, '../public'),

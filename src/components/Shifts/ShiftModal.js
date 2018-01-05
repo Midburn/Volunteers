@@ -1,14 +1,13 @@
 import {observer} from "mobx-react";
 import React from 'react';
 import moment from 'moment';
-import {Modal, FormGroup, ControlLabel, FormControl, Button, Table, DropdownButton, MenuItem} from 'react-bootstrap';
-import DatePicker from 'react-bootstrap-date-picker';
-import {Typeahead} from 'react-bootstrap-typeahead';
+import {Button, ControlLabel, FormControl, FormGroup, Modal} from 'react-bootstrap';
+import DatePicker from 'react-16-bootstrap-date-picker';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import _ from 'lodash';
 
-const asHour = d => moment(d).format('H:mm')
+const asHour = d => moment(d).format('H:mm');
 
 const getHours = (date) =>
   new Array(48).fill(0).map(
@@ -43,7 +42,8 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
         </FormGroup>
         <FormGroup controlId="startTime">
           <ControlLabel>Start Time</ControlLabel>
-          <DatePicker value={moment(shift.startDate).format()} dateFormat="DD/MM/YYYY"
+          <DatePicker value={moment(shift.startDate).format()}
+                      dateFormat="DD/MM/YYYY"
                       onChange={date => changeStartDate(shift, date)}/>
           <FormControl componentClass="select" onChange={e => shift.startDate = moment(e.target.value)}
                        value={moment(shift.startDate).format()}
@@ -53,7 +53,8 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
         </FormGroup>
         <FormGroup controlId="endTime">
           <ControlLabel>End Time</ControlLabel>
-          <DatePicker value={moment(shift.endDate).format()} dateFormat="DD/MM/YYYY"
+          <DatePicker value={moment(shift.endDate).format()}
+                      dateFormat="DD/MM/YYYY"
                       onChange={date => changeEndDate(shift, date)}/>
           <FormControl componentClass="select" onChange={e => shift.endDate = moment(e.target.value)}
                        value={moment(shift.endDate).format()}

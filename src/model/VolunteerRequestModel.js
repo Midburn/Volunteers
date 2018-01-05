@@ -41,7 +41,7 @@ function VolunteerRequestModel() {
 
     this.fetchDepartments = tryNetworkRequest(async () => {
         this.departments = (await axios.get('/api/v1/departments')).data;
-        this.departments = this.departments.filter(department => department.status.visibleToJoin)
+        this.departments = this.departments.filter(department => department.status && department.status.visibleToJoin)
     });
 
     this.requestState = departmentId => {
