@@ -1,0 +1,9 @@
+.option-list-editor {
+  & > .option {
+    margin-bottom: 0.5rem;
+  }
+
+  button {
+    width: 8rem;
+  }
+}

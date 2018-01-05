@@ -31,7 +31,7 @@ const SECRET = process.env.SECRET;
 /////////////////////////////
 app.use(co.wrap(function* (req, res, next) {
 
-    if (req.path === '/login') {
+    if (req.path === '/api/v1/login') {
         return next();
     }
 
@@ -74,7 +74,7 @@ app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/api/v1', require('./routes/permissions'));
 app.use('/api/v1', require('./routes/departmentForms'));
 
-app.use('/login', (req, res) => {
+app.use('/api/v1/login', (req, res) => {
     let token = req.query.token;
     if (!token && devMode && process.env.LOCAL_SPARK === 'true') {
         token = jwt.sign({
@@ -94,7 +94,7 @@ app.use('/login', (req, res) => {
     try {
         jwt.verify(token, SECRET);
         res.cookie(JWT_KEY, token);
-        res.redirect('/');
+        return servePage(req, res);
     }
     catch (err) {
         console.log(err);
@@ -105,16 +105,16 @@ app.use('/login', (req, res) => {
 /////////////////////////////
 // WEB
 /////////////////////////////
-app.use('/static', express.static(path.join(__dirname, '../public/')));
+app.use('/public', express.static(path.join(__dirname, '../public/')));
 
 function servePage(req, res) {
-    res.sendFile(path.join(__dirname, '../src/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 }
 
 app.use(express.static('public'));
 
 app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/static/')) {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/public/')) {
         next();
     } else {
         return servePage(req, res);
@@ -125,16 +125,27 @@ app.get('*', (req, res, next) => {
 // Dev Mode (webpack-dev-server, spark mock
 ////////////////////////////////////////////
 if (devMode) {
-    webpackConfig.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
     const compiler = webpack(webpackConfig);
     const server = new webpackDevServer(compiler, {
-        contentBase: path.resolve(__dirname, '../public'),
-        publicPath: '/',
         hot: true,
-        stats: true
+        contentBase: path.join(__dirname, "..", "public"),
+        compress: true,
+        publicPath: "/",
+        stats: false,
+        proxy: {
+            "/api": "http://localhost:8080",
+            "/public": {
+                target: "http://localhost:9090",
+                pathRewrite: {"^/public": ""}
+            },
+            "/login": "http://localhost:8080/api/v1"
+        },
+        historyApiFallback: {
+            rewrites: [
+                {from: /^\/$/, to: '/index.html'}]
+        }
     });
     server.listen(9090);
-    app.get('/static/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 
     if (process.env.LOCAL_SPARK === 'true') {
         require('./spark/sparkMock')
@@ -150,6 +161,6 @@ mongoose.Promise = Promise;
 const server = app.listen(process.env.PORT, function () {
     const host = server.address().address;
     const port = server.address().port;
-    console.log("Listening at http://%s:%s", host, port);
+    console.log(`Server is listening on port ${port}`);
     console.log(`Go to http://${host}:${port}/login`);
 });

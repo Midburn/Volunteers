@@ -6,6 +6,7 @@
   "dependencies": {
     "axios": "^0.15.3",
     "body-parser": "^1.17.1",
+    "classnames": "^2.2.5",
     "co": "^4.6.0",
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
