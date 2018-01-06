@@ -15,7 +15,7 @@ Start the dev server
 
 `SPARK_HOST=http://localhost:3000/ yarn run local`
 
-Volunteers should be available at http://localhost:8080/login
+Volunteers should be available at http://localhost:9090/login
 
 
 ### Testing with Spark staging / production
@@ -39,7 +39,7 @@ In this manner we will be able to separate development from production (`master`
 docker-compose up -d --build
 ```
 
-Volunteers is available at http://localhost:8000/login
+Volunteers is available at http://localhost:9090/login
 
 
 ### Setting up the continuous deployment
