@@ -35,8 +35,7 @@ app.use(co.wrap(function* (req, res, next) {
         return next();
     }
 
-    const token = req.cookies && req.cookies[JWT_KEY];
-
+    const token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
     if (!token) {
         return res.redirect(SPARK_HOST);
     }
