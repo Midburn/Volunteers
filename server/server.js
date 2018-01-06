@@ -151,5 +151,7 @@ const server = app.listen(process.env.PORT, function () {
     const host = server.address().address;
     const port = server.address().port;
     console.log("Listening at http://%s:%s", host, port);
-    console.log(`Go to http://${host}:${port}/login`);
+    if (devMode) {
+        console.log(`For debug go to http://localhot:9090/login`);
+    }
 });

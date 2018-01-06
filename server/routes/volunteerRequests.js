@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const VolunteerRequest = require("../models/volunteerRequest");
+const DepartmentFormsAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
 
@@ -12,9 +13,12 @@ router.get("/volunteer-requests", co.wrap(function* (req, res) {
     return res.json(volunteerRequests);
 }));
 
+// Get all join requests of a department 
 router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
+
+    // TODO: permissions
 
     const volunteerRequests = yield VolunteerRequest.find({
         departmentId: departmentId,
@@ -24,19 +28,26 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
     return res.json(volunteerRequests);
 }));
 
-router.post("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
+// Returns the answer of a user join request
+
+
+router.post("/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
-    const comment = req.body.comment;
+
+    const answer = new DepartmentFormsAnswer({
+        departmentId: departmentId,
+        form: req.body.answer
+    })
+    yield answer.save();
 
     const email = req.userDetails.email;
-
     const volunteerRequest = new VolunteerRequest({
         departmentId: departmentId,
         eventId: eventId,
         userId: email,
         approved: false,
-        comment: comment
+        answerId: answer._id
     });
 
     yield volunteerRequest.save();
@@ -44,7 +55,8 @@ router.post("/departments/:departmentId/events/:eventId/requests", co.wrap(funct
     return res.json(volunteerRequest);
 }));
 
-router.put("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
+// A new join request
+router.put("/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
     const approved = req.body.approved;

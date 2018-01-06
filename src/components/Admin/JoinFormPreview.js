@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {Button, FormGroup, FormControl, ControlLabel, Checkbox, Radio} from 'react-bootstrap'
 
-const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
-
 export default class JoinFormPreview extends Component {
   constructor(props) {
     super(props);

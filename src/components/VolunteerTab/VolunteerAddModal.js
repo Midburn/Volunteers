@@ -7,12 +7,12 @@ require('./VolunteerAddModal.css')
 export default class VolunteerAddModal extends Component {
   constructor(props) {
     super(props);
-    this.onEnter()
+    this.initState();
   }
 
-  onEnter = _ => {
+  initState = _ => {
     const departmentId = this.props.departmentId ? this.props.departmentId : 
-      (this.props.departments && this.props.departments.length ? this.props.departments[0]._id : '')
+    (this.props.departments && this.props.departments.length ? this.props.departments[0]._id : '')
     this.state = {
       departmentId: departmentId,
       permission: 'volunteer',
@@ -22,7 +22,10 @@ export default class VolunteerAddModal extends Component {
       status: [],
       isButtonEnabled: true
     }
+  }
 
+  onEnter = _ => {
+    this.initState();
     this.setState(this.state);
   }
 
@@ -126,6 +129,8 @@ export default class VolunteerAddModal extends Component {
       <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
         <Modal.Header closeButton>
           <Modal.Title>Add Volunteers</Modal.Title>
+          <Button className="add-volunteer-save" bsStyle="success" disabled={!this.state.isButtonEnabled} 
+                  onClick={this.handleSubmit}>Add</Button>
         </Modal.Header>
         
         <Modal.Body>
@@ -157,7 +162,7 @@ export default class VolunteerAddModal extends Component {
             </FormGroup>
           </div>
           <FormGroup controlId="emails">
-              <ControlLabel>User Email</ControlLabel>
+              <ControlLabel>Emails</ControlLabel>
               <FormControl className="add-volunteer-emails" componentClass="textarea" onChange={this.handleEmailsChange}
                   placeholder="Please enter email addresses - one in each line"></FormControl>
           </FormGroup>
