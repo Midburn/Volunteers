@@ -10,6 +10,12 @@
     margin-left: 10px;
 }
 
+.add-volunteer-save {
+  float: right;
+  margin-top: -30px;
+  margin-right: 35px;
+}
+
 .add-volunteer-options {
   display: flex;
   margin-left: -5px;
