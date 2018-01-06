@@ -2,12 +2,11 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image } from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
+import * as Consts from '../../model/consts'
 import VolunteerAddModal from "./VolunteerAddModal"
 import VolunteerEditModal from "./VolunteerEditModal"
 
 require('./VolunteerListTab.css');
-
-const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 export default class VolunteerListTab extends Component {
 
@@ -146,7 +145,7 @@ export default class VolunteerListTab extends Component {
   render() {
     const {filter, volunteers, departments} = this.state;
     const department = departments.find(department => department._id === filter.departmentId);
-    const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : DEFAULT_LOGO;
+    const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : Consts.DEFAULT_LOGO;
     const title = department ? `${department.basicInfo.nameEn} Volunteers` : 'All Volunteers';
     return (
       <div className="volunteer-list-tab-component">

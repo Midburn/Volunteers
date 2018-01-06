@@ -1,16 +1,15 @@
 import {observer} from "mobx-react";
 import React from 'react';
 import {Modal, Button, Image} from 'react-bootstrap'
+import * as Consts from '../../model/consts'
 require ('./JoinProcessView.scss');
-
-const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 const joinProcessView = observer(({volunteerRequestModel}) => {
     const show = !!volunteerRequestModel.joinProcess
     const close = () => volunteerRequestModel.stopJoinProcess();
 
     const isValid = true;
-    const departmentLogo = DEFAULT_LOGO;
+    const departmentLogo = Consts.DEFAULT_LOGO;
 
     return (
     <Modal className="join-process-modal" show={show} onHide={close} bsSize="lg">

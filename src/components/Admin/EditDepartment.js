@@ -4,9 +4,8 @@ import {Modal, Image, Tabs, Tab ,Button,
   Form, FormGroup, FormControl, ControlLabel, HelpBlock, Checkbox} from 'react-bootstrap'
 require('./EditDepartment.css')
 import * as Permissions from "../../model/permissionsUtils"
+import * as Consts from '../../model/consts'
 import JoinFormPreview from './JoinFormPreview';
-
-const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 export default class EditDepartment extends Component {
     constructor(props) {
@@ -157,7 +156,7 @@ export default class EditDepartment extends Component {
     
   render() {
     const basicInfo = this.state.department.basicInfo;
-    const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
+    const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : Consts.DEFAULT_LOGO;
     const questions = this.state.department.requestForm;
     const status = this.state.department.status;
 

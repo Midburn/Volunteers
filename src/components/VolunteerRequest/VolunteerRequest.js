@@ -2,13 +2,11 @@ import React from 'react';
 import {ListGroup, ListGroupItem, Image, Button} from 'react-bootstrap'
 import JoinProcessView from './JoinProcessView'
 import VolunteerRequestModel from "../../model/VolunteerRequestModel";
+import * as Consts from '../../model/consts'
 import {observer} from "mobx-react/index";
 require('./VolunteerRequest.css')
 
-const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
-
 const volunteerRequestModel = new VolunteerRequestModel();
-
 
 const VolunteerRequest = observer(() => {
     const departments = volunteerRequestModel.departments;
@@ -27,7 +25,7 @@ const VolunteerRequest = observer(() => {
         <ListGroup className="requests-list">
           {departments.map(department => {
             const basicInfo = department.basicInfo;
-            const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO; 
+            const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : Consts.DEFAULT_LOGO; 
             const requestState = volunteerRequestModel.requestState(department._id);
             return (
             <ListGroupItem key={department._id}>
