@@ -2,3 +2,27 @@
   cursor: pointer;
   color: cornflowerblue;
 }
+
+body {
+  background: url("https://midburn.org/wp-content/uploads/2017/01/poicamp.jpg");
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.card {
+  padding: 40px;
+  background-color: #f1f1f5;
+  border-radius: 10px;
+  box-shadow: 2px 2px 6px 0px rgba(255, 255, 255, 0.55), -2px -2px 6px 0px rgba(255, 255, 255, 0.57);
+  margin: 20px;
+}
+
+.modal-content {
+  box-shadow: 1px 1px 3px 1px rgba(242, 242, 242, 0.55), -1px -1px 20px 0px rgba(255, 255, 255, 0.57);
+}
+
+.btn {
+  border-radius: 3px;
+}

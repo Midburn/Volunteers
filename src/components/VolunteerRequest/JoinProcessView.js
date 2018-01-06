@@ -2,7 +2,7 @@ import {observer} from "mobx-react";
 import React from 'react';
 import {Modal, Button, Image} from 'react-bootstrap'
 import * as Consts from '../../model/consts'
-require ('./JoinProcessView.scss');
+require('./JoinProcessView.scss');
 
 const joinProcessView = observer(({volunteerRequestModel}) => {
     const show = !!volunteerRequestModel.joinProcess

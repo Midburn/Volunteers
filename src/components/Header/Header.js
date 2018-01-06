@@ -1,15 +1,23 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {Button} from 'react-bootstrap'
+import * as Consts from '../../model/consts';
+require('./Header.scss');
 
 class Header extends React.Component {
   render() {
     return (
-      <div style={{display: 'flex'}}>
-        <a href="https://spark.midburn.org"><img height="40" src="https://spark.midburn.org/images/midburn_logo_120.png" /></a>
-        <div style={{flex: 1}}>
-          <ul className="nav nav-tabs" style={{display: 'flex', justifyContent: 'center'}}>
+      <div className="header">
+        <a className="logo" href="https://spark.midburn.org">
+          <img className="logo-img" src="http://tickets-registration.midburn.org/midburn.png"/>
+        </a>
+        <div className="header-nav">
+
+          <ul className="nav" style={{display: 'flex', justifyContent: 'center'}}>
           {this.props.routes.map(route => 
-            <li key={route.path}><Link to={route.path}>{route.name}</Link></li>
+            <Link className="nav-btn" key={route.path} to={route.path}>
+              <div className="nav-btn-text">{route.name}</div>
+            </Link>
           )}
         </ul>
       </div>
