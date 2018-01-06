@@ -4,7 +4,9 @@ import axios from 'axios';
 function VolunteerRequestModel() {
     extendObservable(this, {
         requests: [],
-        departments: []
+        departments: [],
+        
+        joinProcess: null
     });
 
     function logNetworkError(err) {
@@ -66,8 +68,27 @@ function VolunteerRequestModel() {
         this.requests = {...this.requests, [departmentId]: false};
 
         const eventId = "1";
-        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/requests`, {credentials: 'include'});
+        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`, {
+            answer: [],
+            credentials: 'include'
+        });
     };
+
+    this.startJoinProcess = departmentId => {
+        // TODO add general form
+
+        return axios.get(`/api/v1/departments/${departmentId}/form`).then(res => {
+            const questions = res.data;
+            this.joinProcess = {
+                departmentId,
+                departmentForm: questions
+            }
+        })
+    }
+
+    this.stopJoinProcess = _ => {
+        this.joinProcess = null;
+    }
 
     this.init = () => {
         this.fetchDepartments();

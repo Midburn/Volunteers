@@ -38,12 +38,17 @@
   margin-top: -12px;
 }
 
+.volunteer-list-list-title {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
 .volunteer-list-group {
-  margin-top: 30px;
+  margin-top: 3px;
 }
 
 .no-volunteers {
-  margin-top: 30px;
+  margin-top: 3px;
 }
 
 .volunteer-list-group-item-header {

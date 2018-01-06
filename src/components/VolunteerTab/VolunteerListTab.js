@@ -16,6 +16,8 @@ export default class VolunteerListTab extends Component {
     this.state = {
       volunteers: [],
       visibleVolunteers: [],
+      requests: [],
+      visibleRequests:[],
       numberOfRequests: 0,
 
       departments: [],
@@ -49,7 +51,7 @@ export default class VolunteerListTab extends Component {
 
   fetchVolunteers = () => {
     this.state.volunteers = [];
-    this.state.numberOfRequests = this.state.departments.length;
+    this.state.numberOfRequests = this.state.departments.length * 2;
     this.setState(this.state);
     for (let i = 0; i<this.state.departments.length; i++) {
       const departmentId = this.state.departments[i]._id;
@@ -64,18 +66,27 @@ export default class VolunteerListTab extends Component {
         this.state.numberOfRequests--;
         this.setState(this.state);
       });
+      const eventId = '1';
+      axios.get(`/api/v1/departments/${departmentId}/events/${eventId}/requests`)
+      .then(res => {
+        this.state.requests = this.state.requests.concat(res.data);
+        this.state.numberOfRequests--;
+        this.setState(this.state);
+        this.updateVisibleVolunteers();
+      })
+      .catch(_ => {
+        this.state.numberOfRequests--;
+        this.setState(this.state);
+      });
     }
   }
 
   updateVisibleVolunteers = _ => {
     const searchTerm = this.state.filter.search.toLowerCase().trim();
-
-    this.state.visibleVolunteers = this.state.volunteers.filter(volunteer => {
+    const isVisible = volunteer => {
       if (this.state.filter.departmentId && this.state.filter.departmentId !== volunteer.departmentId) {
         return false;
       }
-
-      
       if (searchTerm) {
         const match = volunteer.userId.toLowerCase().indexOf(searchTerm) > -1 || 
                       (volunteer.firstName && volunteer.firstName.toLowerCase().indexOf(searchTerm) > -1) ||
@@ -84,9 +95,11 @@ export default class VolunteerListTab extends Component {
           return false;
         }
       }
-
       return true;
-    })
+    };
+
+    this.state.visibleVolunteers = this.state.volunteers.filter(isVisible);
+    this.state.visibleRequests = this.state.requests.filter(isVisible);
     this.setState(this.state);
   }
 
@@ -126,6 +139,10 @@ export default class VolunteerListTab extends Component {
     this.setState(this.state);
   }
 
+  showRequest = requestId => _ => {
+
+  }
+
   render() {
     const {filter, volunteers, departments} = this.state;
     const department = departments.find(department => department._id === filter.departmentId);
@@ -155,7 +172,7 @@ export default class VolunteerListTab extends Component {
           <FormControl type="text" className="search-volunteer"
                       value={this.state.filter.search} onChange={this.searchChanged} 
                       placeholder="Search by user's first name, last name or email"/>
-
+          <div className="volunteer-list-list-title">Volunteers:</div>
           {this.state.numberOfRequests > 0 ? 
             <div className="no-volunteers">Loading</div>
           : this.state.visibleVolunteers.length === 0 ? 
@@ -185,7 +202,38 @@ export default class VolunteerListTab extends Component {
               </ListGroupItem>
               )}
             </ListGroup>}
+
+          <div className="volunteer-list-list-title">Join Requests:</div>
+          {this.state.numberOfRequests > 0 ? 
+            <div className="no-volunteers">Loading</div>
+          : this.state.visibleRequests.length === 0 ? 
+          <div className="no-volunteers">No Join Requests</div>
+          :
+            <ListGroup className="volunteer-list-group">
+              <ListGroupItem className="volunteer-list-group-item-header">
+                {!this.state.filter.departmentId &&
+                  <span className="ellipsis-text flex2">Department</span>
+                }
+                <span className="ellipsis-text flex3">Email</span>
+                <span className="ellipsis-text flex2">First Name</span>
+                <span className="ellipsis-text flex2">Last Name</span>
+              </ListGroupItem>
+              {this.state.visibleRequests.map(volunteerRequest => 
+              <ListGroupItem key={volunteerRequest._id} className="volunteer-list-group-item" onClick={this.showRequest(volunteerRequest._id)}>
+                {!this.state.filter.departmentId &&
+                  <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
+                }
+                <span className="ellipsis-text flex3">{volunteerRequest.userId}</span>
+                <span className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
+                <span className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
+                {/* <span className="ellipsis-text flex1">{volunteer.permission}</span> */}
+                {/* <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span> */}
+              </ListGroupItem>
+              )}
+            </ListGroup>}
+
         </div>
+
         <VolunteerAddModal show={this.state.showAddModal} departmentId={this.state.filter.departmentId}
                           departments={this.state.departments} onHide={this.hideAddModal} 
                           onSuccess={this.fetchVolunteers}/>

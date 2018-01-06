@@ -6,7 +6,8 @@ const volunteerRequestSchema = new Schema({
     departmentId: String,
     eventId: String,
     status: String,
-    approved: Boolean
+    approved: Boolean,
+    answerId: String 
 });
 
 const VolunteerRequest = mongoose.model('VolunteerRequest', volunteerRequestSchema);

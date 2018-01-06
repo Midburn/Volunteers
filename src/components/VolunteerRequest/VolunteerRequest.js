@@ -1,5 +1,6 @@
 import React from 'react';
 import {ListGroup, ListGroupItem, Image, Button} from 'react-bootstrap'
+import JoinProcessView from './JoinProcessView'
 import VolunteerRequestModel from "../../model/VolunteerRequestModel";
 import {observer} from "mobx-react/index";
 require('./VolunteerRequest.css')
@@ -35,7 +36,7 @@ const VolunteerRequest = observer(() => {
                 <h2 className="requests-department-title">{basicInfo.nameEn} - {basicInfo.nameHe}</h2>
                 {requestState === 'Opened' &&
                   <Button bsStyle="primary" className="request-join-button" 
-                          onClick={() => volunteerRequestModel.handleSendRequest(department._id)}>Join</Button>}
+                          onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>Join</Button>}
                 {requestState === 'Closed' && null} 
                 {requestState === 'Cancel' &&
                   <Button bsStyle="primary" className="request-join-button" 
@@ -49,6 +50,9 @@ const VolunteerRequest = observer(() => {
           )})}
         </ListGroup>
       </div>
+
+      <JoinProcessView volunteerRequestModel={volunteerRequestModel} />
+
     </div>
 )});
 
