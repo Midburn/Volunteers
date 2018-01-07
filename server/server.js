@@ -92,7 +92,7 @@ app.use('/login', (req, res) => {
 
     try {
         jwt.verify(token, SECRET);
-        res.cookie(JWT_KEY, token);
+        res.cookie(JWT_KEY, {token});
         res.redirect('/');
     }
     catch (err) {
