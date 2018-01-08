@@ -6,8 +6,8 @@ const DepartmentFormSchema = new Schema({
     form: [{
       question : {
             en:String,
-      he: String
-        },questionType : String,
+      he:String
+      },questionType : String,
       options: [{
                 en:String,
                 he: String
