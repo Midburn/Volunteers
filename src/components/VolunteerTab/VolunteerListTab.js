@@ -185,6 +185,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex3">Email</span>
                 <span className="ellipsis-text flex2">First Name</span>
                 <span className="ellipsis-text flex2">Last Name</span>
+                <span className="ellipsis-text flex2">Added Date</span>
                 <span className="ellipsis-text flex1">Role</span>
                 <span className="ellipsis-text flex1">Yearly</span>
               </ListGroupItem>
@@ -196,6 +197,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex3">{volunteer.userId}</span>
                 <span className="ellipsis-text flex2">{volunteer.firstName ? volunteer.firstName : 'No Data'}</span>
                 <span className="ellipsis-text flex2">{volunteer.lastName ? volunteer.lastName : 'No Data'}</span>
+                <span className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
                 <span className="ellipsis-text flex1">{volunteer.permission}</span>
                 <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
               </ListGroupItem>
@@ -216,6 +218,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex3">Email</span>
                 <span className="ellipsis-text flex2">First Name</span>
                 <span className="ellipsis-text flex2">Last Name</span>
+                <span className="ellipsis-text flex2">Join Date</span>
               </ListGroupItem>
               {this.state.visibleRequests.map(volunteerRequest => 
               <ListGroupItem key={volunteerRequest._id} className="volunteer-list-group-item" onClick={this.showRequest(volunteerRequest._id)}>
@@ -225,6 +228,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex3">{volunteerRequest.userId}</span>
                 <span className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
                 <span className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
+                <span className="ellipsis-text flex2">{volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}</span>
                 {/* <span className="ellipsis-text flex1">{volunteer.permission}</span> */}
                 {/* <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span> */}
               </ListGroupItem>
