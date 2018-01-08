@@ -1,0 +1,6 @@
+.form-manager {
+  & > header {
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,14 @@
+.form-language-picker {
+  display: flex;
+  & > .language {
+    margin-left: 0.5rem;
+
+    &.selected {
+      color: red;
+    }
+
+    &:hover:not(.selected) {
+      cursor: pointer;
+    }
+  }
+}

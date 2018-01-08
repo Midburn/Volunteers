@@ -32,12 +32,12 @@ const saveDepartmentFrom = co.wrap(function* (departmentId, form) {
     return departmentForm;
 });
 
-router.get("/departments/:departmentId/form", co.wrap(function* (req, res) {
+router.get("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
 
     const departmentForm = yield getDepartmentFrom(departmentId);
 
-    return res.json(departmentForm.form);
+    return res.json(departmentForm ? departmentForm.form : []);
 }));
 
 router.post("/departments/:departmentId/forms", co.wrap(function* (req, res) {
@@ -46,7 +46,7 @@ router.post("/departments/:departmentId/forms", co.wrap(function* (req, res) {
 
     const departmentForm = yield saveDepartmentFrom(departmentId, form);
 
-    return res.json(departmentForm);
+    return res.json(departmentForm.form);
 }));
 
 router.delete("/departments/:departmentId/forms", co.wrap(function* (req, res) {
@@ -60,13 +60,13 @@ router.delete("/departments/:departmentId/forms", co.wrap(function* (req, res) {
 
     yield departmentForm.remove();
 
-    return res.json(departmentForm);
+    return res.json(departmentForm.form);
 }));
 
 router.get("/form", co.wrap(function* (req, res) {
     const departmentForm = yield getDepartmentFrom(GENERAL);
 
-    return res.json(departmentForm.form);
+    return res.json(departmentForm ? departmentForm.form : []);
 }));
 
 router.post("/form", co.wrap(function* (req, res) {

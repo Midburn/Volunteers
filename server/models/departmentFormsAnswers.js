@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 const DepartmentFormAnswerSchema = new Schema({
     departmentId: String,
     form: [{
-      question : String,
-      questionType : String,
-      answer: String
+        question: String,
+        questionType: String,
+        answer: String
     }]
-});
+}, {timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const DepartmentFormAnswer = mongoose.model('DepartmentFormAnswer', DepartmentFormAnswerSchema);
 
