@@ -1,0 +1,38 @@
+.header {
+    display: flex;
+    background: linear-gradient(#5f5e63, #464546);
+    border-bottom: 1px solid rgba(9, 9, 9, 0.4);
+
+    .logo {
+        float: left;
+        margin: 6px;
+        
+        .logo-img {
+            height: 38px;
+        }
+    }
+    .header-nav {
+        flex: 1;
+        padding-right: 50px;
+        display: flex;
+        justify-content: center;
+
+        .nav-btn {
+            color: #f1f1f5;
+            text-decoration: none;
+            min-width: 150px;
+            text-align: center;
+            font-size: 18px;
+            margin: 0px 3px 0px 3px;
+            border-radius: 100px 100px 0px 0px;
+
+            .nav-btn-text {
+                padding-top: 16px;
+            }
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1)
+        }
+    }
+}

@@ -2,12 +2,11 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {Button, FormControl, Image, ListGroup, ListGroupItem, Modal} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
+import * as Consts from '../../model/consts'
 import EditDepartment from './EditDepartment';
 import FormManager from "../FormManager/FormManager";
 
 require('./AdminView.css');
-
-const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
 export default class AdminView extends Component {
     constructor(props) {

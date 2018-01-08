@@ -35,8 +35,7 @@ app.use(co.wrap(function* (req, res, next) {
         return next();
     }
 
-    const token = req.cookies && req.cookies[JWT_KEY];
-
+    const token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
     if (!token) {
         return res.redirect(SPARK_HOST);
     }
@@ -161,6 +160,8 @@ mongoose.Promise = Promise;
 const server = app.listen(process.env.PORT, function () {
     const host = server.address().address;
     const port = server.address().port;
-    console.log(`Server is listening on port ${port}`);
-    console.log(`Go to http://${host}:${port}/login`);
+    console.log("Listening at http://%s:%s", host, port);
+    if (devMode) {
+        console.log(`For debug go to http://localhot:9090/login`);
+    }
 });
