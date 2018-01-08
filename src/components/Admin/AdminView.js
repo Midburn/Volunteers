@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {Button, FormControl, Image, ListGroup, ListGroupItem, Modal} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
-import * as Consts from '../../model/consts'
+import {DEFAULT_LOGO} from '../../model/consts'
 import EditDepartment from './EditDepartment';
 import FormManager from "../FormManager/FormManager";
 

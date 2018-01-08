@@ -92,7 +92,7 @@ app.use('/api/v1/login', (req, res) => {
 
     try {
         jwt.verify(token, SECRET);
-        res.cookie(JWT_KEY, token);
+        res.cookie(JWT_KEY, {token});
         return servePage(req, res);
     }
     catch (err) {
