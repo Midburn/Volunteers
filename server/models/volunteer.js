@@ -11,7 +11,7 @@ const volunteersSchema = new Schema({
     comment: String,
     deleted: Boolean,
     tags: [String]
-}, {_id: false});
+}, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const Volunteer = mongoose.model('Volunteer', volunteersSchema);
 module.exports = Volunteer;
