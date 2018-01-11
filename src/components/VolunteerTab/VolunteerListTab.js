@@ -39,7 +39,7 @@ export default class VolunteerListTab extends Component {
     axios.get("/api/v1/departments")
     .then(res => {
       const departments = res.data;
-      this.state.departments = departments.filter(department => 
+      this.state.departments = departments.filter(department =>
           department.status.active &&
           (Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id)));
       this.state.filter.departmentId = this.state.departments && this.state.departments[0]._id;
@@ -87,7 +87,7 @@ export default class VolunteerListTab extends Component {
         return false;
       }
       if (searchTerm) {
-        const match = volunteer.userId.toLowerCase().indexOf(searchTerm) > -1 || 
+        const match = volunteer.userId.toLowerCase().indexOf(searchTerm) > -1 ||
                       (volunteer.firstName && volunteer.firstName.toLowerCase().indexOf(searchTerm) > -1) ||
                       (volunteer.lastName && volunteer.lastName.toLowerCase().indexOf(searchTerm) > -1);
         if (!match) {
@@ -156,7 +156,7 @@ export default class VolunteerListTab extends Component {
           <Dropdown className="volunteer-department-dropdown" id="departments-dropdown" onSelect={this.onSelectDepartment}>
             <Dropdown.Toggle/>
             <Dropdown.Menu>
-              {departments.map(department => 
+              {departments.map(department =>
                 <MenuItem key={department._id} eventKey={department._id}
                           active={this.state.filter.departmentId === department._id}>
                   {department.basicInfo.nameEn}
@@ -166,15 +166,15 @@ export default class VolunteerListTab extends Component {
               <MenuItem eventKey="all" active={!this.state.filter.departmentId}>All</MenuItem>
             </Dropdown.Menu>
           </Dropdown>}
-          <Button bsStyle="primary" className="add-volunteers-button" 
+          <Button bsStyle="primary" className="add-volunteers-button"
                   onClick={this.showAddModal}>Add Volunteers</Button>
           <FormControl type="text" className="search-volunteer"
-                      value={this.state.filter.search} onChange={this.searchChanged} 
+                      value={this.state.filter.search} onChange={this.searchChanged}
                       placeholder="Search by user's first name, last name or email"/>
           <div className="volunteer-list-list-title">Volunteers:</div>
-          {this.state.numberOfRequests > 0 ? 
+          {this.state.numberOfRequests > 0 ?
             <div className="no-volunteers">Loading</div>
-          : this.state.visibleVolunteers.length === 0 ? 
+          : this.state.visibleVolunteers.length === 0 ?
           <div className="no-volunteers">No Volunteers</div>
           :
             <ListGroup className="volunteer-list-group">
@@ -188,8 +188,9 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex2">Added Date</span>
                 <span className="ellipsis-text flex1">Role</span>
                 <span className="ellipsis-text flex1">Yearly</span>
+                <span className="ellipsis-text flex1">Other Departments Volunteering In</span>
               </ListGroupItem>
-              {this.state.visibleVolunteers.map(volunteer => 
+              {this.state.visibleVolunteers.map(volunteer =>
               <ListGroupItem key={volunteer._id} className="volunteer-list-group-item" onClick={this.showEditModal(volunteer._id)}>
                 {!this.state.filter.departmentId &&
                   <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
@@ -200,14 +201,15 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
                 <span className="ellipsis-text flex1">{volunteer.permission}</span>
                 <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
+                <span className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(dept => dept.basicInfo.nameEn ? dept.basicInfo.nameEn : dept.basicInfo.nameHe).join() : ''}</span>
               </ListGroupItem>
               )}
             </ListGroup>}
 
           <div className="volunteer-list-list-title">Join Requests:</div>
-          {this.state.numberOfRequests > 0 ? 
+          {this.state.numberOfRequests > 0 ?
             <div className="no-volunteers">Loading</div>
-          : this.state.visibleRequests.length === 0 ? 
+          : this.state.visibleRequests.length === 0 ?
           <div className="no-volunteers">No Join Requests</div>
           :
             <ListGroup className="volunteer-list-group">
@@ -220,7 +222,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex2">Last Name</span>
                 <span className="ellipsis-text flex2">Join Date</span>
               </ListGroupItem>
-              {this.state.visibleRequests.map(volunteerRequest => 
+              {this.state.visibleRequests.map(volunteerRequest =>
               <ListGroupItem key={volunteerRequest._id} className="volunteer-list-group-item" onClick={this.showRequest(volunteerRequest._id)}>
                 {!this.state.filter.departmentId &&
                   <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
@@ -238,7 +240,7 @@ export default class VolunteerListTab extends Component {
         </div>
 
         <VolunteerAddModal show={this.state.showAddModal} departmentId={this.state.filter.departmentId}
-                          departments={this.state.departments} onHide={this.hideAddModal} 
+                          departments={this.state.departments} onHide={this.hideAddModal}
                           onSuccess={this.fetchVolunteers}/>
         <VolunteerEditModal show={!!this.state.editModalVolunteer} volunteer={this.state.editModalVolunteer}
                           onHide={this.hideEditModal} onSuccess={this.fetchVolunteers}/>
