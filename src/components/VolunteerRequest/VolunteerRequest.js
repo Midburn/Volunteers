@@ -20,7 +20,6 @@ const VolunteerRequest = observer(() => {
         <h1 className="requests-title">Volunteering</h1>
           <p style={{direction:'rtl'}}>התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה. </p>
           <p>Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city. Volunteering does not automatically award you a ticket, but this year the priority is to allot tickets to volunteers in the different departments.
-            <br/><br/>* Join requests are coming soon
         </p>
         <ListGroup className="requests-list">
           {departments.map(department => {
@@ -33,7 +32,7 @@ const VolunteerRequest = observer(() => {
                 <Image src={departmentLogo} className="request-department-logo"/>
                 <h2 className="requests-department-title">{basicInfo.nameEn} - {basicInfo.nameHe}</h2>
                 {requestState === 'Opened' &&
-                  <Button bsStyle="primary" disabled className="request-join-button"
+                  <Button bsStyle="primary" className="request-join-button"
                           onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>Join</Button>}
                 {requestState === 'Closed' && null} 
                 {requestState === 'Cancel' &&
