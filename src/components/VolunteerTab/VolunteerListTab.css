@@ -39,8 +39,18 @@
 }
 
 .volunteer-list-list-title {
-  margin-top: 20px;
+  margin-top: 25px;
   font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.volunteer-list-list-title span {
+  padding: 0px;
+}
+
+.volunteer-list-list-title .btn {
+  padding: 5px;
 }
 
 .volunteer-list-group {
