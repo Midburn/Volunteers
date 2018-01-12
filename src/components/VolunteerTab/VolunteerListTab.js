@@ -173,22 +173,25 @@ export default class VolunteerListTab extends Component {
                     <FormControl type="text" className="search-volunteer"
                                  value={this.state.filter.search} onChange={this.searchChanged}
                                  placeholder="Search by user's first name, last name or email"/>
-                    <CSVLink data={this.state.visibleVolunteers.map(volunteer => {
-                        const displayedVolunteer = new Object();
-                        displayedVolunteer.Department = this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn;
-                        displayedVolunteer.Email = volunteer.userId;
-                        displayedVolunteer["First Name"] = volunteer.firstName ? volunteer.firstName : 'No Data';
-                        displayedVolunteer["Last Name"] = volunteer.lastName ? volunteer.lastName : 'No Data';
-                        displayedVolunteer["Added Date"] = volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A';
-                        displayedVolunteer.Role = volunteer.permission;
-                        displayedVolunteer.Yearly = volunteer.yearly ? 'Yes' : 'No';
-                        return displayedVolunteer;
-                    })}
-                             filename={(this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : "all") + "-volunteers.csv"}
-                             target="_blank" className="btn btn-primary">
-                        Download Volunteers Data as CSV
-                    </CSVLink>
-                    <div className="volunteer-list-list-title">Volunteers:</div>
+                    <div className="volunteer-list-list-title">
+                        <span>Volunteers:</span>
+                        <CSVLink data={this.state.visibleVolunteers.map(volunteer => {
+                            const displayedVolunteer = new Object();
+                            displayedVolunteer.Department = this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn;
+                            displayedVolunteer.Email = volunteer.userId;
+                            displayedVolunteer["First Name"] = volunteer.firstName ? volunteer.firstName : 'No Data';
+                            displayedVolunteer["Last Name"] = volunteer.lastName ? volunteer.lastName : 'No Data';
+                            displayedVolunteer["Added Date"] = volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A';
+                            displayedVolunteer.Role = volunteer.permission;
+                            displayedVolunteer.Yearly = volunteer.yearly ? 'Yes' : 'No';
+                            return displayedVolunteer;
+                        })}
+                                filename={(this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : "all") + "-volunteers.csv"}
+                                target="_blank">
+                            <Button bsStyle="link">Download</Button>
+                        </CSVLink>
+                    </div>
+
                     {this.state.numberOfRequests > 0 ?
                         <div className="no-volunteers">Loading</div>
                         : this.state.visibleVolunteers.length === 0 ?
