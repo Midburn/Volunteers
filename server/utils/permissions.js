@@ -23,6 +23,8 @@ module.exports = {
         return userDetails && userDetails.permissions && userDetails.permissions.some(role => role.permission === 'admin');
     },
     isDepartmentManager: function (userDetails, departmentId) {
-        return userDetails && userDetails.permissions &&  userDetails.permissions.some(role => role.departmentId === departmentId && role.permission === 'manager');
+        return (userDetails && userDetails.permissions &&
+            userDetails.permissions.some(role => (role.permission === 'admin') ||
+                (role.departmentId === departmentId && role.permission === 'manager')));
     }
 };
