@@ -205,6 +205,7 @@ export default class VolunteerListTab extends Component {
                                     <span className="ellipsis-text flex2">Added Date</span>
                                     <span className="ellipsis-text flex1">Role</span>
                                     <span className="ellipsis-text flex1">Yearly</span>
+                                    <span className="ellipsis-text flex1">Other Departments Volunteering In</span>
                                 </ListGroupItem>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <ListGroupItem key={volunteer._id} className="volunteer-list-group-item"
@@ -222,6 +223,7 @@ export default class VolunteerListTab extends Component {
                                             className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
                                         <span className="ellipsis-text flex1">{volunteer.permission}</span>
                                         <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
+                                        <span className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
                                     </ListGroupItem>
                                 )}
                             </ListGroup>}
