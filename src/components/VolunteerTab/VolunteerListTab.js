@@ -201,7 +201,7 @@ export default class VolunteerListTab extends Component {
                 <span className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
                 <span className="ellipsis-text flex1">{volunteer.permission}</span>
                 <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
-                <span className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(dept => dept.basicInfo.nameEn ? dept.basicInfo.nameEn : dept.basicInfo.nameHe).join() : ''}</span>
+                <span className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
               </ListGroupItem>
               )}
             </ListGroup>}

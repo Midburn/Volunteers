@@ -6,6 +6,28 @@ const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
 
+enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
+    const departmentVolunteersOtherDepartments = yield Volunteer
+        .find({
+            userId: {$in: departmentVolunteers.map(volunteer => volunteer.userId)},
+            deleted: false
+        });
+
+    let otherDepartmentIds = departmentVolunteersOtherDepartments.map(volunteer => volunteer.departmentId);
+    const otherDepartmentObjects = yield Department.find({_id: {$in: otherDepartmentIds}, deleted: false});
+    let idToDepartment = {};
+    otherDepartmentObjects.forEach(department => {
+        idToDepartment[department._id] = department
+    });
+
+    departmentVolunteers.forEach(volunteer => {
+        volunteer._doc.otherDepartments = departmentVolunteersOtherDepartments
+            .filter(volunteerInOtherDepartments => (volunteerInOtherDepartments.userId === volunteer.userId
+                && volunteerInOtherDepartments.departmentId !== departmentId))
+            .map(volunteerInOtherDepartments => idToDepartment[volunteerInOtherDepartments.departmentId].basicInfo);
+    });
+});
+
 // Get all volunteers for department
 router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
@@ -15,34 +37,10 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     // TODO: check permission
 
     const departmentVolunteers = yield Volunteer.find({departmentId: departmentId, deleted: false});
-    let departmentVolunteersUserIds = departmentVolunteers.map(volunteer => volunteer.userId);
-    if (departmentVolunteersUserIds && departmentVolunteersUserIds.length > 0) {
-        const departmentVolunteersOtherDeparments = yield Volunteer
-            .find({
-                userId: {$in: departmentVolunteersUserIds},
-                deleted: false
-            });
-
-        let otherDepartmentIds = departmentVolunteersOtherDeparments.map(volunteer => volunteer.departmentId);
-        const otherDepartmentObjects = yield Department.find({_id: {$in: otherDepartmentIds}, deleted: false});
-        let idToDepartment = {};
-        otherDepartmentObjects.forEach(function (department) {
-            idToDepartment[department._id] = department
-        });
-
-        departmentVolunteers.forEach(function (volunteer) {
-            volunteer._doc.otherDepartments = departmentVolunteersOtherDeparments
-                .filter(volunteerInOtherDepartments => (volunteerInOtherDepartments.userId === volunteer.userId
-                    && volunteerInOtherDepartments.departmentId !== departmentId))
-                .map(volunteerInOtherDepartments => idToDepartment[volunteerInOtherDepartments.departmentId]);
-        });
+    if (departmentVolunteers) {
+        yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
     }
 
-
-    //
-    // userVolunteeringDepartments.forEach(function (volunteer) {
-    //     permissions.push({permission: volunteer.permission, departmentId: volunteer.departmentId});
-    // });
     // TODO: get more info like name and phone number from spark
 
     return res.json(departmentVolunteers);
