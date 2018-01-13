@@ -15,23 +15,26 @@ const getPhase = joinProcess => {
     return phase;
 }
 
-const phaseView = (phase ,joinProcess) => {
+const phaseView = (phase ,volunteerRequestModel) => {
     if (phase === 'general') {
-        return generalPhase(joinProcess);
+        return generalPhase(volunteerRequestModel);
     }
     if (phase === 'department') {
-        return departmentPhase(joinProcess);
+        return departmentPhase(volunteerRequestModel);
     }
     return donePhase();
 }
 
-const generalPhase = joinProcess => {
+const generalPhase = volunteerRequestModel => {
+    const joinProcess = volunteerRequestModel.joinProcess;
     const generalQuestions = joinProcess.generalQuestions;
     const generalAnswer = joinProcess.generalAnswer;
-    return <FillFormView questions={generalQuestions} language={joinProcess.language} onAnswer={this.sendGeneralForm}/>
+    return <FillFormView questions={generalQuestions} language={joinProcess.language}
+                        onAnswer={sendGeneralForm(volunteerRequestModel)}/>
 }
 
-const departmentPhase = joinProcess => {
+const departmentPhase = volunteerRequestModel => {
+    const joinProcess = volunteerRequestModel.joinProcess;
     const departmentQuestions = joinProcess.departmentQuestions;
     const departmentAnswer = joinProcess.departmentAnswer;
     return <div>department form</div>
@@ -41,7 +44,8 @@ const donePhase = () => {
     return <div>done</div>
 }
 
-const sendGeneralForm = answers => { 
+const sendGeneralForm = volunteerRequestModel => answers => { 
+    debugger;
     volunteerRequestModel.sendGeneralForm(answers);
 }
 
@@ -69,7 +73,7 @@ const joinProcessView = observer(({volunteerRequestModel}) => {
         <Modal.Body>
         {loading 
             ? <div>Loading...</div> 
-            : phaseView(phase, joinProcess)
+            : phaseView(phase, volunteerRequestModel)
         }
         </Modal.Body>
     </Modal> 

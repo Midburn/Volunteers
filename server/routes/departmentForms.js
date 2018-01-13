@@ -81,6 +81,17 @@ router.get('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(fu
     return res.json(answer ? answer : '');
 }));
 
+// Submit answers of the current user to the department form
+router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
+    const userId = req.userDetails.email;
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const answer = req.body;
+    yield formAnswer = new DepartmentFormAnswer(answer);
+    yield formAnswer.save();
+    return res.json(formAnswer);
+}));
+
 
 router.get("/form", co.wrap(function* (req, res) {
     const departmentForm = yield getDepartmentFrom(GENERAL);
@@ -104,6 +115,21 @@ router.get('/form/events/:eventId/answer', co.wrap(function* (req, res) {
     const answer = yield getAnswer(GENERAL, userId, eventId);
 
     return res.json(answer ? answer : '');
+}));
+
+// Submit answers of the current user to the general form
+router.post('/form/events/:eventId/answer', co.wrap(function* (req, res) {
+    const userId = req.userDetails.email;
+    const eventId = req.params.eventId;
+    const answer = req.body;
+    const formAnswer = new DepartmentFormAnswer({
+        departmentId: GENERAL,
+        userId,
+        eventId,
+        form: answer
+    });
+    yield formAnswer.save();
+    return res.json(formAnswer);
 }));
 
 module.exports = router;

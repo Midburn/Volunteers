@@ -66,8 +66,9 @@ export default class FillFormView extends Component {
     submit = form => {
         const elements = form.elements;
         const answers = this.state.questions.map((question ,index) => ({
-            question: question.question,
-            answer: this.state.inputRefs[index].value
+            question: question.question[this.props.language],
+            questionType: question.questionType,
+            answer: question.answer
         }))
         this.props.onAnswer(answers)   
     }
@@ -78,7 +79,7 @@ export default class FillFormView extends Component {
 
         return (
             <div className="fill-form-view">
-                <Form onSubmit={this.submit}>
+                <Form>
                     {this.state.questions && this.state.questions.map((question, index) => 
                         <div key={`question-${index}`} className={rtl ? 'rtl' : ''}>
                             {question.questionType === 'text' && (
@@ -119,7 +120,7 @@ export default class FillFormView extends Component {
                         </div>
                     )}
                     <div className='button-container'>
-                        <Button className="send" bsStyle="success" type="submit"//disabled={!isValid}
+                        <Button className="send" bsStyle="success"//disabled={!isValid}
                             onClick={this.submit}>Send</Button>
                     </div>
                 </Form>

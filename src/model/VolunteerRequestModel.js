@@ -121,8 +121,20 @@ function VolunteerRequestModel() {
         });
     };
 
-    this.sendGeneralForm = _ => {
-
+    this.sendGeneralForm = answers => {
+        this.joinProcess = {
+            ...this.joinProcess,
+            loading: false,
+        } 
+        debugger;
+        axios.post(`/api/v1/form/events/${eventId}/answer`, answers).then(res => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                generalAnswer: res.data,
+                filledGeneral: true,
+                loading: false,
+            } 
+        })
     }
 
     this.stopJoinProcess = _ => {
