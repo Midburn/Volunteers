@@ -34,10 +34,6 @@ const saveDepartmentFrom = co.wrap(function* (departmentId, form) {
 router.get("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
 
-    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
-        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
-    }
-
     const departmentForm = yield getDepartmentFrom(departmentId);
 
     return res.json(departmentForm ? departmentForm.form : []);
