@@ -3,11 +3,20 @@ import axios from 'axios';
 import {Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
 import * as Consts from '../../model/consts'
+import Select from 'react-select';
 import VolunteerAddModal from "./VolunteerAddModal"
 import VolunteerEditModal from "./VolunteerEditModal"
 import {CSVLink} from 'react-csv';
+import TagFilter from "../TagFilter";
 
-require('./VolunteerListTab.css');
+import './VolunteerListTab.css';
+
+function formatTag(tag) {
+    const max = 5;
+    if (tag.length <= max) return tag;
+
+    return `${tag.slice(0, max)}..`;
+}
 
 export default class VolunteerListTab extends Component {
 
@@ -24,12 +33,21 @@ export default class VolunteerListTab extends Component {
 
             filter: {
                 search: '',
-                departmentId: null
+                departmentId: null,
+                tags: new Set()
             },
 
             showAddModal: false,
-            editModalVolunteer: ''
-        }
+            editModalVolunteer: '',
+            showTags: true
+        };
+
+        this.onTagsChange = this.onTagsChange.bind(this);
+        this.updateVolunteer = this.updateVolunteer.bind(this);
+        this.handleOnTagFilterChange = this.handleOnTagFilterChange.bind(this);
+        this.updateVisibleVolunteers = this.updateVisibleVolunteers.bind(this);
+        this.handleOnShowTagToggle = this.handleOnShowTagToggle.bind(this);
+        this.showEditModal = this.showEditModal.bind(this);
     }
 
     componentWillMount() {
@@ -82,7 +100,7 @@ export default class VolunteerListTab extends Component {
     }
 
     updateVisibleVolunteers = _ => {
-        const searchTerm = this.state.filter.search.toLowerCase().trim();
+        const searchTerm = this.state.filter.search ? this.state.filter.search.toLowerCase().trim() : "";
         const isVisible = volunteer => {
             if (this.state.filter.departmentId && this.state.filter.departmentId !== volunteer.departmentId) {
                 return false;
@@ -95,12 +113,18 @@ export default class VolunteerListTab extends Component {
                     return false;
                 }
             }
+
+            const selectedTags = this.state.filter.tags;
+            if (selectedTags.size !== 0) {
+                const intersection = volunteer.tags.filter(tag => selectedTags.has(tag));
+                if (intersection.length === 0) return false;
+            }
             return true;
         };
 
-        this.state.visibleVolunteers = this.state.volunteers.filter(isVisible);
-        this.state.visibleRequests = this.state.requests.filter(isVisible);
-        this.setState(this.state);
+        const visibleVolunteers = this.state.volunteers.filter(isVisible);
+        const visibleRequests = this.state.requests.filter(isVisible);
+        this.setState({visibleVolunteers, visibleRequests});
     }
 
     searchChanged = event => {
@@ -115,6 +139,8 @@ export default class VolunteerListTab extends Component {
         } else {
             this.state.filter.departmentId = eventKey;
         }
+        this.state.filter.tags = new Set();
+        this.state.showTags = true;
         this.setState(this.state);
         this.updateVisibleVolunteers();
     }
@@ -129,7 +155,7 @@ export default class VolunteerListTab extends Component {
         this.setState(this.state);
     }
 
-    showEditModal = volunteerId => _ => {
+    showEditModal(volunteerId) {
         this.state.editModalVolunteer = this.state.visibleVolunteers.find(volunteer => volunteer._id === volunteerId);
         this.setState(this.state);
     }
@@ -143,15 +169,58 @@ export default class VolunteerListTab extends Component {
 
     }
 
+    updateVolunteer(volunteer) {
+        const {departmentId} = this.state.filter;
+
+        axios.put(`/api/v1/departments/${departmentId}/volunteer/${volunteer._id}`, {
+            permission: volunteer.permission,
+            yearly: volunteer.yearly === 'true',
+            tags: volunteer.tags
+        });
+    }
+
+
+    onTagsChange(userId, tags) {
+        const {visibleVolunteers} = this.state;
+        const volunteer = visibleVolunteers.find(volunteer => volunteer.userId === userId);
+        volunteer['tags'] = tags.map(tag => tag.value);
+
+        this.setState({visibleVolunteers});
+        this.updateVolunteer(volunteer);
+    }
+
+    handleOnTagFilterChange(event, option) {
+        const selectedTags = this.state.filter.tags;
+        if (event.target.checked) {
+            selectedTags.add(option);
+        } else {
+            selectedTags.delete(option);
+        }
+
+        this.setState({filter: {...this.state.filter, tags: selectedTags}});
+        this.updateVisibleVolunteers();
+    }
+
+    handleOnShowTagToggle(event) {
+        this.setState(
+            {showTags: event.target.checked, filter: {...this.filter, tags: new Set()}},
+            this.updateVisibleVolunteers);
+    }
+
     render() {
-        const {filter, volunteers, departments} = this.state;
+        const {filter, visibleVolunteers, departments, showTags} = this.state;
         const department = departments.find(department => department._id === filter.departmentId);
         const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : Consts.DEFAULT_LOGO;
         const title = department ? `${department.basicInfo.nameEn} Volunteers` : 'All Volunteers';
+
+        const allTags = new Set([].concat.apply([], visibleVolunteers.map(volunteer => volunteer.tags)));
+        const tagOptions = [];
+        allTags.forEach(tag => tagOptions.push({value: tag, label: formatTag(tag)}));
+
         return (
             <div className="volunteer-list-tab-component">
                 <div className="container card">
-                    <Image src={logoImage} className="volunteer-list-department-logo"></Image>
+                    <Image src={logoImage} className="volunteer-list-department-logo"/>
                     <h1 className="volunteers-title">{title}</h1>
                     {this.state.departments.length > 1 &&
                     <Dropdown className="volunteer-department-dropdown" id="departments-dropdown"
@@ -173,21 +242,34 @@ export default class VolunteerListTab extends Component {
                     <FormControl type="text" className="search-volunteer"
                                  value={this.state.filter.search} onChange={this.searchChanged}
                                  placeholder="Search by user's first name, last name or email"/>
+
+
+                    <div className="tags-header">
+                        <input type="checkbox"
+                               checked={showTags}
+                               onChange={this.handleOnShowTagToggle}/>
+                        <h4>Filter by tags</h4>
+                    </div>
+
+                    {showTags &&
+                    <TagFilter selected={filter.tags} options={allTags} onChange={this.handleOnTagFilterChange}/>}
+
                     <div className="volunteer-list-list-title">
                         <span>Volunteers:</span>
-                        <CSVLink data={this.state.visibleVolunteers.map(volunteer => {
-                            const displayedVolunteer = new Object();
-                            displayedVolunteer.Department = this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn;
-                            displayedVolunteer.Email = volunteer.userId;
-                            displayedVolunteer["First Name"] = volunteer.firstName ? volunteer.firstName : 'No Data';
-                            displayedVolunteer["Last Name"] = volunteer.lastName ? volunteer.lastName : 'No Data';
-                            displayedVolunteer["Added Date"] = volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A';
-                            displayedVolunteer.Role = volunteer.permission;
-                            displayedVolunteer.Yearly = volunteer.yearly ? 'Yes' : 'No';
-                            return displayedVolunteer;
-                        })}
-                                filename={(this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : "all") + "-volunteers.csv"}
-                                target="_blank">
+                        <CSVLink data={
+                            this.state.visibleVolunteers.map(volunteer => ({
+                                Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
+                                Email: volunteer.userId,
+                                "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
+                                "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
+                                "Added Date": volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A',
+                                Role: volunteer.permission,
+                                Yearly: volunteer.yearly ? 'Yes' : 'No',
+                                Tags: volunteer.tags.join(", ")
+                            }))}
+                                 filename={(this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : "all") + "-volunteers.csv"}
+                                 target="_blank"
+                        >
                             <Button bsStyle="link">Download</Button>
                         </CSVLink>
                     </div>
@@ -208,11 +290,18 @@ export default class VolunteerListTab extends Component {
                                     <span className="ellipsis-text flex2">Added Date</span>
                                     <span className="ellipsis-text flex1">Role</span>
                                     <span className="ellipsis-text flex1">Yearly</span>
-                                    <span className="ellipsis-text flex1">Other Departments Volunteering In</span>
+                                    <span className="ellipsis-text flex1">Other Departments</span>
+                                    {showTags && <span className="ellipsis-text flex2">Tags</span>}
                                 </ListGroupItem>
                                 {this.state.visibleVolunteers.map(volunteer =>
-                                    <ListGroupItem key={volunteer._id} className="volunteer-list-group-item"
-                                                   onClick={this.showEditModal(volunteer._id)}>
+                                    <ListGroupItem key={volunteer._id}
+                                                   className="volunteer-list-group-item"
+                                                   onClick={event => {
+                                                       if (event.type === 'click' && event.clientX !== 0 && event.clientY !== 0) {
+                                                           this.showEditModal(volunteer._id)
+                                                       }
+                                                   }}
+                                    >
                                         {!this.state.filter.departmentId &&
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
@@ -226,7 +315,17 @@ export default class VolunteerListTab extends Component {
                                             className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
                                         <span className="ellipsis-text flex1">{volunteer.permission}</span>
                                         <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
-                                        <span className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
+                                        <span
+                                            className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
+                                        {showTags && <span className="flex2"
+                                                           onClick={event => event.stopPropagation()}
+                                        >
+                                            <Select.Creatable multi
+                                                              value={volunteer.tags}
+                                                              options={tagOptions}
+                                                              onChange={(tags) => this.onTagsChange(volunteer.userId, tags)}
+                                            />
+                                        </span>}
                                     </ListGroupItem>
                                 )}
                             </ListGroup>}
