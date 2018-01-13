@@ -20,6 +20,7 @@ const getAnswer = co.wrap(function* (departmentId, userId, eventId) {
         userId: userId,
         eventId: eventId
     })
+    return answer;
 });
 
 const saveDepartmentFrom = co.wrap(function* (departmentId, form) {
@@ -87,7 +88,12 @@ router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(f
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
     const answer = req.body;
-    yield formAnswer = new DepartmentFormAnswer(answer);
+    const formAnswer = new DepartmentFormAnswer({
+        departmentId,
+        userId,
+        eventId,
+        form: answer
+    });
     yield formAnswer.save();
     return res.json(formAnswer);
 }));

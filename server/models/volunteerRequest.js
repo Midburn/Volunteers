@@ -6,7 +6,8 @@ const volunteerRequestSchema = new Schema({
     departmentId: String,
     eventId: String,
     status: String,
-    approved: Boolean
+    approved: Boolean,
+    comment: String
 }, {timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const VolunteerRequest = mongoose.model('VolunteerRequest', volunteerRequestSchema);

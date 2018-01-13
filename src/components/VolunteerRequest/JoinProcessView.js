@@ -6,13 +6,16 @@ import * as Consts from '../../model/consts'
 require('./JoinProcessView.scss');
 
 const getPhase = joinProcess => {
-    let phase = 'general';
-    if (joinProcess.filledGeneral && joinProcess.filledDepartment) {
-        phase = 'done'
-    } else if (joinProcess.filledGeneral) {
-        phase = 'department'
+    if (!joinProcess.filledGeneral) {
+        return 'general';
     }
-    return phase;
+    if (!joinProcess.filledDepartment) {
+        return 'department';
+    }
+    if (!joinProcess.requestSent) {
+        return 'request';
+    }
+    return 'done';
 }
 
 const phaseView = (phase ,volunteerRequestModel) => {
@@ -21,6 +24,9 @@ const phaseView = (phase ,volunteerRequestModel) => {
     }
     if (phase === 'department') {
         return departmentPhase(volunteerRequestModel);
+    }
+    if (phase === 'request') {
+        return requestPhase(volunteerRequestModel);
     }
     return donePhase();
 }
@@ -37,7 +43,15 @@ const departmentPhase = volunteerRequestModel => {
     const joinProcess = volunteerRequestModel.joinProcess;
     const departmentQuestions = joinProcess.departmentQuestions;
     const departmentAnswer = joinProcess.departmentAnswer;
-    return <div>department form</div>
+    return <FillFormView questions={departmentQuestions} language={joinProcess.language}
+        onAnswer={sendDepartmentForm(volunteerRequestModel)}/>
+}
+
+const requestPhase = volunteerRequestModel => {
+    const joinProcess = volunteerRequestModel.joinProcess;
+    const departmentQuestions = joinProcess.departmentQuestions;
+    const departmentAnswer = joinProcess.departmentAnswer;
+    return <Button className="lan-btn" bsStyle="link" onClick={volunteerRequestModel.sendRequest}>Send</Button>
 }
 
 const donePhase = () => {
@@ -45,8 +59,11 @@ const donePhase = () => {
 }
 
 const sendGeneralForm = volunteerRequestModel => answers => { 
-    debugger;
     volunteerRequestModel.sendGeneralForm(answers);
+}
+
+const sendDepartmentForm = volunteerRequestModel => answers => { 
+    volunteerRequestModel.sendDepartmentForm(answers);
 }
 
 const joinProcessView = observer(({volunteerRequestModel}) => {

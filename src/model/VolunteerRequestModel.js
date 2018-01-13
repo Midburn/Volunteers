@@ -13,14 +13,14 @@ const createJoinProcess = () => ({
         departmentQuestions: [],
         departmentAnswer: [],
         filledDepartment: false,
+        requestSent: false,
         language: 'he'
     });
 
 function VolunteerRequestModel() {
     extendObservable(this, {
-        requests: [],
+        requests: {},
         departments: [],
-        
         joinProcess: createJoinProcess()
     });
 
@@ -46,14 +46,15 @@ function VolunteerRequestModel() {
 
     this.fetchRequests = tryNetworkRequest(async () => {
         const requests = (await axios.get('/api/v1/volunteer-requests')).data;
-
-        const requestStatus = {};
-
-        for (let index = 0; index < requests.length; index++) {
-            requestStatus[requests.data[index]["departmentId"]] = requests.data[index]["approved"]
+        if (requests && requests.length) {
+            const requestsMap = requests.reduce((acc, request) => {
+                acc[request.departmentId] = request;
+                return acc;
+            }, {});
+            this.requests = requestsMap;
+        } else {
+            this.requests = {};
         }
-
-        this.requests = requestStatus;
     });
 
     this.fetchDepartments = tryNetworkRequest(async () => {
@@ -78,19 +79,11 @@ function VolunteerRequestModel() {
         axios.delete(`/api/v1/departments/${departmentId}/events/${eventId}/requests`, {data: {credentials: 'include'}});
     };
 
-    this.handleSendRequest = departmentId => {
-        this.requests = {...this.requests, [departmentId]: false};
-
-        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`, {
-            answer: [],
-            credentials: 'include'
-        });
-    };
-
     this.startJoinProcess = departmentId => {
         const joinProcess = createJoinProcess();
         joinProcess.departmentId = departmentId;
         joinProcess.loading = true;
+        joinProcess.requestSent = !!this.requests[departmentId];
         this.joinProcess = joinProcess;
 
         Promise.all([
@@ -106,10 +99,10 @@ function VolunteerRequestModel() {
                 ...this.joinProcess,
                 generalQuestions,
                 generalAnswer,
-                filledGeneral: generalAnswer && generalAnswer.length > 0,
+                filledGeneral: generalAnswer && generalAnswer.form && generalAnswer.form.length > 0,
                 departmentQuestions,
                 departmentAnswer,
-                filledDepartment: departmentAnswer && departmentAnswer > 0,
+                filledDepartment: departmentAnswer && departmentAnswer.form && departmentAnswer.form.length > 0,
                 loading: false
             }
         }).catch(err => {
@@ -125,8 +118,7 @@ function VolunteerRequestModel() {
         this.joinProcess = {
             ...this.joinProcess,
             loading: false,
-        } 
-        debugger;
+        }
         axios.post(`/api/v1/form/events/${eventId}/answer`, answers).then(res => {
             this.joinProcess = {
                 ...this.joinProcess,
@@ -136,6 +128,37 @@ function VolunteerRequestModel() {
             } 
         })
     }
+
+    this.sendDepartmentForm = answers => {
+        this.joinProcess = {
+            ...this.joinProcess,
+            loading: false,
+        }
+        const departmentId = this.joinProcess.departmentId;
+        axios.post(`/api/v1/departments/${departmentId}/forms/events/${eventId}/answer`, answers).then(res => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                departmentAnswer: res.data,
+                filledDepartment: true,
+                loading: false,
+            } 
+        })
+    }
+
+    this.sendRequest = () => {
+        this.joinProcess = {
+            ...this.joinProcess,
+            loading: false,
+        }
+        const departmentId = this.joinProcess.departmentId;
+        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`).then(res => {
+            this.requests[departmentId] = res.data;
+            this.joinProcess = {
+                loading: false,
+                requestSent: true
+            }
+        });
+    };
 
     this.stopJoinProcess = _ => {
         this.joinProcess.departmentId = '';
