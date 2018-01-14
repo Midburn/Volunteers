@@ -25,37 +25,29 @@ const phaseView = (phase ,volunteerRequestModel) => {
     if (phase === 'department') {
         return departmentPhase(volunteerRequestModel);
     }
-    if (phase === 'request') {
-        return requestPhase(volunteerRequestModel);
-    }
     return donePhase();
 }
 
 const generalPhase = volunteerRequestModel => {
     const joinProcess = volunteerRequestModel.joinProcess;
     const generalQuestions = joinProcess.generalQuestions;
-    const generalAnswer = joinProcess.generalAnswer;
-    return <FillFormView questions={generalQuestions} language={joinProcess.language}
+    return <FillFormView key="general-form" questions={generalQuestions} language={joinProcess.language}
                         onAnswer={sendGeneralForm(volunteerRequestModel)}/>
 }
 
 const departmentPhase = volunteerRequestModel => {
     const joinProcess = volunteerRequestModel.joinProcess;
     const departmentQuestions = joinProcess.departmentQuestions;
-    const departmentAnswer = joinProcess.departmentAnswer;
-    return <FillFormView questions={departmentQuestions} language={joinProcess.language}
-        onAnswer={sendDepartmentForm(volunteerRequestModel)}/>
-}
-
-const requestPhase = volunteerRequestModel => {
-    const joinProcess = volunteerRequestModel.joinProcess;
-    const departmentQuestions = joinProcess.departmentQuestions;
-    const departmentAnswer = joinProcess.departmentAnswer;
-    return <Button className="lan-btn" bsStyle="link" onClick={volunteerRequestModel.sendRequest}>Send</Button>
+    return <FillFormView key="departement-form" questions={departmentQuestions} language={joinProcess.language}
+                        onAnswer={sendDepartmentForm(volunteerRequestModel)}/>
 }
 
 const donePhase = () => {
-    return <div>done</div>
+    return (
+    <div className="done-join">
+        <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Symbol_great.svg"/>
+    </div>
+    )
 }
 
 const sendGeneralForm = volunteerRequestModel => answers => { 
@@ -69,7 +61,7 @@ const sendDepartmentForm = volunteerRequestModel => answers => {
 const joinProcessView = observer(({volunteerRequestModel}) => {
     const show = !!volunteerRequestModel.joinProcess.departmentId;
     const joinProcess = volunteerRequestModel.joinProcess;
-    const loading =  joinProcess.loading;
+    const loading =  joinProcess.loading || !show; 
     const phase = getPhase(joinProcess);
     const language = joinProcess.language;
 

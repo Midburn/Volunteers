@@ -126,7 +126,13 @@ function VolunteerRequestModel() {
                 filledGeneral: true,
                 loading: false,
             } 
-        })
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
+            }
+        });
     }
 
     this.sendDepartmentForm = answers => {
@@ -141,8 +147,17 @@ function VolunteerRequestModel() {
                 departmentAnswer: res.data,
                 filledDepartment: true,
                 loading: false,
-            } 
-        })
+            };
+            if (!this.joinProcess.requestSent) { 
+                this.sendRequest();
+            }
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
+            }
+        });
     }
 
     this.sendRequest = () => {
@@ -154,8 +169,15 @@ function VolunteerRequestModel() {
         axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`).then(res => {
             this.requests[departmentId] = res.data;
             this.joinProcess = {
+                ...this.joinProcess,
                 loading: false,
                 requestSent: true
+            }
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
             }
         });
     };
