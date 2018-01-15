@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const DepartmentForm = require("../models/departmentForms");
+const DepartmentFormAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
 const GENERAL = 1;
@@ -10,6 +11,17 @@ const getDepartmentFrom = co.wrap(function* (departmentId) {
     return yield DepartmentForm.findOne({
         departmentId: departmentId
     });
+
+    return departmentForm;
+});
+
+const getAnswer = co.wrap(function* (departmentId, userId, eventId) {
+    const answer = yield DepartmentFormAnswer.findOne({
+        departmentId: departmentId,
+        userId: userId,
+        eventId: eventId
+    })
+    return answer;
 });
 
 const saveDepartmentFrom = co.wrap(function* (departmentId, form) {
@@ -70,6 +82,32 @@ router.delete("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     return res.json(departmentForm.form);
 }));
 
+// Retunes the answer of a department form for the current user
+router.get('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
+    const userId = req.userDetails.email;
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const answer = yield getAnswer(departmentId, userId, eventId);
+    return res.json(answer ? answer : '');
+}));
+
+// Submit answers of the current user to the department form
+router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
+    const userId = req.userDetails.email;
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const answer = req.body;
+    const formAnswer = new DepartmentFormAnswer({
+        departmentId,
+        userId,
+        eventId,
+        form: answer
+    });
+    yield formAnswer.save();
+    return res.json(formAnswer);
+}));
+
+
 router.get("/form", co.wrap(function* (req, res) {
     const departmentForm = yield getDepartmentFrom(GENERAL);
 
@@ -86,6 +124,31 @@ router.post("/form", co.wrap(function* (req, res) {
     const departmentForm = yield saveDepartmentFrom(GENERAL, form);
 
     return res.json(departmentForm.form);
+}));
+
+
+// Returns the answers of the general form for the current user.
+router.get('/form/events/:eventId/answer', co.wrap(function* (req, res) {
+    const userId = req.userDetails.email;
+    const eventId = req.params.eventId;
+    const answer = yield getAnswer(GENERAL, userId, eventId);
+
+    return res.json(answer ? answer : '');
+}));
+
+// Submit answers of the current user to the general form
+router.post('/form/events/:eventId/answer', co.wrap(function* (req, res) {
+    const userId = req.userDetails.email;
+    const eventId = req.params.eventId;
+    const answer = req.body;
+    const formAnswer = new DepartmentFormAnswer({
+        departmentId: GENERAL,
+        userId,
+        eventId,
+        form: answer
+    });
+    yield formAnswer.save();
+    return res.json(formAnswer);
 }));
 
 module.exports = router;

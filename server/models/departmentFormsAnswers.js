@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const DepartmentFormAnswerSchema = new Schema({
     departmentId: String,
+    userId: String,
+    eventId: String,
     form: [{
         question: String,
         questionType: String,
