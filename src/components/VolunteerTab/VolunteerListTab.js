@@ -306,7 +306,7 @@ export default class VolunteerListTab extends Component {
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
                                         }
-                                        <span className="ellipsis-text flex3">{volunteer.userId}</span>
+                                        <span className="ellipsis-text flex3"><a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.userId}`} target="_blank">{volunteer.userId}</a></span>
                                         <span
                                             className="ellipsis-text flex2">{volunteer.firstName ? volunteer.firstName : 'No Data'}</span>
                                         <span
@@ -353,7 +353,7 @@ export default class VolunteerListTab extends Component {
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
                                         }
-                                        <span className="ellipsis-text flex3">{volunteerRequest.userId}</span>
+                                        <span className="ellipsis-text flex3"><a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.userId}`} target="_blank">{volunteer.userId}</a></span>
                                         <span
                                             className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
                                         <span
