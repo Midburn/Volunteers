@@ -5,9 +5,10 @@ const Department = require('../models/deparment');
 const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
+const sparkApi = require('../spark/sparkApi');
 const permissionsUtils = require('../utils/permissions');
 
-enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
+const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
     const departmentVolunteersOtherDepartments = yield Volunteer
         .find({
             userId: {$in: departmentVolunteers.map(volunteer => volunteer.userId)},
@@ -29,6 +30,30 @@ enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVol
     });
 });
 
+const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
+    const emails = volunteers.map(volunteer => volunteer.userId);
+    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails);
+
+    volunteers.forEach(volunteer => {
+        const volunteerDetails = volunteerDetailsByEmail[volunteer.userId];
+        if (!volunteerDetails) return;
+
+        volunteer._doc.firstName = volunteerDetails['first_name'];
+        volunteer._doc.lastName = volunteerDetails['last_name'];
+        volunteer._doc.hasTicket = volunteerDetails['has_ticket'];
+        volunteer._doc.phone = volunteerDetails['phone'];
+    });
+
+    return volunteers;
+});
+
+const userExists = co.wrap(function* (email) {
+    const volunteerDetails = yield sparkApi.getProfileByMail(email);
+
+    return email in volunteerDetails;
+});
+
+
 // Get all volunteers for department
 router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
   const departmentId = req.params.departmentId;
@@ -43,9 +68,8 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     const departmentVolunteers = yield Volunteer.find({departmentId: departmentId, deleted: false});
     if (departmentVolunteers) {
         yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
+        yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
     }
-
-    // TODO: get more info like name and phone number from spark
 
     return res.json(departmentVolunteers);
 }));
@@ -65,9 +89,17 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
 
     const responses = [];
     const newVolunteers = [];
-    const emails = req.body.emails
+    const emails = req.body.emails;
+
+    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails);
+
     for (let i = 0; i < emails.length; i++) {
         const email = emails[i];
+
+        if (!(email in volunteerDetailsByEmail)) {
+            responses.push({email: email, status: 'Failed'});
+            continue;
+        }
 
         // existing volunteer
         const existingVolunteer = yield Volunteer.findOne({
@@ -79,8 +111,6 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
             responses.push({email: email, status: 'Already Exists'});
             continue;
         }
-
-        // TODO: check valid profile against spark
 
         // new volunteers
         const volunteerId = uuid();
