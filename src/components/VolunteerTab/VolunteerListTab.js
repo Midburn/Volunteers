@@ -344,7 +344,7 @@ export default class VolunteerListTab extends Component {
                                     <span className="ellipsis-text flex3">Email</span>
                                     <span className="ellipsis-text flex2">First Name</span>
                                     <span className="ellipsis-text flex2">Last Name</span>
-                                    <span className="ellipsis-text flex2">Join Date</span>
+                                    <span className="ellipsis-text flex2">Request Date</span>
                                 </ListGroupItem>
                                 {this.state.visibleRequests.map(volunteerRequest =>
                                     <ListGroupItem key={volunteerRequest._id} className="volunteer-list-group-item"

@@ -13,10 +13,20 @@
         display: block;
         padding-top: 17px;
       }
+
+      .lan-btn {
+        float: right;
+        margin-top: -40px;
+        margin-right: 20px;
+      }
       
       .save {
         float: right;
         margin-top: -34px;
         margin-right: 35PX;
+      }
+
+      .done-join {
+        text-align: center;
       }
 }
