@@ -5,6 +5,7 @@ const Department = require('../models/deparment');
 const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
+const permissionsUtils = require('../utils/permissions');
 
 enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
     const departmentVolunteersOtherDepartments = yield Volunteer
@@ -30,11 +31,14 @@ enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVol
 
 // Get all volunteers for department
 router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
-    const departmentId = req.params.departmentId;
-    const department = yield Department.findOne({_id: departmentId, deleted: false});
-    if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+  const departmentId = req.params.departmentId;
 
-    // TODO: check permission
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const department = yield Department.findOne({_id: departmentId, deleted: false});
+  if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
     const departmentVolunteers = yield Volunteer.find({departmentId: departmentId, deleted: false});
     if (departmentVolunteers) {
@@ -49,6 +53,11 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
 // Add multiple volunteers to department
 router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
     const department = yield Department.findOne({_id: departmentId, deleted: false});
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
@@ -94,11 +103,15 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
 
 // Update one volunteer in department
 router.put('/departments/:departmentId/volunteer/:volunteerId', co.wrap(function* (req, res) {
-    const departmentId = req.params.departmentId;
-    const volunteerId = req.params.volunteerId;
-    const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
-    if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
+  const departmentId = req.params.departmentId;
 
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const volunteerId = req.params.volunteerId;
+  const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
+  if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
     // TODO: check permission
 
     const updatedVolunteer = req.body;
@@ -111,12 +124,15 @@ router.put('/departments/:departmentId/volunteer/:volunteerId', co.wrap(function
 
 // Delete one volunteer in department
 router.delete('/departments/:departmentId/volunteer/:volunteerId', co.wrap(function* (req, res) {
-    const departmentId = req.params.departmentId;
-    const volunteerId = req.params.volunteerId;
-    const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
-    if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
+  const departmentId = req.params.departmentId;
 
-    // TODO: check permission
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const volunteerId = req.params.volunteerId;
+  const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
+  if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
 
     volunteer.deleted = true;
     yield volunteer.save();

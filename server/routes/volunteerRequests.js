@@ -4,6 +4,7 @@ const VolunteerRequest = require("../models/volunteerRequest");
 const DepartmentFormsAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
+const permissionsUtils = require('../utils/permissions');
 
 // Returns my requests
 router.get("/volunteer-requests", co.wrap(function* (req, res) {
@@ -16,6 +17,10 @@ router.get("/volunteer-requests", co.wrap(function* (req, res) {
 router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
 
     // TODO: permissions
 
