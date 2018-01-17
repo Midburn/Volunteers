@@ -74,7 +74,7 @@ export default class VolunteerListTab extends Component {
         for (let i = 0; i < this.state.departments.length; i++) {
             const departmentId = this.state.departments[i]._id;
             axios.get(`/api/v1/departments/${departmentId}/volunteers`)
-                .then(res => {
+                .then(res => {      
                     this.state.volunteers = this.state.volunteers.concat(res.data);
                     this.state.numberOfRequests--;
                     this.setState(this.state);
@@ -284,7 +284,7 @@ export default class VolunteerListTab extends Component {
                                     {!this.state.filter.departmentId &&
                                     <span className="ellipsis-text flex2">Department</span>
                                     }
-                                    <span className="ellipsis-text flex3">Email</span>
+                                    <span className="ellipsis-text flex3">Midburn Profile</span>
                                     <span className="ellipsis-text flex2">First Name</span>
                                     <span className="ellipsis-text flex2">Last Name</span>
                                     <span className="ellipsis-text flex2">Added Date</span>
@@ -341,25 +341,27 @@ export default class VolunteerListTab extends Component {
                                     {!this.state.filter.departmentId &&
                                     <span className="ellipsis-text flex2">Department</span>
                                     }
-                                    <span className="ellipsis-text flex3">Email</span>
                                     <span className="ellipsis-text flex2">First Name</span>
                                     <span className="ellipsis-text flex2">Last Name</span>
+                                    <span className="ellipsis-text flex3">Midburn Profile</span>
+                                    <span className="ellipsis-text flex2">Phone</span>
+                                    <span className="ellipsis-text flex3">Email</span>
                                     <span className="ellipsis-text flex2">Request Date</span>
                                 </ListGroupItem>
                                 {this.state.visibleRequests.map(volunteerRequest =>
-                                    <ListGroupItem key={volunteerRequest._id} className="volunteer-list-group-item"
+                                    <ListGroupItem key={volunteerRequest._id} className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
+
                                                    onClick={this.showRequest(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
                                         }
-                                        <span className="ellipsis-text flex3"><a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.userId}`} target="_blank">{volunteer.userId}</a></span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}</span>
+                                        <span className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
+                                        <span className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
+                                        <span className="ellipsis-text flex3">{volunteerRequest.userId}</span>
+                                        <span className="ellipsis-text flex2">{volunteerRequest.contactPhone}</span>
+                                        <span className="ellipsis-text flex3"><a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteerRequest.contactEmail}`} target="_blank">{volunteerRequest.contactEmail}</a></span>
+                                        <span className="ellipsis-text flex2">{volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}</span>
                                     </ListGroupItem>
                                 )}
                             </ListGroup>}
