@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Department = require('../models/deparment');
-const Volunteer = require('../models/volunteer');
+const permissionsUtils = require('../utils/permissions');
 
 const co = require('co');
 const _ = require('lodash');
@@ -20,6 +20,10 @@ router.get('/departments/:departmentId', co.wrap(function* (req, res) {
 }));
 
 router.post('/departments', co.wrap(function* (req, res) {
+    if (!permissionsUtils.isAdmin(req.userDetails)){
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
+    }
+
     const departmentId = uuid();
     const department = new Department({
         ...req.body,
@@ -32,6 +36,11 @@ router.post('/departments', co.wrap(function* (req, res) {
 
 router.put('/departments/:departmentId', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
     const department = yield Department.findOne({_id: departmentId, deleted: false});
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
@@ -45,6 +54,10 @@ router.put('/departments/:departmentId', co.wrap(function* (req, res) {
 }));
 
 router.delete('/departments/:departmentId', co.wrap(function* (req, res) {
+    if (!permissionsUtils.isAdmin(req.userDetails)){
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
+    }
+
     const departmentId = req.params.departmentId;
     const department = yield Department.findOne({_id: departmentId, deleted: false});
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});

@@ -3,10 +3,6 @@ const router = express.Router();
 const Shift = require('../models/shift');
 const co = require('co');
 const _ = require('lodash');
-const SparkFacade = require('../spark/spark');
-const SPARK_HOST = (process.env.LOCAL_SPARK !== 'true') ? process.env.SPARK_HOST : 'http://localhost:3000';
-
-const sparkFacade = new SparkFacade(SPARK_HOST);
 
 router.get('/departments/:departmentId/shifts', co.wrap(function*(req, res) {
   const departmentId = req.params.departmentId;

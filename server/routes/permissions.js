@@ -7,12 +7,10 @@ const permissionsUtils = require('../utils/permissions');
 
 const addLocalAdmin = co.wrap(function* (userDetails) {
     if (process.env.LOCAL_SPARK === 'true') {
-        if (userDetails && userDetails.permissions) {
-            const isAdmin = userDetails.permissions.some(role => role.permission === 'admin');
-            if (isAdmin){
-                return;
-            }
+        if (permissionsUtils.isAdmin(userDetails)) {
+            return;
         }
+
 
         const admin = yield Admin.find({userId: 'user@midburn.org'});
         if (admin && admin.length) {
@@ -51,15 +49,17 @@ router.get('/permissions/admins', co.wrap(function* (req, res) {
 
 
 router.post('/permissions/admins', co.wrap(function* (req, res) {
-    const userId = req.userDetails.email;
-    const admin = yield Admin.find({userId: userId});
-    if (!admin) {
-        return res.status(403).json([{"error": "action is not allowed"}]);
+    if (!permissionsUtils.isAdmin(req.userDetails)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
     }
 
     const newAdminId = req.body.userId;
+    const admin = yield Admin.find({userId: newAdminId});
+    if (admin) {
+        return res.json(admin);
+
+    }
     // TODO: call spark and validate email
-    // TODO: don't add the same email twice
 
     const newAdmin = new Admin({
         _id: uuid(),

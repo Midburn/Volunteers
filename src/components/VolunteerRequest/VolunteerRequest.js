@@ -18,10 +18,9 @@ const VolunteerRequest = observer(() => {
     <div className="requests-view">
       <div className="card container">
         <h1 className="requests-title">Volunteering</h1>
-          <p style={{direction:'rtl'}}>התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה. </p>
-          <p>Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city. Volunteering does not automatically award you a ticket, but this year the priority is to allot tickets to volunteers in the different departments.
-            <br/><br/>* Join requests are coming soon
-        </p>
+        <div style={{direction:'rtl'}}>התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה. </div>
+        <div>Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city. </div>
+        <div><br/>* Join requests are coming soon</div>
         <ListGroup className="requests-list">
           {departments.map(department => {
             const basicInfo = department.basicInfo;

@@ -7,7 +7,7 @@ const volunteerRequestSchema = new Schema({
     eventId: String,
     status: String,
     approved: Boolean,
-    answerId: String
+    comment: String
 }, {timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const VolunteerRequest = mongoose.model('VolunteerRequest', volunteerRequestSchema);

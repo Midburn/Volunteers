@@ -4,12 +4,12 @@ const VolunteerRequest = require("../models/volunteerRequest");
 const DepartmentFormsAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
+const permissionsUtils = require('../utils/permissions');
 
+// Returns my requests
 router.get("/volunteer-requests", co.wrap(function* (req, res) {
     const email = req.userDetails.email;
-
-    const volunteerRequests = yield VolunteerRequest.find({email: email});
-
+    const volunteerRequests = yield VolunteerRequest.find({userId: email});
     return res.json(volunteerRequests);
 }));
 
@@ -17,6 +17,10 @@ router.get("/volunteer-requests", co.wrap(function* (req, res) {
 router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
 
     // TODO: permissions
 
@@ -28,30 +32,20 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
     return res.json(volunteerRequests);
 }));
 
-// Returns the answer of a user join request
-
-
+// Create a new join requsts for the current user
 router.post("/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
-
-    const answer = new DepartmentFormsAnswer({
-        departmentId: departmentId,
-        form: req.body.answer
-    })
-    yield answer.save();
-
     const email = req.userDetails.email;
+
     const volunteerRequest = new VolunteerRequest({
         departmentId: departmentId,
         eventId: eventId,
         userId: email,
-        approved: false,
-        answerId: answer._id
+        approved: false
     });
 
     yield volunteerRequest.save();
-
     return res.json(volunteerRequest);
 }));
 
