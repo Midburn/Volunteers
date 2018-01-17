@@ -20,11 +20,6 @@ export default class FillFormView extends Component {
         }
     }
 
-    toggleLan = _ => {
-        this.state.language = this.state.language === 'he' ? 'en' : 'he';
-        this.setState(this.state);
-    }
-
     handleTextChange = event => {
         const id = event.target.id;
         const index = id.substring(3);
@@ -73,9 +68,19 @@ export default class FillFormView extends Component {
         this.props.onAnswer(answers)   
     }
 
+    isValid = () => {
+        for (let i=0; i<this.state.questions.length; i++) {
+            if (!this.state.questions[i].answer) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     render(){
         const language = this.props.language;
         const rtl = language === 'he';
+        const isValid = this.isValid();
 
         return (
             <div className="fill-form-view">
@@ -120,7 +125,7 @@ export default class FillFormView extends Component {
                         </div>
                     )}
                     <div className='button-container'>
-                        <Button className="send" bsStyle="success"//disabled={!isValid}
+                        <Button className="send" bsStyle="success" disabled={!isValid}
                             onClick={this.submit}>Send</Button>
                     </div>
                 </Form>
