@@ -6,6 +6,24 @@ const co = require("co");
 const _ = require('lodash');
 const permissionsUtils = require('../utils/permissions');
 
+
+// PUBLIC - Returns if the user has request in this department
+router.get("/departments/:departmentId/events/:eventId/hasRequest", co.wrap(function* (req, res) {
+    if (!req.headers.userdata) {
+        return res.status(400).json({error: "invalid request"});
+    }
+    const userdata = JSON.parse(req.headers.userdata);
+    const userId = userdata.profileEmail;
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const request = yield VolunteerRequest.findOne({
+        departmentId,
+        userId,
+        eventId
+    });
+    return res.json({hasRequest: !!request});
+}));
+
 // Returns my requests
 router.get("/volunteer-requests", co.wrap(function* (req, res) {
     const email = req.userDetails.email;
@@ -32,16 +50,22 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
     return res.json(volunteerRequests);
 }));
 
-// Create a new join requsts for the current user
+// PUBLIC - Creates a new join requst
 router.post("/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
+    if (!req.headers.userdata) {
+        return res.status(400).json({error: "invalid request"});
+    }
+    const userdata = JSON.parse(req.headers.userdata);
+    const userId = userdata.profileEmail;
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
-    const email = req.userDetails.email;
 
     const volunteerRequest = new VolunteerRequest({
-        departmentId: departmentId,
-        eventId: eventId,
-        userId: email,
+        departmentId,
+        userId,
+        eventId,
+        contactEmail: userdata.contactEmail,
+        contactPhone: userdata.contactPhoneNumber,
         approved: false
     });
 

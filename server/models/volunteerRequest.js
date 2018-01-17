@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const volunteerRequestSchema = new Schema({
     userId: String,
+    contactEmail: String,
+    contactPhone: String,
     departmentId: String,
     eventId: String,
     status: String,

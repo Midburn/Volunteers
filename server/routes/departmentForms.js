@@ -168,7 +168,6 @@ router.get('/form/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
     if (!answer && email) {
         answer = yield getAnswer(GENERAL, email, eventId);
     }
-    console.log(answer);
     return res.json({hasAnswer: !!answer});
 }));
 

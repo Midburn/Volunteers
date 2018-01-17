@@ -80,6 +80,7 @@ const joinProcessView = observer(({volunteerRequestModel}) => {
     const show = !!volunteerRequestModel.joinProcess.departmentId;
     const joinProcess = volunteerRequestModel.joinProcess;
     const loading =  joinProcess.loading || !show; 
+    const error = joinProcess.error;
     const phase = getPhase(joinProcess);
     const language = joinProcess.language;
 
@@ -98,9 +99,11 @@ const joinProcessView = observer(({volunteerRequestModel}) => {
             </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        {loading 
-            ? <div>Loading...</div> 
-            : phaseView(phase, volunteerRequestModel)
+        {error 
+            ? <div>Error...</div> 
+            : loading || phase==='request'
+                ? <div>Loading...</div>
+                : phaseView(phase, volunteerRequestModel)
         }
         </Modal.Body>
     </Modal> 

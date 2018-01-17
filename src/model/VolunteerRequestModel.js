@@ -72,8 +72,9 @@ function VolunteerRequestModel() {
             axios.get(`/api/v1/form`).then(req => req.data),
             axios.get(`/api/v1/form/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
             axios.get(`/api/v1/departments/${departmentId}/forms`).then(req => req.data),
-            axios.get(`/api/v1/departments/${departmentId}/forms/events/${eventId}/hasAnswer`, {headers}).then(req => req.data)
-        ]).then(([generalQuestions, generalAnswer, departmentQuestions, departmentAnswer]) => {
+            axios.get(`/api/v1/departments/${departmentId}/forms/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/departments/${departmentId}/events/${eventId}/hasRequest`, {headers}).then(req => req.data)
+        ]).then(([generalQuestions, generalAnswer, departmentQuestions, departmentAnswer, requestAnswer]) => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }
@@ -84,7 +85,12 @@ function VolunteerRequestModel() {
                 filledGeneral: generalAnswer && generalAnswer.hasAnswer,
                 departmentQuestions : departmentQuestions,
                 filledDepartment: departmentAnswer && departmentAnswer.hasAnswer,
+                requestSent: requestAnswer && requestAnswer.hasRequest,
                 loading: false
+            }
+
+            if (this.joinProcess.filledGeneral && this.joinProcess.filledDepartment && !this.joinProcess.requestSent) {
+                this.sendRequest();
             }
         }).catch(err => {
             this.joinProcess = {
@@ -110,7 +116,10 @@ function VolunteerRequestModel() {
                 ...this.joinProcess,
                 filledGeneral: true,
                 loading: false,
-            } 
+            }
+            if (this.joinProcess.filledGeneral && this.joinProcess.filledDepartment && !this.joinProcess.requestSent) {
+                this.sendRequest();
+            }
         }).catch(err => {
             this.joinProcess = {
                 ...this.joinProcess,
@@ -136,7 +145,7 @@ function VolunteerRequestModel() {
                 filledDepartment: true,
                 loading: false,
             };
-            if (!this.joinProcess.requestSent) { 
+            if (this.joinProcess.filledGeneral && this.joinProcess.filledDepartment && !this.joinProcess.requestSent) {
                 this.sendRequest();
             }
         }).catch(err => {
@@ -153,8 +162,12 @@ function VolunteerRequestModel() {
             ...this.joinProcess,
             loading: false,
         }
+        const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`).then(res => {
+        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`,{}, {headers}).then(res => {
+            if (this.joinProcess.departmentId !== departmentId) { 
+                return; 
+            }
             this.joinProcess = {
                 ...this.joinProcess,
                 loading: false,
