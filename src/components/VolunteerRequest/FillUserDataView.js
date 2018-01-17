@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {Button, Form, FormControl, FormGroup, ControlLabel, Checkbox, Radio} from 'react-bootstrap';
 import axios from 'axios';
 
+const EMAIL_REG = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 // require('./FillFormView.scss')
 
 const emailTitle = {
@@ -39,13 +41,24 @@ export default class FillUserDataView extends Component {
 
         this.props.onAnswer(this.state)   
     }
-    
+
+    isValid = () => {
+        if (!this.state.contactEmail) {
+            return false;
+        }
+        if (!EMAIL_REG.test(this.state.contactEmail)) {
+            return false;
+        }
+        if (this.state.profileEmail && !EMAIL_REG.test(this.state.profileEmail)){
+            return false;
+        }
+        return true;
+    }
 
     render(){
         const language = this.props.language;
         const rtl = language === 'he';
-        const isValid = !!this.state.contactEmail;
-
+        const isValid = this.isValid();
 
         return (
             <div className="fill-form-view">
