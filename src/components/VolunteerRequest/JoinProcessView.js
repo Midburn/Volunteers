@@ -32,7 +32,7 @@ const phaseView = (phase ,volunteerRequestModel) => {
     if (phase === 'department') {
         return departmentPhase(volunteerRequestModel);
     }
-    return donePhase();
+    return donePhase(volunteerRequestModel.joinProcess.language);
 }
 
 const userDataPhase = volunteerRequestModel => {
@@ -56,10 +56,17 @@ const departmentPhase = volunteerRequestModel => {
                         onAnswer={sendDepartmentForm(volunteerRequestModel)}/>
 }
 
-const donePhase = () => {
+const donePhase = language => {
     return (
     <div className="done-join">
+        <h2>{language==='he' ? 'תודה' : 'Thank You'}</h2>
+        <h5>{language==='he' ? 'בקשתך נשלחה' : 'Your request was sent'}</h5>
         <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Symbol_great.svg"/>
+        <h3>
+        {language==='he' ? 'אם אין לך פרופיל מידברן לחץ' : 'If you don\'t have a midburn profile please create one'}
+            <a href="https://profile.midburn.org/en/user/register">{language==='he' ? ' כאן' : ' here'}</a><br/>
+            <h5>{language==='he' ? 'זה דרוש בשביל להשתתף במידברן' : 'This is needed for volunteering or participation Midburn.'}</h5>
+        </h3>
     </div>
     )
 }
