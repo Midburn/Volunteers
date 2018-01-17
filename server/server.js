@@ -30,28 +30,24 @@ const SECRET = process.env.SECRET;
 // WEB middleware
 /////////////////////////////
 app.use(co.wrap(function* (req, res, next) {
-
+    console.log(req.path);
     if (req.path === '/api/v1/login') {
         return next();
     }
 
-    const token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
-    if (!token) {
-        return res.redirect(SPARK_HOST);
-    }
-
     try {
+        const token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
         const userDetails = jwt.verify(token, SECRET);
         req.token = token;
         req.userDetails = userDetails;
         req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
-
         next();
     }
     catch (err) {
-        console.log(err);
-        res.clearCookie(JWT_KEY);
-        return res.redirect(SPARK_HOST);
+        next();
+        // console.log(err);
+        // res.clearCookie(JWT_KEY);
+        // return res.redirect(SPARK_HOST);
     }
 }));
 

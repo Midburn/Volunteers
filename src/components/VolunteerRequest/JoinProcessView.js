@@ -2,10 +2,14 @@ import {observer} from "mobx-react";
 import React from 'react';
 import {Modal, Button, Image} from 'react-bootstrap'
 import FillFormView from './FillFormView'
+import FillUserDataView from './FillUserDataView'
 import * as Consts from '../../model/consts'
 require('./JoinProcessView.scss');
 
 const getPhase = joinProcess => {
+    if (!joinProcess.userData.profileEmail) {
+        return 'userData';
+    }
     if (!joinProcess.filledGeneral) {
         return 'general';
     }
@@ -19,6 +23,9 @@ const getPhase = joinProcess => {
 }
 
 const phaseView = (phase ,volunteerRequestModel) => {
+    if (phase === 'userData') {
+        return userDataPhase(volunteerRequestModel);
+    }
     if (phase === 'general') {
         return generalPhase(volunteerRequestModel);
     }
@@ -26,6 +33,13 @@ const phaseView = (phase ,volunteerRequestModel) => {
         return departmentPhase(volunteerRequestModel);
     }
     return donePhase();
+}
+
+const userDataPhase = volunteerRequestModel => {
+    return (
+        <FillUserDataView language={volunteerRequestModel.joinProcess.language}
+                        onAnswer={checkUserData(volunteerRequestModel)}/>
+    );
 }
 
 const generalPhase = volunteerRequestModel => {
@@ -48,6 +62,10 @@ const donePhase = () => {
         <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Symbol_great.svg"/>
     </div>
     )
+}
+
+const checkUserData = volunteerRequestModel => userData => {
+    volunteerRequestModel.checkUserData(userData);
 }
 
 const sendGeneralForm = volunteerRequestModel => answers => { 
