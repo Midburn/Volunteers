@@ -65,7 +65,7 @@ const donePhase = language => {
         <h3>
         {language==='he' ? 'אם אין לך פרופיל מידברן לחץ' : 'If you don\'t have a midburn profile please create one'}
             <a href="https://profile.midburn.org/en/user/register">{language==='he' ? ' כאן' : ' here'}</a><br/>
-            <h5>{language==='he' ? 'זה דרוש בשביל להשתתף במידברן' : 'This is needed for volunteering or participation Midburn.'}</h5>
+            <h5>{language==='he' ? 'זה דרוש בשביל להשתתף במידברן' : 'This is needed for volunteering or participation in Midburn.'}</h5>
         </h3>
     </div>
     )
