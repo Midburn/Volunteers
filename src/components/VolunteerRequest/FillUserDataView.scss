@@ -1,24 +1,17 @@
-.fill-form-view {
+.fill-userdata-view {
 
     .rtl {
         direction: rtl;
 
-        .radio-inline, .checkbox-inline {
-            padding-right: 20px;
-        }
-
-        .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
-            margin-right: -20px;
-        }
-
-        .radio, .checkbox {
-            padding-right: 20px;
+        .en-input {
+            direction: ltr;
         }
     }
 
     .form-group {
         padding: 10px;
     }
+
 
     .button-container {
         display: flex;

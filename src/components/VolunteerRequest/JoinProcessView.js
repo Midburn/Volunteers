@@ -86,8 +86,9 @@ const joinProcessView = observer(({volunteerRequestModel}) => {
 
     const toggleLan = () => volunteerRequestModel.toggleLanguage();
     const close = () => volunteerRequestModel.stopJoinProcess();
-    const isValid = true;
-    const departmentLogo = Consts.DEFAULT_LOGO;
+
+    const department = volunteerRequestModel.departments.find(d => d._id === joinProcess.departmentId);
+    const departmentLogo = department && department.basicInfo && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : Consts.DEFAULT_LOGO;
 
     return (
     <Modal className="join-process-modal" show={show} onHide={close} bsSize="lg">

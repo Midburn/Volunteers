@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const EMAIL_REG = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-// require('./FillFormView.scss')
+require('./FillUserDataView.scss')
 
 const emailTitle = {
     he: 'כתובת אימייל ליצירת קשר:',
@@ -61,20 +61,20 @@ export default class FillUserDataView extends Component {
         const isValid = this.isValid();
 
         return (
-            <div className="fill-form-view">
+            <div className="fill-userdata-view">
                 <Form>
                     <div className={rtl ? 'rtl' : ''}>
                         <FormGroup controlId="contactEmail">
                             <ControlLabel>{emailTitle[language]}</ControlLabel>
-                            <FormControl onChange={this.handleTextChange} placeholder="email@gmail.com"/>
+                            <FormControl className="en-input" onChange={this.handleTextChange} placeholder="email@gmail.com"/>
                         </FormGroup>
                         <FormGroup controlId="contactPhoneNumber">
                             <ControlLabel>{phoneTitle[language]}</ControlLabel>
-                            <FormControl onChange={this.handleTextChange} placeholder="050-123456789"/>
+                            <FormControl className="en-input" onChange={this.handleTextChange} placeholder="050-123456789"/>
                         </FormGroup>
                         <FormGroup controlId="profileEmail">
                             <ControlLabel>{profileTitle[language]}</ControlLabel>
-                            <FormControl onChange={this.handleTextChange} placeholder="email@gmail.com"/>
+                            <FormControl className="en-input" onChange={this.handleTextChange} placeholder="email@gmail.com"/>
                         </FormGroup>
                     </div>
                     <div className='button-container'>
