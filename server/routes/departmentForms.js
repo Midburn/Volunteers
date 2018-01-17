@@ -44,7 +44,7 @@ const saveDepartmentFrom = co.wrap(function* (departmentId, form) {
 });
 
 // PUBLIC - Returns a depertment form
-router.get("/departments/:departmentId/forms", co.wrap(function* (req, res) {
+router.get("/public/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
 
     const departmentForm = yield getDepartmentFrom(departmentId);
@@ -86,7 +86,7 @@ router.delete("/departments/:departmentId/forms", co.wrap(function* (req, res) {
 }));
 
 // PUBLIC - Returns if the userdata has answers to the department form or not
-router.get('/departments/:departmentId/forms/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
+router.get('/public/departments/:departmentId/forms/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
@@ -109,7 +109,7 @@ router.get('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(fu
 }));
 
 // PUBLIC - Submit answers to the department form
-router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
+router.post('/public/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
@@ -130,7 +130,7 @@ router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(f
 
 
 // PUBLIC - Returns the general form
-router.get("/form", co.wrap(function* (req, res) {
+router.get("/public/form", co.wrap(function* (req, res) {
     const departmentForm = yield getDepartmentFrom(GENERAL);
 
     return res.json(departmentForm ? departmentForm.form : []);
@@ -152,7 +152,7 @@ router.post("/form", co.wrap(function* (req, res) {
 
 
 // PUBLIC - Returns if the userdata has answers to the general form or not
-router.get('/form/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
+router.get('/public/form/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
@@ -172,7 +172,7 @@ router.get('/form/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
 }));
 
 // PUBLIC - Submit answers to the general form
-router.post('/form/events/:eventId/answer', co.wrap(function* (req, res) {
+router.post('/public/form/events/:eventId/answer', co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }

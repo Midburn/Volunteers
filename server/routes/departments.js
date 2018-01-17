@@ -7,7 +7,7 @@ const co = require('co');
 const _ = require('lodash');
 const uuid = require('uuid/v1');
 
-router.get('/departments', co.wrap(function* (req, res) {
+router.get('/public/departments', co.wrap(function* (req, res) {
     const departments = yield Department.find({deleted: false});
     return res.json(departments);
 }));

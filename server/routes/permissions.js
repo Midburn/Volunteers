@@ -25,7 +25,7 @@ const addLocalAdmin = co.wrap(function* (userDetails) {
 });
 
 
-router.get('/permissions/me', co.wrap(function* (req, res) {
+router.get('/public/permissions/me', co.wrap(function* (req, res) {
     yield addLocalAdmin(req.userDetails);
     const permissions = yield permissionsUtils.getPermissions(req.userDetails);
     return res.json(permissions);

@@ -29,11 +29,11 @@ export default class AdminView extends Component {
     }
 
     refreshData() {
-        axios.get("/api/v1/departments")
+        axios.get("/api/v1/public/departments")
             .then(res => this.setState({departments: res.data}));
         axios.get("/api/v1/permissions/admins")
             .then(res => this.setState({admins: res.data}));
-        axios.get("/api/v1/form")
+        axios.get("/api/v1/public/form")
             .then(res => this.setState({generalForm: res.data}));
     };
 

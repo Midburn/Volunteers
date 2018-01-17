@@ -29,7 +29,7 @@ const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
 
 
 // PUBLIC - Returns if the user has request in this department
-router.get("/departments/:departmentId/events/:eventId/hasRequest", co.wrap(function* (req, res) {
+router.get("/public/departments/:departmentId/events/:eventId/hasRequest", co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
@@ -69,7 +69,7 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
 }));
 
 // PUBLIC - Creates a new join requst
-router.post("/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
+router.post("/public/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
@@ -92,7 +92,7 @@ router.post("/departments/:departmentId/events/:eventId/join", co.wrap(function*
 }));
 
 // A new join request
-router.put("/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
+router.put("/public/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
     const approved = req.body.approved;

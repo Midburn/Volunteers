@@ -55,7 +55,7 @@ export default class VolunteerListTab extends Component {
     }
 
     fetchDepartments = () => {
-        axios.get("/api/v1/departments")
+        axios.get("/api/v1/public/departments")
             .then(res => {
                 const departments = res.data;
                 this.state.departments = departments.filter(department =>

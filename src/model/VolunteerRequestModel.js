@@ -46,7 +46,7 @@ function VolunteerRequestModel() {
     }
 
     this.fetchDepartments = tryNetworkRequest(async () => {
-        this.departments = (await axios.get('/api/v1/departments')).data;
+        this.departments = (await axios.get('/api/v1/public/departments')).data;
         this.departments = this.departments.filter(department => department.status.visibleToJoin)
     });
 
@@ -69,11 +69,11 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(newUserData)};
         Promise.all([
-            axios.get(`/api/v1/form`).then(req => req.data),
-            axios.get(`/api/v1/form/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
-            axios.get(`/api/v1/departments/${departmentId}/forms`).then(req => req.data),
-            axios.get(`/api/v1/departments/${departmentId}/forms/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
-            axios.get(`/api/v1/departments/${departmentId}/events/${eventId}/hasRequest`, {headers}).then(req => req.data)
+            axios.get(`/api/v1/public/form`).then(req => req.data),
+            axios.get(`/api/v1/public/form/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/forms`).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/forms/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/events/${eventId}/hasRequest`, {headers}).then(req => req.data)
         ]).then(([generalQuestions, generalAnswer, departmentQuestions, departmentAnswer, requestAnswer]) => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
@@ -108,7 +108,7 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/form/events/${eventId}/answer`, answers, {headers}).then(res => {
+        axios.post(`/api/v1/public/form/events/${eventId}/answer`, answers, {headers}).then(res => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }
@@ -136,7 +136,7 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/departments/${departmentId}/forms/events/${eventId}/answer`, answers, {headers}).then(res => {
+        axios.post(`/api/v1/public/departments/${departmentId}/forms/events/${eventId}/answer`, answers, {headers}).then(res => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }
@@ -164,7 +164,7 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`,{}, {headers}).then(res => {
+        axios.post(`/api/v1/public/departments/${departmentId}/events/${eventId}/join`,{}, {headers}).then(res => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }

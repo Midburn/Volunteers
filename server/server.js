@@ -44,10 +44,13 @@ app.use(co.wrap(function* (req, res, next) {
         next();
     }
     catch (err) {
-        next();
-        // console.log(err);
-        // res.clearCookie(JWT_KEY);
-        // return res.redirect(SPARK_HOST);
+        if (req.path.startsWith('/api/v1/public/')) {
+            next();
+        } else {
+            console.log(err);
+            res.clearCookie(JWT_KEY);
+            return res.redirect(SPARK_HOST);
+        }
     }
 }));
 
