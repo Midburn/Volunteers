@@ -115,10 +115,10 @@ console.log(profileId, checkinTime, comment)
 
     reaction(() => this.departmentID, async dept => {
         // Can optimize by connecting with volunteer-list model
-        this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
-        location.href = `#${dept}`
-        localStorage.setItem('currentDepartment', dept);
-        this.refreshShifts()
+        // this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
+        // location.href = `#${dept}`
+        // localStorage.setItem('currentDepartment', dept);
+        // this.refreshShifts()
     })
 
     const deptFromHash = () => {
