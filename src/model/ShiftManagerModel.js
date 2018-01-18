@@ -158,7 +158,7 @@ console.log(profileId, checkinTime, comment)
         }, []);
     })
 
-    this.initDepartments()
+    //this.initDepartments()
 }
 
 export default ShiftManagerModel;

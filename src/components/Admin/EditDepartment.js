@@ -54,7 +54,7 @@ export default class EditDepartment extends Component {
     componentDidMount() {
         if (!this.state.department._id) return;
 
-        axios.get(`/api/v1/departments/${this.state.department._id}/forms`)
+        axios.get(`/api/v1/public/departments/${this.state.department._id}/forms`)
             .then(res => this.setState({departmentForm: res.data}));
     }
 
