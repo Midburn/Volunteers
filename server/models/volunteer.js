@@ -9,6 +9,8 @@ const volunteersSchema = new Schema({
     permission: String,
     yearly: Boolean,
     comment: String,
+    contactEmail: String,
+    contactPhone: String,
     deleted: Boolean,
     tags: [String]
 }, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});

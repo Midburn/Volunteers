@@ -99,13 +99,17 @@ router.get('/public/departments/:departmentId/forms/events/:eventId/hasAnswer', 
     return res.json({hasAnswer: !!answer});
 }));
 
-// Retunes the answer of a department form for the current user
-router.get('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
-    const userId = req.userDetails.email;
+// MANAGER - Returns answers to a department form of a spcefic user
+router.get('/departments/:departmentId/forms/events/:eventId/answer/:userId', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
     const eventId = req.params.eventId;
+    const userId = req.params.userId;
     const answer = yield getAnswer(departmentId, userId, eventId);
-    return res.json(answer ? answer : '');
+    return res.json(answer);
 }));
 
 // PUBLIC - Submit answers to the department form
@@ -148,6 +152,18 @@ router.post("/form", co.wrap(function* (req, res) {
     const departmentForm = yield saveDepartmentFrom(GENERAL, form);
 
     return res.json(departmentForm.form);
+}));
+
+// MANAGER - Returns answers to general form of a spcefic user
+router.get('/form/events/:eventId/answer/:userId', co.wrap(function* (req, res) {
+    if (!permissionsUtils.isManager(req.userDetails)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions"}]);
+    }
+
+    const userId = req.params.userId;
+    const eventId = req.params.eventId;
+    const answer = yield getAnswer(GENERAL, userId, eventId);
+    return res.json(answer);
 }));
 
 
