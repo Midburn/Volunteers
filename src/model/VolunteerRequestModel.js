@@ -45,9 +45,23 @@ function VolunteerRequestModel() {
         }
     }
 
+    function compareDepartments(a ,b) {
+        // avaialble first
+        if (a.status.availableToJoin && !b.status.availableToJoin) {
+            return -1;
+        }
+        if (b.status.availableToJoin && !a.status.availableToJoin) {
+            return 1;
+        }
+
+        // sort by name
+        return a.basicInfo.nameEn.localeCompare(b.basicInfo.nameEn);
+    }
+
     this.fetchDepartments = tryNetworkRequest(async () => {
         this.departments = (await axios.get('/api/v1/public/departments')).data;
         this.departments = this.departments.filter(department => department.status.visibleToJoin)
+        this.departments = this.departments.sort(compareDepartments);
     });
 
     this.requestState = departmentId => {
