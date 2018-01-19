@@ -12,14 +12,17 @@ function getProfileByMail(emails) {
     const profileByMail = {};
     return axios.post(`${SPARK_HOST}/volunteers/profiles`, {emails}, {headers: getAuthHeader()})
         .then(response => {
+            if (!response.data) return {};
             response.data.forEach(profile => {
                 if (!('user_data' in profile)) return;
 
                 profileByMail[profile['email']] = profile['user_data'];
             });
-
             return profileByMail;
-        });
+        }).catch(error => {
+            console.log(error);
+            return {};
+        })
 }
 
 module.exports = {
