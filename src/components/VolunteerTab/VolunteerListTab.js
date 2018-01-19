@@ -6,6 +6,7 @@ import * as Consts from '../../model/consts'
 import Select from 'react-select';
 import VolunteerAddModal from "./VolunteerAddModal"
 import VolunteerEditModal from "./VolunteerEditModal"
+import VolunteerRequestPreviewModal from "./VolunteerRequestPreviewModal"
 import {CSVLink} from 'react-csv';
 import TagFilter from "../TagFilter";
 
@@ -39,6 +40,7 @@ export default class VolunteerListTab extends Component {
 
             showAddModal: false,
             editModalVolunteer: '',
+            editModalRequest: '',
             showTags: true
         };
 
@@ -69,6 +71,7 @@ export default class VolunteerListTab extends Component {
 
     fetchVolunteers = () => {
         this.state.volunteers = [];
+        this.state.requests = [];
         this.state.numberOfRequests = this.state.departments.length * 2;
         this.setState(this.state);
         for (let i = 0; i < this.state.departments.length; i++) {
@@ -150,23 +153,21 @@ export default class VolunteerListTab extends Component {
         this.setState(this.state);
     }
 
-    hideAddModal = _ => {
-        this.state.showAddModal = false;
-        this.setState(this.state);
-    }
-
     showEditModal(volunteerId) {
         this.state.editModalVolunteer = this.state.visibleVolunteers.find(volunteer => volunteer._id === volunteerId);
         this.setState(this.state);
     }
 
-    hideEditModal = _ => {
-        this.state.editModalVolunteer = null;
+    showRequestModal(requestId) {
+        this.state.editModalRequest = this.state.visibleRequests.find(request => request._id === requestId);
         this.setState(this.state);
     }
 
-    showRequest = requestId => _ => {
-
+    hideModals = _ => {
+        this.state.showAddModal = false;
+        this.state.editModalVolunteer = null;
+        this.state.editModalRequest = null;
+        this.setState(this.state);
     }
 
     updateVolunteer(volunteer) {
@@ -350,8 +351,7 @@ export default class VolunteerListTab extends Component {
                                 </ListGroupItem>
                                 {this.state.visibleRequests.map(volunteerRequest =>
                                     <ListGroupItem key={volunteerRequest._id} className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
-
-                                                   onClick={this.showRequest(volunteerRequest._id)}>
+                                                   onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
@@ -369,10 +369,12 @@ export default class VolunteerListTab extends Component {
                 </div>
 
                 <VolunteerAddModal show={this.state.showAddModal} departmentId={this.state.filter.departmentId}
-                                   departments={this.state.departments} onHide={this.hideAddModal}
+                                   departments={this.state.departments} onHide={this.hideModals}
                                    onSuccess={this.fetchVolunteers}/>
                 <VolunteerEditModal show={!!this.state.editModalVolunteer} volunteer={this.state.editModalVolunteer}
-                                    onHide={this.hideEditModal} onSuccess={this.fetchVolunteers}/>
+                                    onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
+                <VolunteerRequestPreviewModal show={!!this.state.editModalRequest} request={this.state.editModalRequest}
+                                             onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
             </div>
         );
     }

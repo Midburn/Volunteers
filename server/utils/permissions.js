@@ -35,5 +35,14 @@ module.exports = {
         return (userDetails && userDetails.permissions &&
             userDetails.permissions.some(role => (role.permission === 'admin') ||
                 (role.departmentId === departmentId && role.permission === 'manager')));
+    },
+
+    // Returns true if managing any department
+    isManager: userDetails => {
+        if (!userDetails || !userDetails.permissions) {
+            return false;
+        }
+        return (userDetails.permissions.some(role => role.permission === 'admin' || role.permission === 'manager'));
     }
+
 };

@@ -30,7 +30,6 @@ const SECRET = process.env.SECRET;
 // WEB middleware
 /////////////////////////////
 app.use(co.wrap(function* (req, res, next) {
-    console.log(req.path);
     if (req.path === '/api/v1/login') {
         return next();
     }

@@ -17,8 +17,8 @@ export default class VolunteerShifts extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDepartments();
-    this.fetchShifts();
+    // this.fetchDepartments();
+    // this.fetchShifts();
   }
 
   fetchDepartments = () => {
