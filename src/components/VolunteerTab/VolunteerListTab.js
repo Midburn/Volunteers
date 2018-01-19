@@ -214,6 +214,47 @@ export default class VolunteerListTab extends Component {
             this.updateVisibleVolunteers);
     }
 
+    downloadVolunteers = _ => {
+        const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
+        const filename =  `${departmentName}-volunteers.csv`
+        const data = this.state.visibleVolunteers.map(volunteer => ({
+            Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
+            "Midubrn Profile": volunteer.userId,
+            "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
+            "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
+            Email: volunteer.contactEmail? volunteer.contactEmail : 'No Data',
+            Phone: volunteer.contactPhone? volunteer.contactPhone : 'No Data',
+            "Added Date": volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A',
+            Role: volunteer.permission,
+            Yearly: volunteer.yearly ? 'Yes' : 'No',
+            Tags: volunteer.tags.join(", ")
+        }))
+        return (
+            <CSVLink data={data} target="_blank" filename={filename}>
+                <Button bsStyle="link">Download</Button>
+            </CSVLink>
+        )
+    }
+
+    downloadRequests = _ => {
+        const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
+        const filename =  `${departmentName}-requests.csv`
+        const data = this.state.visibleRequests.map(request => ({
+            Department: this.state.departments.find(d => d._id === request.departmentId).basicInfo.nameEn,
+            "Midubrn Profile": request.userId,
+            "First Name": request.firstName ? request.firstName : 'No Data',
+            "Last Name": request.lastName ? request.lastName : 'No Data',
+            Email: request.contactEmail? request.contactEmail : 'No Data',
+            Phone: request.contactPhone? request.contactPhone : 'No Data',
+            "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A'
+        }))
+        return (
+            <CSVLink data={data} target="_blank" filename={filename}>
+                <Button bsStyle="link">Download</Button>
+            </CSVLink>
+        )
+    }
+
     render() {
         const {filter, visibleVolunteers, departments, showTags} = this.state;
         const department = departments.find(department => department._id === filter.departmentId);
@@ -263,22 +304,7 @@ export default class VolunteerListTab extends Component {
 
                     <div className="volunteer-list-list-title">
                         <span>Volunteers:</span>
-                        <CSVLink data={
-                            this.state.visibleVolunteers.map(volunteer => ({
-                                Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
-                                Email: volunteer.userId,
-                                "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
-                                "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
-                                "Added Date": volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A',
-                                Role: volunteer.permission,
-                                Yearly: volunteer.yearly ? 'Yes' : 'No',
-                                Tags: volunteer.tags.join(", ")
-                            }))}
-                                 filename={(this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : "all") + "-volunteers.csv"}
-                                 target="_blank"
-                        >
-                            <Button bsStyle="link">Download</Button>
-                        </CSVLink>
+                        {this.downloadVolunteers()}
                     </div>
 
                     {this.state.numberOfRequests > 0 ?
@@ -336,7 +362,10 @@ export default class VolunteerListTab extends Component {
                                 )}
                             </ListGroup>}
 
-                    <div className="volunteer-list-list-title">Join Requests:</div>
+                    <div className="volunteer-list-list-title">
+                        <span>Join Requests:</span>
+                        {this.downloadRequests()}
+                    </div>
                     {this.state.numberOfRequests > 0 ?
                         <div className="no-volunteers">Loading</div>
                         : this.state.visibleRequests.length === 0 ?
