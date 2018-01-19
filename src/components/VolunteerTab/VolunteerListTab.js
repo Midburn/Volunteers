@@ -294,37 +294,36 @@ export default class VolunteerListTab extends Component {
                                     <span className="ellipsis-text flex3">Midburn Profile</span>
                                     <span className="ellipsis-text flex2">First Name</span>
                                     <span className="ellipsis-text flex2">Last Name</span>
+                                    <span className="ellipsis-text flex3">Email</span>
+                                    <span className="ellipsis-text flex2">Phone</span>
                                     <span className="ellipsis-text flex2">Added Date</span>
-                                    <span className="ellipsis-text flex1">Role</span>
+                                    <span className="ellipsis-text flex2">Role</span>
                                     <span className="ellipsis-text flex1">Yearly</span>
-                                    <span className="ellipsis-text flex1">Other Departments</span>
-                                    {showTags && <span className="ellipsis-text flex2">Tags</span>}
+                                    <span className="ellipsis-text flex2">Other Departments</span>
+                                    {showTags && <span className="ellipsis-text flex3">Tags</span>}
                                 </ListGroupItem>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <ListGroupItem key={volunteer._id}
-                                                   className="volunteer-list-group-item"
-                                                   onClick={event => {
-                                                       if (event.type === 'click' && event.clientX !== 0 && event.clientY !== 0) {
-                                                           this.showEditModal(volunteer._id)
-                                                       }
-                                                   }}
+                                                    className={`volunteer-list-group-item ${!volunteer.validProfile ? 'invalid' : ''}`}
+                                                    onClick={event => {
+                                                        if (event.type === 'click' && event.clientX !== 0 && event.clientY !== 0) {
+                                                            this.showEditModal(volunteer._id)
+                                                        }
+                                                     }}
                                     >
                                         {!this.state.filter.departmentId &&
-                                        <span
-                                            className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
+                                        <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
                                         }
-                                        <span className="ellipsis-text flex3"><a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.userId}`} target="_blank">{volunteer.userId}</a></span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteer.firstName ? volunteer.firstName : 'No Data'}</span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteer.lastName ? volunteer.lastName : 'No Data'}</span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
-                                        <span className="ellipsis-text flex1">{volunteer.permission}</span>
+                                        <span className="ellipsis-text flex3">{volunteer.userId}</span>
+                                        <span className="ellipsis-text flex2">{volunteer.firstName ? volunteer.firstName : 'No Data'}</span>
+                                        <span className="ellipsis-text flex2">{volunteer.lastName ? volunteer.lastName : 'No Data'}</span>
+                                        <span className="ellipsis-text flex3">{volunteer.contactEmail ? <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.contactEmail}`} target="_blank">{volunteer.contactEmail}</a> : 'No Data'}</span>
+                                        <span className="ellipsis-text flex2">{volunteer.contactPhone? volunteer.contactPhone : 'No Data'}</span>
+                                        <span className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
+                                        <span className="ellipsis-text flex2">{volunteer.permission}</span>
                                         <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
-                                        <span
-                                            className="ellipsis-text flex1">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
-                                        {showTags && <span className="flex2"
+                                        <span className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
+                                        {showTags && <span className="flex3"
                                                            onClick={event => event.stopPropagation()}
                                         >
                                             <Select.Creatable multi
@@ -356,8 +355,9 @@ export default class VolunteerListTab extends Component {
                                     <span className="ellipsis-text flex2">Request Date</span>
                                 </ListGroupItem>
                                 {this.state.visibleRequests.map(volunteerRequest =>
-                                    <ListGroupItem key={volunteerRequest._id} className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
-                                                   onClick={() => this.showRequestModal(volunteerRequest._id)}>
+                                    <ListGroupItem key={volunteerRequest._id} 
+                                                    className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
+                                                    onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>

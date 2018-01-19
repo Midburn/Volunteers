@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button, FormGroup, HelpBlock, FormControl, ControlLabel} from 'react-bootstrap';
+import {Modal, Button, FormGroup, HelpBlock, FormControl, ControlLabel, Alert} from 'react-bootstrap';
 import axios from 'axios';
 require('./VolunteerEditModal.css')
 
@@ -19,6 +19,7 @@ export default class VolunteerEditModal extends React.Component {
   onEnter = _ => {
     this.state = { 
       volunteer: {
+        ...this.props.volunteer,
         permission: this.props.volunteer.permission,
         yearly: this.props.volunteer.yearly ? 'true' : 'false'
       },
@@ -37,6 +38,17 @@ export default class VolunteerEditModal extends React.Component {
   onHide = _ => {
     //TODO: check if there are unsaved changes and show "are you sure" alert
     this.props.onHide()
+  }
+
+  errorMessage = _ => {
+    if (!this.state.volunteer.validProfile) {
+      return (
+        <Alert className="profile-alert" bsStyle="danger">
+          <strong>{this.state.volunteer.userId}</strong> isn't a valid Midburn Profile
+        </Alert>
+      )
+    }
+    return null;
   }
 
   save = _ => {
@@ -71,6 +83,7 @@ export default class VolunteerEditModal extends React.Component {
                   `${this.props.volunteer.firstName} ${this.props.volunteer.lastName}` :
                   'No Data'
     const email = this.props.volunteer ? this.props.volunteer.userId : 'No Data'
+    const errorMessage = this.errorMessage();
 
     return (
       <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
@@ -83,6 +96,7 @@ export default class VolunteerEditModal extends React.Component {
           <Button className="edit-volunteer-save" bsStyle="success" onClick={this.save}>Save</Button>}
         </Modal.Header>
         <Modal.Body>
+          {errorMessage}
           <div className="edit-volunteer-options">
             <FormGroup className="edit-volunteer-form-group" controlId="permission">
               <ControlLabel>Role</ControlLabel>

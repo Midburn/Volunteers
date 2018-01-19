@@ -36,12 +36,15 @@ const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
 
     volunteers.forEach(volunteer => {
         const volunteerDetails = volunteerDetailsByEmail[volunteer.userId];
-        if (!volunteerDetails) return;
-
-        volunteer._doc.firstName = volunteerDetails['first_name'];
-        volunteer._doc.lastName = volunteerDetails['last_name'];
-        volunteer._doc.hasTicket = volunteerDetails['has_ticket'];
-        volunteer._doc.phone = volunteerDetails['phone'];
+        if (!volunteerDetails) {
+            volunteer._doc.validProfile = false;
+        } else {
+            volunteer._doc.validProfile = true;
+            volunteer._doc.firstName = volunteerDetails['first_name'];
+            volunteer._doc.lastName = volunteerDetails['last_name'];
+            volunteer._doc.hasTicket = volunteerDetails['has_ticket'];
+            volunteer._doc.phone = volunteerDetails['phone'];
+        }
     });
 
     return volunteers;
