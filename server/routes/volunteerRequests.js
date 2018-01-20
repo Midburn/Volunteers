@@ -8,18 +8,18 @@ const permissionsUtils = require('../utils/permissions');
 const sparkApi = require('../spark/sparkApi');
 
 const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
+    const sparkInfos = yield [requests.map(request => sparkApi.getProfileByMail([request.userId], 5 * 1000))]
     for (let i=0; i<requests.length; i++) {
         const request = requests[i];
-        const sparkInfo = yield sparkApi.getProfileByMail([request.userId], 5 * 1000);
-        const requestsDetails = sparkInfo[request.userId];
-        if (!requestsDetails) {
+        const sparkInfo = sparkInfos[i] && sparkInfos[request.userId] ? sparkInfos[request.userId] : null;
+        if (!sparkInfo) {
             request._doc.validProfile = false;
         } else {
             request._doc.validProfile = true;
-            request._doc.firstName = requestsDetails['first_name'];
-            request._doc.lastName = requestsDetails['last_name'];
-            request._doc.hasTicket = requestsDetails['has_ticket'];
-            request._doc.phone = requestsDetails['phone'];
+            request._doc.firstName = sparkInfo['first_name'];
+            request._doc.lastName = sparkInfo['last_name'];
+            request._doc.hasTicket = sparkInfo['has_ticket'];
+            request._doc.phone = sparkInfo['phone'];
         }
     };
     return requests;

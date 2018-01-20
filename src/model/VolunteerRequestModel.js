@@ -65,8 +65,9 @@ function VolunteerRequestModel() {
     });
 
     this.requestState = departmentId => {
-        const department = this.departments.find(d => d._id === departmentId)
-        return department.status.availableToJoin ? 'Opened' : 'Closed'
+        return 'Closed';
+        // const department = this.departments.find(d => d._id === departmentId)
+        // return department.status.availableToJoin ? 'Opened' : 'Closed'
     }
   
     this.startJoinProcess = departmentId => {
