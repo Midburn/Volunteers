@@ -8,10 +8,10 @@ const permissionsUtils = require('../utils/permissions');
 const sparkApi = require('../spark/sparkApi');
 
 const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
-    const sparkInfos = yield [requests.map(request => sparkApi.getProfileByMail([request.userId], 5 * 1000))]
+    const sparkInfos = yield requests.map(request => sparkApi.getProfileByMail([request.userId], 5 * 1000))
     for (let i=0; i<requests.length; i++) {
         const request = requests[i];
-        const sparkInfo = sparkInfos[i] && sparkInfos[request.userId] ? sparkInfos[request.userId] : null;
+        const sparkInfo = sparkInfos[i] && sparkInfos[i][request.userId] ? sparkInfos[i][request.userId] : null;
         if (!sparkInfo) {
             request._doc.validProfile = false;
         } else {
