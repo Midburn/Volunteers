@@ -8,11 +8,10 @@ const permissionsUtils = require('../utils/permissions');
 const sparkApi = require('../spark/sparkApi');
 
 const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
-    const emails = requests.map(request => request.userId);
-    const requestsDetailsByEmail = yield sparkApi.getProfileByMail(emails);
-
-    requests.forEach(request => {
-        const requestsDetails = requestsDetailsByEmail[request.userId];
+    for (let i=0; i<requests.length; i++) {
+        const request = requests[i];
+        const sparkInfo = yield sparkApi.getProfileByMail([request.userId], 5 * 1000);
+        const requestsDetails = sparkInfo[request.userId];
         if (!requestsDetails) {
             request._doc.validProfile = false;
         } else {
@@ -22,8 +21,7 @@ const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
             request._doc.hasTicket = requestsDetails['has_ticket'];
             request._doc.phone = requestsDetails['phone'];
         }
-    });
-
+    };
     return requests;
 });
 

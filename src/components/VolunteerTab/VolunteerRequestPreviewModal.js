@@ -55,7 +55,10 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     if (!this.state.request.validProfile) {
       return (
         <Alert className="profile-alert" bsStyle="danger">
-          <strong>{this.state.request.userId}</strong> isn't a valid Midburn Profile
+          <big><strong>{this.state.request.userId}</strong> isn't a valid Midburn Profile.</big><br/>
+          1. Ask the volunteer to create a Midburn Profile in the profiles system.<br/>
+          2. The volunteer might need to accept the Terms of Service, ask to volunteer to login to the profiles system and accept.<br/>
+          Link to profiles system - <u>https://profile.midburn.org/</u>
         </Alert>
       )
     }

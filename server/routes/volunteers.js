@@ -31,11 +31,10 @@ const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departm
 });
 
 const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
-    const emails = volunteers.map(volunteer => volunteer.userId);
-    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails, 20 * 1000);
-
-    volunteers.forEach(volunteer => {
-        const volunteerDetails = volunteerDetailsByEmail[volunteer.userId];
+    for (let i=0; i<volunteers.length; i++) {
+        const volunteer = volunteers[0]
+        const sparkInfo = yield sparkApi.getProfileByMail([volunteer.userId], 5 * 1000);
+        const volunteerDetails = sparkInfo[volunteer.userId];
         if (!volunteerDetails) {
             volunteer._doc.validProfile = false;
         } else {
@@ -45,7 +44,7 @@ const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
             volunteer._doc.hasTicket = volunteerDetails['has_ticket'];
             volunteer._doc.phone = volunteerDetails['phone'];
         }
-    });
+    };
 
     return volunteers;
 });
