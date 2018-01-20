@@ -33,3 +33,32 @@
   margin-top: -20px;
   margin-left: -18px;
 }
+
+.admin-department-line {
+  display: flex;
+}
+
+.admin-department-line-left {
+  flex: 1;
+}
+
+.admin-department-line-right {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.admin-department-line-right.Open {
+  color: #048b03
+}
+
+.admin-department-line-right.Closed {
+  color: #051ea2
+}
+
+.admin-department-line-right.Hidden {
+  color: #ff2e2e
+}
+
+.admin-department-line-right.Inactive {
+  color: #cbcbcb
+}

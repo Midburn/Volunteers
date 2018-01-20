@@ -31,18 +31,20 @@ const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departm
 });
 
 const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
-    const emails = volunteers.map(volunteer => volunteer.userId);
-    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails);
-
-    volunteers.forEach(volunteer => {
-        const volunteerDetails = volunteerDetailsByEmail[volunteer.userId];
-        if (!volunteerDetails) return;
-
-        volunteer._doc.firstName = volunteerDetails['first_name'];
-        volunteer._doc.lastName = volunteerDetails['last_name'];
-        volunteer._doc.hasTicket = volunteerDetails['has_ticket'];
-        volunteer._doc.phone = volunteerDetails['phone'];
-    });
+    const sparkInfos = yield [volunteers.map(volunteer => sparkApi.getProfileByMail([volunteer.userId], 5 * 1000))]
+    for (let i=0; i<volunteers.length; i++) {
+        const volunteer = volunteers[0]
+        const sparkInfo = sparkInfos[i] && sparkInfos[i][volunteer.userId] ? sparkInfos[i][volunteer.userId] : null;
+        if (!sparkInfo) {
+            volunteer._doc.validProfile = false;
+        } else {
+            volunteer._doc.validProfile = true;
+            volunteer._doc.firstName = sparkInfo['first_name'];
+            volunteer._doc.lastName = sparkInfo['last_name'];
+            volunteer._doc.hasTicket = sparkInfo['has_ticket'];
+            volunteer._doc.phone = sparkInfo['phone'];
+        }
+    };
 
     return volunteers;
 });
@@ -72,6 +74,51 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     }
 
     return res.json(departmentVolunteers);
+}));
+
+// MANAGER - adds a new volunteer to the department
+router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(function* (req, res) {
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const userId = req.body.userId;
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+    const department = yield Department.findOne({_id: departmentId, deleted: false});
+    if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+
+    // invalid profile
+    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail([userId]);
+    if (!(userId in volunteerDetailsByEmail)) {
+        return res.status(404).json({error: 'Invalid Midburn Profile'})
+    }
+
+    // already volunteering
+    const existingVolunteer = yield Volunteer.findOne({
+        departmentId,
+        userId,
+        eventId,
+        deleted: false,
+    });
+    if (existingVolunteer) {
+        return res.status(404).json({error: 'Already volunteering'})
+    }
+
+    // add as volunteer
+    const volunteerId = uuid();
+    const volunteer = new Volunteer({
+        _id: volunteerId,
+        departmentId,
+        eventId,
+        userId,
+        contactEmail: req.body.contactEmail,
+        contactPhone: req.body.contactPhone,        
+        permission: req.body.permission,
+        yearly: req.body.yearly,
+        deleted: false
+    });
+    yield volunteer.save();
+    return res.json(volunteer);
 }));
 
 // Add multiple volunteers to department

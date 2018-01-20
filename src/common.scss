@@ -11,7 +11,7 @@ body {
   background-color: #f1f1f5;
   border-radius: 10px;
   box-shadow: 0px 0px 6px 2px rgba(255, 255, 255, 0.55);
-  margin: 20px;
+  margin-top: 20px;
 }
 
 .modal-dialog {
@@ -27,4 +27,10 @@ body {
 
 .btn {
   border-radius: 21px;
+}
+
+.alert-danger {
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  color: #a94442;
 }

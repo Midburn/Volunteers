@@ -9,7 +9,7 @@ import axios from 'axios';
 
 async function fetchUserRoles() {
     try {
-        const response = await axios.get('api/v1/permissions/me', {credentials: 'include'});
+        const response = await axios.get('api/v1/public/permissions/me', {credentials: 'include'});
         document.roles = response.data;
         // document.roles = [{departmentId: '42ea4150-e739-11e7-822d-e92efb1d493b',
         //                     permission: 'manager'}];

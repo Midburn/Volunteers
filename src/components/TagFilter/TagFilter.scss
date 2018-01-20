@@ -5,11 +5,14 @@ div.tag-filter {
   padding: 1rem;
 
   & > label {
-    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
     flex-shrink: 0;
+    font-weight: 200;
 
     & > input {
-      margin-right: 0.5rem;
+      margin-right: 0.2rem;
     }
 
     &:hover {

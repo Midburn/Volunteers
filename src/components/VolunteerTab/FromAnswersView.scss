@@ -1,4 +1,4 @@
-.fill-form-view {
+.form-answers-view {
 
     .rtl {
         direction: rtl;
@@ -20,17 +20,7 @@
         padding: 10px;
     }
 
-    .button-container {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-
-        .send {
-            width: 150px;
-        }
-
-        .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
-            opacity: 0.3;
-        }
+    .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+        background-color: white;
     }
 }

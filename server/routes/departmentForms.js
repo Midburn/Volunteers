@@ -43,7 +43,8 @@ const saveDepartmentFrom = co.wrap(function* (departmentId, form) {
     return departmentForm;
 });
 
-router.get("/departments/:departmentId/forms", co.wrap(function* (req, res) {
+// PUBLIC - Returns a depertment form
+router.get("/public/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
 
     const departmentForm = yield getDepartmentFrom(departmentId);
@@ -51,6 +52,7 @@ router.get("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     return res.json(departmentForm ? departmentForm.form : []);
 }));
 
+// MANAGER - Updates a depertment form
 router.post("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
     const form = req.body.form;
@@ -64,6 +66,7 @@ router.post("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     return res.json(departmentForm.form);
 }));
 
+// MANAGER - Deletes a depertment form
 router.delete("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
 
@@ -82,18 +85,40 @@ router.delete("/departments/:departmentId/forms", co.wrap(function* (req, res) {
     return res.json(departmentForm.form);
 }));
 
-// Retunes the answer of a department form for the current user
-router.get('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
-    const userId = req.userDetails.email;
-    const departmentId = req.params.departmentId;
+// PUBLIC - Returns if the userdata has answers to the department form or not
+router.get('/public/departments/:departmentId/forms/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
+    if (!req.headers.userdata) {
+        return res.status(400).json({error: "invalid request"});
+    }
+    const userdata = JSON.parse(req.headers.userdata);
+    const userId = userdata.profileEmail;
     const eventId = req.params.eventId;
+    const departmentId = req.params.departmentId;
     const answer = yield getAnswer(departmentId, userId, eventId);
-    return res.json(answer ? answer : '');
+
+    return res.json({hasAnswer: !!answer});
 }));
 
-// Submit answers of the current user to the department form
-router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
-    const userId = req.userDetails.email;
+// MANAGER - Returns answers to a department form of a spcefic user
+router.get('/departments/:departmentId/forms/events/:eventId/answer/:userId', co.wrap(function* (req, res) {
+    const departmentId = req.params.departmentId;
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const eventId = req.params.eventId;
+    const userId = req.params.userId;
+    const answer = yield getAnswer(departmentId, userId, eventId);
+    return res.json(answer);
+}));
+
+// PUBLIC - Submit answers to the department form
+router.post('/public/departments/:departmentId/forms/events/:eventId/answer', co.wrap(function* (req, res) {
+    if (!req.headers.userdata) {
+        return res.status(400).json({error: "invalid request"});
+    }
+    const userdata = JSON.parse(req.headers.userdata);
+    const userId = userdata.profileEmail;
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
     const answer = req.body;
@@ -108,12 +133,15 @@ router.post('/departments/:departmentId/forms/events/:eventId/answer', co.wrap(f
 }));
 
 
-router.get("/form", co.wrap(function* (req, res) {
+// PUBLIC - Returns the general form
+router.get("/public/form", co.wrap(function* (req, res) {
     const departmentForm = yield getDepartmentFrom(GENERAL);
 
     return res.json(departmentForm ? departmentForm.form : []);
 }));
 
+
+// ADMIN - update the general form
 router.post("/form", co.wrap(function* (req, res) {
     const form = req.body.form;
 
@@ -126,21 +154,50 @@ router.post("/form", co.wrap(function* (req, res) {
     return res.json(departmentForm.form);
 }));
 
+// MANAGER - Returns answers to general form of a spcefic user
+router.get('/form/events/:eventId/answer/:userId', co.wrap(function* (req, res) {
+    if (!permissionsUtils.isManager(req.userDetails)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions"}]);
+    }
 
-// Returns the answers of the general form for the current user.
-router.get('/form/events/:eventId/answer', co.wrap(function* (req, res) {
-    const userId = req.userDetails.email;
+    const userId = req.params.userId;
     const eventId = req.params.eventId;
     const answer = yield getAnswer(GENERAL, userId, eventId);
-
-    return res.json(answer ? answer : '');
+    return res.json(answer);
 }));
 
-// Submit answers of the current user to the general form
-router.post('/form/events/:eventId/answer', co.wrap(function* (req, res) {
-    const userId = req.userDetails.email;
+
+// PUBLIC - Returns if the userdata has answers to the general form or not
+router.get('/public/form/events/:eventId/hasAnswer', co.wrap(function* (req, res) {
+    if (!req.headers.userdata) {
+        return res.status(400).json({error: "invalid request"});
+    }
+    const userdata = JSON.parse(req.headers.userdata);
+    const userId = userdata.profileEmail;
+    const email = userdata.contactEmail;
+    const eventId = req.params.eventId;
+    
+    let answer = null;
+    if (userId) {
+        answer = yield getAnswer(GENERAL, userId, eventId);
+    }
+    if (!answer && email) {
+        answer = yield getAnswer(GENERAL, email, eventId);
+    }
+    return res.json({hasAnswer: !!answer});
+}));
+
+// PUBLIC - Submit answers to the general form
+router.post('/public/form/events/:eventId/answer', co.wrap(function* (req, res) {
+    if (!req.headers.userdata) {
+        return res.status(400).json({error: "invalid request"});
+    }
+
+    const userdata = JSON.parse(req.headers.userdata);
+    const userId = userdata.profileEmail;
     const eventId = req.params.eventId;
     const answer = req.body;
+
     const formAnswer = new DepartmentFormAnswer({
         departmentId: GENERAL,
         userId,

@@ -2,6 +2,8 @@ import React from "react";
 import "./TagFilter.scss";
 
 function TagFilter({options, selected, onChange}) {
+  if (!options) return null;
+
   return (
     <div className="tag-filter">
       {Array.from(options).map(option =>

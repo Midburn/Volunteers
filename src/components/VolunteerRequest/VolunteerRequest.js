@@ -10,9 +10,8 @@ const volunteerRequestModel = new VolunteerRequestModel();
 
 const VolunteerRequest = observer(() => {
     const departments = volunteerRequestModel.departments;
-    const requests = volunteerRequestModel.requests;
 
-    if (!departments || !requests) return <div>Loading</div>;
+    if (!departments) return <div>Loading</div>;
 
     return (
     <div className="requests-view">
@@ -20,7 +19,7 @@ const VolunteerRequest = observer(() => {
         <h1 className="requests-title">Volunteering</h1>
         <div style={{direction:'rtl'}}>התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה. </div>
         <div>Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city. </div>
-        <div><br/>* Join requests are coming soon</div>
+        {/* <div><br/>* Join requests are coming soon</div> */}
         <ListGroup className="requests-list">
           {departments.map(department => {
             const basicInfo = department.basicInfo;
@@ -32,12 +31,9 @@ const VolunteerRequest = observer(() => {
                 <Image src={departmentLogo} className="request-department-logo"/>
                 <h2 className="requests-department-title">{basicInfo.nameEn} - {basicInfo.nameHe}</h2>
                 {requestState === 'Opened' &&
-                  <Button bsStyle="primary" disabled className="request-join-button"
-                          onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>Join</Button>}
-                {requestState === 'Closed' && null} 
-                {requestState === 'Cancel' &&
                   <Button bsStyle="primary" className="request-join-button"
-                          onClick={() => volunteerRequestModel.handleCancelRequest(department._id)}>Cancel</Button>}
+                          onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>Join</Button>}
+                {requestState === 'Closed' && "Closed"} 
               </div>
               <p className="requests-department-text">
                 <p style={{direction:'rtl'}}>{basicInfo.descriptionHe}</p>

@@ -25,16 +25,17 @@ const addLocalAdmin = co.wrap(function* (userDetails) {
 });
 
 
-router.get('/permissions/me', co.wrap(function* (req, res) {
+router.get('/public/permissions/me', co.wrap(function* (req, res) {
     yield addLocalAdmin(req.userDetails);
-
     const permissions = yield permissionsUtils.getPermissions(req.userDetails);
-
     return res.json(permissions);
 }));
 
 router.get('/permissions/admins', co.wrap(function* (req, res) {
     yield addLocalAdmin(req.userDetails);
+    if (!req.userDetails) {
+        return res.status(403).json([{"error": "action is not allowed"}]);
+    }
 
     const userId = req.userDetails.email;
     const admin = yield Admin.find({userId: userId});

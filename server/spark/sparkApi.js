@@ -8,18 +8,28 @@ function getAuthHeader() {
 }
 
 // GET PROFILES
-function getProfileByMail(emails) {
+function getProfileByMail(emails, timeout) {
     const profileByMail = {};
-    return axios.post(`${SPARK_HOST}/volunteers/profiles`, {emails}, {headers: getAuthHeader()})
+    return axios.post(`${SPARK_HOST}/volunteers/profiles`, {emails}, {headers: getAuthHeader(), timeout: timeout})
         .then(response => {
+            try {
+                console.log(`Spark res: ${JSON.stringify(response.data)}`);
+            } catch (error) {
+                console.log(`Spark res: ${response.data}`);
+            }
+
+            if (!response.data) {
+                return {};
+            }
             response.data.forEach(profile => {
                 if (!('user_data' in profile)) return;
-
                 profileByMail[profile['email']] = profile['user_data'];
             });
-
             return profileByMail;
-        });
+        }).catch(error => {
+            console.log(error);
+            return {};
+        })
 }
 
 module.exports = {

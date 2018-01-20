@@ -1,5 +1,4 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 require("dotenv");
 
 const SECRET = process.env.SECRET;

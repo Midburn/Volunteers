@@ -29,11 +29,11 @@ export default class AdminView extends Component {
     }
 
     refreshData() {
-        axios.get("/api/v1/departments")
+        axios.get("/api/v1/public/departments")
             .then(res => this.setState({departments: res.data}));
         axios.get("/api/v1/permissions/admins")
             .then(res => this.setState({admins: res.data}));
-        axios.get("/api/v1/form")
+        axios.get("/api/v1/public/form")
             .then(res => this.setState({generalForm: res.data}));
     };
 
@@ -79,6 +79,19 @@ export default class AdminView extends Component {
         this.refreshData();
     };
 
+    statusStr = department => {
+        if (!department.status.active) {
+            return 'Inactive'
+        }
+        if (!department.status.visibleToJoin) {
+            return 'Hidden'
+        }
+        if (!department.status.availableToJoin) {
+            return 'Closed'
+        }
+        return 'Open'
+    }
+
     render() {
         const {departments, generalForm, selectedDepartmentId, addDepartment} = this.state;
 
@@ -103,16 +116,22 @@ export default class AdminView extends Component {
                             const basicInfo = department.basicInfo;
                             const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
                             const active = department.status.active;
+                            const statusStr = this.statusStr(department);
                             return (
                                 <ListGroupItem key={department._id} style={{minHeight: 80}}>
-                                    <Image src={departmentLogo} className="admin-department-logo"/>
-                                    <div>
-                                        <h4 className={`admin-title ${!active ? 'admin-title-inactive' : ''}`}>{basicInfo.nameEn} - {basicInfo.nameHe}</h4>
-                                        {(Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id)) &&
-                                        <Button bsStyle="link" className="admin-edit-button"
-                                                onClick={() =>
-                                                    this.handleOnDepartmentSelect(department._id)}>Edit
-                                        </Button>}
+                                    <div className="admin-department-line">
+                                        <div className="admin-department-line-left">
+                                            <Image src={departmentLogo} className="admin-department-logo"/>
+                                            <div>
+                                                <h4 className={`admin-title ${!active ? 'admin-title-inactive' : ''}`}>{basicInfo.nameEn} - {basicInfo.nameHe}</h4>
+                                                {(Permissions.isAdmin() || Permissions.isManagerOfDepartment(department._id)) &&
+                                                <Button bsStyle="link" className="admin-edit-button"
+                                                        onClick={() =>
+                                                            this.handleOnDepartmentSelect(department._id)}>Edit
+                                                </Button>}
+                                            </div>
+                                        </div>
+                                        <div className={`admin-department-line-right ${statusStr}`}>{statusStr}</div>
                                     </div>
                                 </ListGroupItem>
                             )
