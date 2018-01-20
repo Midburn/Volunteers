@@ -8,9 +8,9 @@ function getAuthHeader() {
 }
 
 // GET PROFILES
-function getProfileByMail(emails) {
+function getProfileByMail(emails, timeout) {
     const profileByMail = {};
-    return axios.post(`${SPARK_HOST}/volunteers/profiles`, {emails}, {headers: getAuthHeader()})
+    return axios.post(`${SPARK_HOST}/volunteers/profiles`, {emails}, {headers: getAuthHeader(), timeout: timeout})
         .then(response => {
             console.log(`Spark res: ${response.data}`);
             if (!response.data) {

@@ -32,7 +32,7 @@ const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departm
 
 const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
     const emails = volunteers.map(volunteer => volunteer.userId);
-    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails);
+    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails, 20 * 1000);
 
     volunteers.forEach(volunteer => {
         const volunteerDetails = volunteerDetailsByEmail[volunteer.userId];

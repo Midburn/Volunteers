@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image} from 'react-bootstrap'
+import {Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image, Table} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
 import * as Consts from '../../model/consts'
 import Select from 'react-select';
@@ -10,7 +10,7 @@ import VolunteerRequestPreviewModal from "./VolunteerRequestPreviewModal"
 import {CSVLink} from 'react-csv';
 import TagFilter from "../TagFilter";
 
-import './VolunteerListTab.css';
+import './VolunteerListTab.scss';
 
 function formatTag(tag) {
     const max = 5;
@@ -77,7 +77,7 @@ export default class VolunteerListTab extends Component {
         for (let i = 0; i < this.state.departments.length; i++) {
             const departmentId = this.state.departments[i]._id;
             axios.get(`/api/v1/departments/${departmentId}/volunteers`)
-                .then(res => {      
+                .then(res => {
                     this.state.volunteers = this.state.volunteers.concat(res.data);
                     this.state.numberOfRequests--;
                     this.setState(this.state);
@@ -210,20 +210,20 @@ export default class VolunteerListTab extends Component {
 
     handleOnShowTagToggle(event) {
         this.setState(
-            {showTags: event.target.checked, filter: {...this.filter, tags: new Set()}},
+            {showTags: event.target.checked, filter: {...this.state.filter, tags: new Set()}},
             this.updateVisibleVolunteers);
     }
 
     downloadVolunteers = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
-        const filename =  `${departmentName}-volunteers.csv`
+        const filename = `${departmentName}-volunteers.csv`
         const data = this.state.visibleVolunteers.map(volunteer => ({
             Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
             "Midubrn Profile": volunteer.userId,
             "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
             "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
-            Email: volunteer.contactEmail? volunteer.contactEmail : 'No Data',
-            Phone: volunteer.contactPhone? volunteer.contactPhone : 'No Data',
+            Email: volunteer.contactEmail ? volunteer.contactEmail : 'No Data',
+            Phone: volunteer.contactPhone ? volunteer.contactPhone : 'No Data',
             "Added Date": volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A',
             Role: volunteer.permission,
             Yearly: volunteer.yearly ? 'Yes' : 'No',
@@ -238,14 +238,14 @@ export default class VolunteerListTab extends Component {
 
     downloadRequests = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
-        const filename =  `${departmentName}-requests.csv`
+        const filename = `${departmentName}-requests.csv`
         const data = this.state.visibleRequests.map(request => ({
             Department: this.state.departments.find(d => d._id === request.departmentId).basicInfo.nameEn,
             "Midubrn Profile": request.userId,
             "First Name": request.firstName ? request.firstName : 'No Data',
             "Last Name": request.lastName ? request.lastName : 'No Data',
-            Email: request.contactEmail? request.contactEmail : 'No Data',
-            Phone: request.contactPhone? request.contactPhone : 'No Data',
+            Email: request.contactEmail ? request.contactEmail : 'No Data',
+            Phone: request.contactPhone ? request.contactPhone : 'No Data',
             "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A'
         }))
         return (
@@ -312,55 +312,70 @@ export default class VolunteerListTab extends Component {
                         : this.state.visibleVolunteers.length === 0 ?
                             <div className="no-volunteers">No Volunteers</div>
                             :
-                            <ListGroup className="volunteer-list-group">
-                                <ListGroupItem className="volunteer-list-group-item-header">
+                            <Table striped condensed hover>
+                                <thead>
+                                <tr className="volunteer-list-group-item-header">
                                     {!this.state.filter.departmentId &&
-                                    <span className="ellipsis-text flex2">Department</span>
+                                    <th className="ellipsis-text flex2">Department</th>
                                     }
-                                    <span className="ellipsis-text flex3">Midburn Profile</span>
-                                    <span className="ellipsis-text flex2">First Name</span>
-                                    <span className="ellipsis-text flex2">Last Name</span>
-                                    <span className="ellipsis-text flex3">Email</span>
-                                    <span className="ellipsis-text flex2">Phone</span>
-                                    <span className="ellipsis-text flex2">Added Date</span>
-                                    <span className="ellipsis-text flex2">Role</span>
-                                    <span className="ellipsis-text flex1">Yearly</span>
-                                    <span className="ellipsis-text flex2">Other Departments</span>
-                                    {showTags && <span className="ellipsis-text flex3">Tags</span>}
-                                </ListGroupItem>
+                                    <th className="ellipsis-text flex3">Midburn Profile</th>
+                                    <th className="ellipsis-text flex2">First Name</th>
+                                    <th className="ellipsis-text flex2">Last Name</th>
+                                    <th className="ellipsis-text flex3">Email</th>
+                                    <th className="ellipsis-text flex2">Phone</th>
+                                    <th className="ellipsis-text flex2">Added Date</th>
+                                    <th className="ellipsis-text flex2">Role</th>
+                                    <th className="ellipsis-text flex1">Yearly</th>
+                                    <th className="ellipsis-text flex2">Other Departments</th>
+                                    {showTags && <th className="ellipsis-text flex3">Tags</th>}
+                                </tr>
+                                </thead>
+                                <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
-                                    <ListGroupItem key={volunteer._id}
-                                                    className={`volunteer-list-group-item ${!volunteer.validProfile ? 'invalid' : ''}`}
-                                                    onClick={event => {
-                                                        if (event.type === 'click' && event.clientX !== 0 && event.clientY !== 0) {
-                                                            this.showEditModal(volunteer._id)
-                                                        }
-                                                     }}
+                                    <tr key={volunteer._id}
+                                        className={!volunteer.validProfile ? 'invalid' : ''}
+                                        onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
-                                        <span className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}</span>
+                                        <td className="ellipsis-text flex2">
+                                            {this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}
+                                        </td>
                                         }
-                                        <span className="ellipsis-text flex3">{volunteer.userId}</span>
-                                        <span className="ellipsis-text flex2">{volunteer.firstName ? volunteer.firstName : 'No Data'}</span>
-                                        <span className="ellipsis-text flex2">{volunteer.lastName ? volunteer.lastName : 'No Data'}</span>
-                                        <span className="ellipsis-text flex3">{volunteer.contactEmail ? <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.contactEmail}`} target="_blank">{volunteer.contactEmail}</a> : 'No Data'}</span>
-                                        <span className="ellipsis-text flex2">{volunteer.contactPhone? volunteer.contactPhone : 'No Data'}</span>
-                                        <span className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</span>
-                                        <span className="ellipsis-text flex2">{volunteer.permission}</span>
-                                        <span className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</span>
-                                        <span className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</span>
-                                        {showTags && <span className="flex3"
-                                                           onClick={event => event.stopPropagation()}
-                                        >
+                                        <td className="ellipsis-text flex3">{volunteer.userId}</td>
+                                        <td className="ellipsis-text flex2">
+                                            {volunteer.firstName ? volunteer.firstName : 'No Data'}
+                                        </td>
+                                        <td className="ellipsis-text flex2">
+                                            {volunteer.lastName ? volunteer.lastName : 'No Data'}
+                                        </td>
+                                        <td className="ellipsis-text flex3">
+                                            {volunteer.contactEmail ?
+                                                <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.contactEmail}`}
+                                                   target="_blank">
+                                                    {volunteer.contactEmail}
+                                                </a> : 'No Data'}
+                                        </td>
+                                        <td className="ellipsis-text flex2">
+                                            {volunteer.contactPhone ? volunteer.contactPhone : 'No Data'}
+                                        </td>
+                                        <td
+                                            className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td>
+                                        <td className="ellipsis-text flex2">{volunteer.permission}</td>
+                                        <td className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</td>
+                                        <td
+                                            className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
+                                        {showTags &&
+                                        <td className="flex3" onClick={event => event.stopPropagation()}>
                                             <Select.Creatable multi
                                                               value={volunteer.tags}
                                                               options={tagOptions}
                                                               onChange={(tags) => this.onTagsChange(volunteer.userId, tags)}
                                             />
-                                        </span>}
-                                    </ListGroupItem>
+                                        </td>}
+                                    </tr>
                                 )}
-                            </ListGroup>}
+                                </tbody>
+                            </Table>}
 
                     <div className="volunteer-list-list-title">
                         <span>Join Requests:</span>
@@ -384,19 +399,24 @@ export default class VolunteerListTab extends Component {
                                     <span className="ellipsis-text flex2">Request Date</span>
                                 </ListGroupItem>
                                 {this.state.visibleRequests.map(volunteerRequest =>
-                                    <ListGroupItem key={volunteerRequest._id} 
-                                                    className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
-                                                    onClick={() => this.showRequestModal(volunteerRequest._id)}>
+                                    <ListGroupItem key={volunteerRequest._id}
+                                                   className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
+                                                   onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <span
                                             className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
                                         }
-                                        <span className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
-                                        <span className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
+                                        <span
+                                            className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
+                                        <span
+                                            className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
                                         <span className="ellipsis-text flex3">{volunteerRequest.userId}</span>
                                         <span className="ellipsis-text flex2">{volunteerRequest.contactPhone}</span>
-                                        <span className="ellipsis-text flex3"><a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteerRequest.contactEmail}`} target="_blank">{volunteerRequest.contactEmail}</a></span>
-                                        <span className="ellipsis-text flex2">{volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}</span>
+                                        <span className="ellipsis-text flex3"><a
+                                            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteerRequest.contactEmail}`}
+                                            target="_blank">{volunteerRequest.contactEmail}</a></span>
+                                        <span
+                                            className="ellipsis-text flex2">{volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}</span>
                                     </ListGroupItem>
                                 )}
                             </ListGroup>}
@@ -409,7 +429,7 @@ export default class VolunteerListTab extends Component {
                 <VolunteerEditModal show={!!this.state.editModalVolunteer} volunteer={this.state.editModalVolunteer}
                                     onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
                 <VolunteerRequestPreviewModal show={!!this.state.editModalRequest} request={this.state.editModalRequest}
-                                             onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
+                                              onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
             </div>
         );
     }
