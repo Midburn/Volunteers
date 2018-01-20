@@ -124,7 +124,7 @@ export default class VolunteerListTab extends Component {
             }
 
             const selectedTags = this.state.filter.tags;
-            if (selectedTags.size !== 0) {
+            if (volunteer.tags && selectedTags.size !== 0) {
                 const intersection = volunteer.tags.filter(tag => selectedTags.has(tag));
                 if (intersection.length === 0) return false;
             }

@@ -10,6 +10,16 @@
   & > .rtl {
     direction: rtl;
     font-family: 'Open Sans Hebrew', Arial, sans-serif;;
+
+    .requests-list {
+      flex-direction: row-reverse;
+
+      .department {
+        button {
+          left: 2rem;
+        }
+      }
+    }
   }
 
   header {
@@ -24,14 +34,6 @@
     display: flex;
     flex-wrap: wrap;
     border: 1px solid #dddddd;
-
-    &.rtl {
-      direction: rtl;
-
-      button {
-        left: 2rem;
-      }
-    }
 
     & > .department {
       position: relative;

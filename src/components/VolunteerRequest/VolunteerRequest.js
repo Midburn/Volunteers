@@ -49,8 +49,19 @@ class VolunteerRequest extends React.Component {
                     </p>
 
                     {/* <div><br/>* Join requests are coming soon</div> */}
-                    <div className={classNames("requests-list", {rtl: language === "he"})}>
-                        {departments.map(department => {
+                    <div className="requests-list">
+                        {departments
+                            .sort((a, b) => {
+                                const aName = rtl ? a.nameHe : a.nameEn;
+                                const bName = rtl ? b.nameHe : b.nameEn;
+
+                                if (!aName) return -1;
+
+                                if (!bName) return 1;
+
+                                return aName.localeCompare(bName);
+                            })
+                            .map(department => {
                             const basicInfo = department.basicInfo;
                             const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : Consts.DEFAULT_LOGO;
                             const requestState = volunteerRequestModel.requestState(department._id);
