@@ -45,14 +45,14 @@ const userDataPhase = volunteerRequestModel => {
 const generalPhase = volunteerRequestModel => {
     const joinProcess = volunteerRequestModel.joinProcess;
     const generalQuestions = joinProcess.generalQuestions;
-    return <FillFormView key="general-form" questions={generalQuestions} language={joinProcess.language}
+    return <FillFormView key="general-form" questions={generalQuestions} language={joinProcess.language} showTheCheckbox={true}
                         onAnswer={sendGeneralForm(volunteerRequestModel)}/>
 }
 
 const departmentPhase = volunteerRequestModel => {
     const joinProcess = volunteerRequestModel.joinProcess;
     const departmentQuestions = joinProcess.departmentQuestions;
-    return <FillFormView key="departement-form" questions={departmentQuestions} language={joinProcess.language}
+    return <FillFormView key="departement-form" questions={departmentQuestions} language={joinProcess.language} showTheCheckbox={false}
                         onAnswer={sendDepartmentForm(volunteerRequestModel)}/>
 }
 
