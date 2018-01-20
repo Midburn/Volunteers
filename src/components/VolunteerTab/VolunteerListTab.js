@@ -124,7 +124,7 @@ export default class VolunteerListTab extends Component {
             }
 
             const selectedTags = this.state.filter.tags;
-            if (selectedTags.size !== 0) {
+            if (volunteer.tags && selectedTags.size !== 0) {
                 const intersection = volunteer.tags.filter(tag => selectedTags.has(tag));
                 if (intersection.length === 0) return false;
             }
@@ -285,8 +285,10 @@ export default class VolunteerListTab extends Component {
                             <MenuItem eventKey="all" active={!this.state.filter.departmentId}>All</MenuItem>
                         </Dropdown.Menu>
                     </Dropdown>}
-                    <Button bsStyle="primary" className="add-volunteers-button"
-                            onClick={this.showAddModal}>Add Volunteers</Button>
+                    {Permissions.isAdmin() &&
+                    <Button bsStyle="primary" className="add-volunteers-button" onClick={this.showAddModal}>
+                        Add Volunteers
+                    </Button>}
                     <FormControl type="text" className="search-volunteer"
                                  value={this.state.filter.search} onChange={this.searchChanged}
                                  placeholder="Search by user's first name, last name or email"/>
@@ -386,40 +388,51 @@ export default class VolunteerListTab extends Component {
                         : this.state.visibleRequests.length === 0 ?
                             <div className="no-volunteers">No Join Requests</div>
                             :
-                            <ListGroup className="volunteer-list-group">
-                                <ListGroupItem className="volunteer-list-group-item-header">
+                            <Table className="volunteer-list-group">
+                                <thead>
+                                <tr className="volunteer-list-group-item-header">
                                     {!this.state.filter.departmentId &&
-                                    <span className="ellipsis-text flex2">Department</span>
+                                    <th className="ellipsis-text flex2">Department</th>
                                     }
-                                    <span className="ellipsis-text flex2">First Name</span>
-                                    <span className="ellipsis-text flex2">Last Name</span>
-                                    <span className="ellipsis-text flex3">Midburn Profile</span>
-                                    <span className="ellipsis-text flex2">Phone</span>
-                                    <span className="ellipsis-text flex3">Email</span>
-                                    <span className="ellipsis-text flex2">Request Date</span>
-                                </ListGroupItem>
+                                    <th className="ellipsis-text flex2">First Name</th>
+                                    <th className="ellipsis-text flex2">Last Name</th>
+                                    <th className="ellipsis-text flex3">Midburn Profile</th>
+                                    <th className="ellipsis-text flex2">Phone</th>
+                                    <th className="ellipsis-text flex3">Email</th>
+                                    <th className="ellipsis-text flex2">Request Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
                                 {this.state.visibleRequests.map(volunteerRequest =>
-                                    <ListGroupItem key={volunteerRequest._id}
-                                                   className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
-                                                   onClick={() => this.showRequestModal(volunteerRequest._id)}>
+                                    <tr key={volunteerRequest._id}
+                                        className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
+                                        onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
-                                        <span
-                                            className="ellipsis-text flex2">{this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}</span>
+                                        <td className="ellipsis-text flex2">
+                                            {this.state.departments.find(d => d._id === volunteerRequest.departmentId).basicInfo.nameEn}
+                                        </td>
                                         }
-                                        <span
-                                            className="ellipsis-text flex2">{volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}</span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}</span>
-                                        <span className="ellipsis-text flex3">{volunteerRequest.userId}</span>
-                                        <span className="ellipsis-text flex2">{volunteerRequest.contactPhone}</span>
-                                        <span className="ellipsis-text flex3"><a
-                                            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteerRequest.contactEmail}`}
-                                            target="_blank">{volunteerRequest.contactEmail}</a></span>
-                                        <span
-                                            className="ellipsis-text flex2">{volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}</span>
-                                    </ListGroupItem>
+                                        <td className="ellipsis-text flex2">
+                                            {volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}
+                                        </td>
+                                        <td className="ellipsis-text flex2">
+                                            {volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}
+                                        </td>
+                                        <td className="ellipsis-text flex3">{volunteerRequest.userId}</td>
+                                        <td className="ellipsis-text flex2">{volunteerRequest.contactPhone}</td>
+                                        <td className="ellipsis-text flex3">
+                                            <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteerRequest.contactEmail}`}
+                                               target="_blank">
+                                                {volunteerRequest.contactEmail}
+                                            </a>
+                                        </td>
+                                        <td className="ellipsis-text flex2">
+                                            {volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}
+                                        </td>
+                                    </tr>
                                 )}
-                            </ListGroup>}
+                                </tbody>
+                            </Table>}
 
                 </div>
 

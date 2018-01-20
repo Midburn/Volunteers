@@ -4,6 +4,11 @@ import axios from 'axios';
 
 require('./FillFormView.scss')
 
+const theCheckbox = {
+    he: "אני מאשר שקראתי ואני מסכים לתנאים",
+    en: "I have read and accept the terms and conditions"
+}
+
 export default class FillFormView extends Component {
     constructor(props) {
         super(props);
@@ -16,8 +21,15 @@ export default class FillFormView extends Component {
             answer: null
         }))
         this.state = { 
-            questions: answers
+            questions: answers,
+            showTheCheckbox: this.props.showTheCheckbox,
+            theCheckbox: false,
         }
+    }
+
+    theCheckboxChange = event => {
+        this.state.theCheckbox = event.target.checked;
+        this.setState(this.state);
     }
 
     handleTextChange = event => {
@@ -69,6 +81,9 @@ export default class FillFormView extends Component {
     }
 
     isValid = () => {
+        if (this.state.showTheCheckbox && !this.state.theCheckbox) {
+            return false;
+        }
         for (let i=0; i<this.state.questions.length; i++) {
             if (!this.state.questions[i].answer) {
                 return false;
@@ -124,6 +139,13 @@ export default class FillFormView extends Component {
                             )}
                         </div>
                     )}
+                    {this.state.showTheCheckbox &&
+                        <div className={rtl ? 'rtl' : ''}>
+                            <FormGroup controlId="the-checkbox">
+                                <Checkbox inline onChange={this.theCheckboxChange}><a href="/terms.html" target="_blank"><b>{theCheckbox[language]}</b></a></Checkbox>
+                            </FormGroup>
+                        </div>
+                    }
                     <div className='button-container'>
                         <Button className="send" bsStyle="success" disabled={!isValid}
                             onClick={this.submit}>Send</Button>

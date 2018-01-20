@@ -26,6 +26,24 @@
       }
     }
   }
+
+  .volunteer-list-group-item {
+    display: flex;
+  }
+
+  .volunteer-list-group-item:focus {
+      outline: none;
+  }
+
+  .volunteer-list-group-item.invalid {
+      background-color: #ffcece !important;
+  }
+
+  .volunteer-list-group-item.invalid:hover {
+      background-color: #e2d5d5 !important;
+  }
+
+
   .volunteer-list-tab-component {
     display: flex;
     flex-direction: column;
