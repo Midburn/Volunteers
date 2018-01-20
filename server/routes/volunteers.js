@@ -125,28 +125,30 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
 router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
 
-    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+    // todo: enable for dep managers when spark will work
+    if (!permissionsUtils.isAdmin(req.userDetails)) {
+    // if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
     }
 
     const department = yield Department.findOne({_id: departmentId, deleted: false});
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
-    // TODO: check permission
-
     const responses = [];
     const newVolunteers = [];
     const emails = req.body.emails;
 
-    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails);
+    // todo: get profile when spark will work
+    // const volunteerDetailsByEmail = yield sparkApi.getProfileByMail(emails);
 
     for (let i = 0; i < emails.length; i++) {
         const email = emails[i];
 
-        if (!(email in volunteerDetailsByEmail)) {
-            responses.push({email: email, status: 'Failed'});
-            continue;
-        }
+        // todo: check profile when spark will work
+        // if (!(email in volunteerDetailsByEmail)) {
+        //     responses.push({email: email, status: 'Failed'});
+        //     continue;
+        // }
 
         // existing volunteer
         const existingVolunteer = yield Volunteer.findOne({

@@ -285,8 +285,10 @@ export default class VolunteerListTab extends Component {
                             <MenuItem eventKey="all" active={!this.state.filter.departmentId}>All</MenuItem>
                         </Dropdown.Menu>
                     </Dropdown>}
-                    <Button bsStyle="primary" className="add-volunteers-button"
-                            onClick={this.showAddModal}>Add Volunteers</Button>
+                    {Permissions.isAdmin() &&
+                    <Button bsStyle="primary" className="add-volunteers-button" onClick={this.showAddModal}>
+                        Add Volunteers
+                    </Button>}
                     <FormControl type="text" className="search-volunteer"
                                  value={this.state.filter.search} onChange={this.searchChanged}
                                  placeholder="Search by user's first name, last name or email"/>
