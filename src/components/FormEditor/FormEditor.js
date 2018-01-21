@@ -1,5 +1,5 @@
 import react from 'react';
-import {Button, ControlLabel, FormControl, FormGroup, ListGroup, ListGroupItem} from "react-bootstrap";
+import {Button, ControlLabel, FormControl, FormGroup, ListGroup, ListGroupItem, Checkbox} from "react-bootstrap";
 import "./FormEtidor.scss";
 import OptionListEditor from "../FormOptionListEditor/FormOptionListEditor";
 
@@ -34,7 +34,8 @@ class FormEditor extends react.Component {
                         en: ""
                     },
                     questionType: 'text',
-                    options: []
+                    options: [],
+                    optional: true
                 }
             ]
         });
@@ -57,6 +58,13 @@ class FormEditor extends react.Component {
     handleOnOptionsChange(index, options) {
         const questions = [...this.state.questions];
         questions[index]["options"]  = options;
+
+        this.setState({questions: questions, hasChanges: true});
+    }
+
+    handleOnQuestionOptionalChange(index, value) {
+        const questions = [...this.state.questions];
+        questions[index].optional = value;
 
         this.setState({questions: questions, hasChanges: true});
     }
@@ -112,7 +120,7 @@ class FormEditor extends react.Component {
                                 </FormControl>
                             </FormGroup>
 
-
+                            <Checkbox checked={question.optional} onChange={event => this.handleOnQuestionOptionalChange(index, event.target.checked)}>Optional</Checkbox>
                             {(question.questionType === 'radio' || question.questionType === 'checkboxes') && (
                                 <OptionListEditor options={question.options}
                                                   onChange={options => this.handleOnOptionsChange(index, options)}/>
