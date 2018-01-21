@@ -17,8 +17,8 @@ export default class VolunteerRequestPreviewModal extends React.Component {
       request: this.props.request,
       status: '',
 
-      generalAnswer: [],
-      departmentAnswer: [],
+      generalAnswer: null,
+      departmentAnswer: null,
 
       removeEnabled: true,
 
@@ -44,8 +44,8 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     ]).then(([generalAnswer, departmentAnswer]) => {
       this.setState({
         ...this.state,
-        generalAnswer: generalAnswer.form,
-        departmentAnswer: departmentAnswer.form,
+        generalAnswer: generalAnswer && generalAnswer.form ? generalAnswer.form : [],
+        departmentAnswer: departmentAnswer && departmentAnswer.form ? departmentAnswer.form : [],
         loading: false
       })
     })
@@ -59,6 +59,22 @@ export default class VolunteerRequestPreviewModal extends React.Component {
           1. Ask the volunteer to create a Midburn Profile in the profiles system.<br/>
           2. The volunteer might need to accept the Terms of Service, ask to volunteer to login to the profiles system and accept.<br/>
           Link to profiles system - <u>https://profile.midburn.org/</u>
+        </Alert>
+      )
+    }
+    if (this.state.request.needToFillGeneralForm) {
+      return (
+        <Alert className="profile-alert" bsStyle="warning">
+          <big><strong>{this.state.request.userId}</strong> hasn't filled the general form.</big><br/>
+          Ask the volunteer to send a new join request. It won't add a new request just fill the missing details for this request.
+        </Alert>
+      )
+    }
+    if (this.state.request.needToRefillGeneralForm) {
+      return (
+        <Alert className="profile-alert" bsStyle="warning">
+          <big><strong>{this.state.request.userId}</strong> has filled an old general form.</big><br/>
+          Ask the volunteer to send a new join request. It won't add a new request just fill the missing details for this request.
         </Alert>
       )
     }
@@ -118,16 +134,10 @@ export default class VolunteerRequestPreviewModal extends React.Component {
         contactPhone: request.contactPhone
     })
     .then(response => {
-        axios.delete(`/api/v1/departments/${request.departmentId}/events/${request.eventId}/request/${request.userId}`).then(response => {
-          this.state.addEnabled = true
-          this.setState(this.state)
-          this.props.onSuccess()
-          this.props.onHide() 
-        }).catch(error => {
-          this.state.status = 'Server Error'
-          this.state.addEnabled = true
-          this.setState(this.state)
-        });
+      this.state.addEnabled = true
+      this.setState(this.state)
+      this.props.onSuccess()
+      this.props.onHide() 
     })
     .catch(error => {
       this.state.status = error.response.data && error.response.data.error ? error.response.data.error : 'Server Error'

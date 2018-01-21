@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const Volunteer = require("../models/volunteer");
 const VolunteerRequest = require("../models/volunteerRequest");
 const DepartmentFormsAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
 const permissionsUtils = require('../utils/permissions');
 const sparkApi = require('../spark/sparkApi');
+const consts = require('../utils/consts');
+const utils = require('../utils/utils');
 
 const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
     const sparkInfos = yield requests.map(request => sparkApi.getProfileByMail([request.userId], 15 * 1000))
@@ -22,6 +25,27 @@ const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
             request._doc.phone = sparkInfo['phone'];
         }
     };
+    return requests;
+});
+
+const enrichRequestDetailsFromGeneralForm = co.wrap(function* (requests) {
+    const generalForms = yield requests.map(request => DepartmentFormsAnswer.findOne({
+        departmentId: consts.GENERAL_FORM,
+        userId: request.userId,
+        eventId: request.eventId
+    }));
+    for (let i=0; i<requests.length; i++) {
+        const request = requests[i];
+        const form = generalForms[i];
+        if (!form) {
+            request._doc.needToFillGeneralForm = !form;
+        } else {
+            // HACK - This is a hack to catch users that filled the old form - without the 18+ question
+            const newForm = utils.isNewGeneralForm(form)
+            request._doc.needToRefillGeneralForm = !newForm;
+        }
+    };
+
     return requests;
 });
 
@@ -63,6 +87,7 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
         eventId: eventId
     });
     volunteerRequests = yield enrichRequestDetailsFromSpark(volunteerRequests)
+    volunteerRequests = yield enrichRequestDetailsFromGeneralForm(volunteerRequests)
     return res.json(volunteerRequests);
 }));
 
@@ -76,6 +101,33 @@ router.post("/public/departments/:departmentId/events/:eventId/join", co.wrap(fu
     const departmentId = req.params.departmentId;
     const eventId = req.params.eventId;
 
+    // if already request exists - update
+    const request = yield VolunteerRequest.findOne({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId
+    })
+    if (request) {
+        request.contactEmail = userdata.contactEmail;
+        request.contactPhone = userdata.contactPhoneNumber;
+        yield request.save();
+        return res.json(request);
+    }
+    
+    // if already volunteer exists - update
+    const volunteer = yield Volunteer.findOne({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId,
+        deleted: false
+    })
+    if (volunteer) {
+        volunteer.contactEmail = userdata.contactEmail;
+        volunteer.contactPhone = userdata.contactPhoneNumber;
+        yield volunteer.save();
+        return res.json(volunteer);
+    }
+    
     const volunteerRequest = new VolunteerRequest({
         departmentId,
         userId,
@@ -125,11 +177,26 @@ router.delete("/departments/:departmentId/events/:eventId/request/:userId", co.w
         eventId: eventId,
         departmentId: departmentId
     });
-    yield DepartmentFormsAnswer.findOneAndRemove({
+
+    // if it's the only entry than remove the department form as well
+    const request = yield VolunteerRequest.findOne({
         userId: userId,
         eventId: eventId,
         departmentId: departmentId
     })
+    const volunteer = yield Volunteer.findOne({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId,
+        deleted: false
+    })
+    if (!request && !volunteer) {
+        yield DepartmentFormsAnswer.findOneAndRemove({
+            userId: userId,
+            eventId: eventId,
+            departmentId: departmentId
+        })
+    }
     return res.json({});
 }));
 

@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Volunteer = require("../models/volunteer");
+const VolunteerRequest = require("../models/volunteerRequest");
 const Department = require('../models/deparment');
-const DepartmentFormAnswer = require('../models/departmentFormsAnswers');
+const DepartmentFormsAnswer = require('../models/departmentFormsAnswers');
 const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
@@ -53,7 +54,7 @@ const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
 });
 
 const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
-    const generalForms = yield volunteers.map(volunteer => DepartmentFormAnswer.findOne({
+    const generalForms = yield volunteers.map(volunteer => DepartmentFormsAnswer.findOne({
         departmentId: consts.GENERAL_FORM,
         userId: volunteer.userId,
         eventId: volunteer.eventId
@@ -117,6 +118,13 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
     if (!(userId in volunteerDetailsByEmail)) {
         return res.status(404).json({error: 'Invalid Midburn Profile'})
     }
+
+    // remove request
+    yield VolunteerRequest.findOneAndRemove({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId
+    });
 
     // already volunteering
     const existingVolunteer = yield Volunteer.findOne({
@@ -235,8 +243,8 @@ router.delete('/departments/:departmentId/volunteer/:volunteerId', co.wrap(funct
     }
 
     const volunteerId = req.params.volunteerId;
-  const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
-  if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
+    const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
+    if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
 
     volunteer.deleted = true;
     yield volunteer.save();
