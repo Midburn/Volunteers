@@ -52,13 +52,12 @@ class VolunteerRequest extends React.Component {
                     <div className="requests-list">
                         {departments
                             .sort((a, b) => {
-                                const aName = rtl ? a.nameHe : a.nameEn;
-                                const bName = rtl ? b.nameHe : b.nameEn;
-
+                                if (a.status.availableToJoin && !b.status.availableToJoin) return -1;
+                                if (!a.status.availableToJoin && b.status.availableToJoin) return 1;
+                                const aName = rtl ? a.basicInfo.nameHe : a.basicInfo.nameEn;
+                                const bName = rtl ? b.basicInfo.nameHe : b.basicInfo.nameEn;
                                 if (!aName) return -1;
-
                                 if (!bName) return 1;
-
                                 return aName.localeCompare(bName);
                             })
                             .map(department => {
@@ -76,11 +75,13 @@ class VolunteerRequest extends React.Component {
                                     <p className="requests-department-text">
                                         {rtl ? basicInfo.descriptionHe : basicInfo.descriptionEn}
                                     </p>
-                                    {(requestState === 'Opened') &&
+                                    {(requestState === 'Opened') ?
                                     <Button bsStyle="primary" className="request-join-button"
                                             onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>
                                         {rtl ? "הצטרף" : "Join"}
-                                    </Button>}
+                                    </Button> : 
+                                    <div className="closed">{rtl ? "סגור" : "Closed"}</div>
+                                    }
 
                                 </div>
                             )
