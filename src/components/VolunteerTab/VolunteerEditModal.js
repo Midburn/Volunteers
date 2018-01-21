@@ -51,6 +51,22 @@ export default class VolunteerEditModal extends React.Component {
         </Alert>
       )
     }
+    if (this.state.volunteer.needToFillGeneralForm) {
+      return (
+        <Alert className="profile-alert" bsStyle="warning">
+          <big><strong>{this.state.volunteer.userId}</strong> hasn't filled the general form.</big><br/>
+          Ask the volunteer to send a new join request, then accept the request and delete the old and invalid volunteer.
+        </Alert>
+      )
+    }
+    if (this.state.volunteer.needToRefillGeneralForm) {
+      return (
+        <Alert className="profile-alert" bsStyle="warning">
+          <big><strong>{this.state.volunteer.userId}</strong> has filled an old general form.</big><br/>
+          Ask the volunteer to send a new join request. after that you can delete the request.
+        </Alert>
+      )
+    }
     return null;
   }
 

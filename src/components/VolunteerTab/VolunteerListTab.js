@@ -335,7 +335,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={!volunteer.validProfile ? 'invalid' : ''}
+                                        className={!volunteer.validProfile ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')}
                                         onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&

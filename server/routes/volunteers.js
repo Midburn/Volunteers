@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 const Volunteer = require("../models/volunteer");
 const Department = require('../models/deparment');
+const DepartmentFormAnswer = require('../models/departmentFormsAnswers');
 const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
 const sparkApi = require('../spark/sparkApi');
 const permissionsUtils = require('../utils/permissions');
+const consts = require('../utils/consts');
+const utils = require('../utils/utils');
 
 const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
     const departmentVolunteersOtherDepartments = yield Volunteer
@@ -49,6 +52,27 @@ const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
     return volunteers;
 });
 
+const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
+    const generalForms = yield volunteers.map(volunteer => DepartmentFormAnswer.findOne({
+        departmentId: consts.GENERAL_FORM,
+        userId: volunteer.userId,
+        eventId: volunteer.eventId
+    }));
+    for (let i=0; i<volunteers.length; i++) {
+        const volunteer = volunteers[i];
+        const form = generalForms[i];
+        if (!form) {
+            volunteer._doc.needToFillGeneralForm = !form;
+        } else {
+            // HACK - This is a hack to catch users that filled the old form - without the 18+ question
+            const newForm = utils.isNewGeneralForm(form)
+            volunteer._doc.needToRefillGeneralForm = !newForm;
+        }
+    };
+
+    return volunteers;
+});
+
 const userExists = co.wrap(function* (email) {
     const volunteerDetails = yield sparkApi.getProfileByMail(email);
 
@@ -71,6 +95,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     if (departmentVolunteers) {
         yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
         yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
+        yield enrichVolunteerDetailsFromGeneralForm(departmentVolunteers);
     }
 
     return res.json(departmentVolunteers);

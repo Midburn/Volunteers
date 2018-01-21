@@ -4,8 +4,9 @@ const DepartmentForm = require("../models/departmentForms");
 const DepartmentFormAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
-const GENERAL = 1;
 const permissionsUtils = require('../utils/permissions');
+const consts = require('../utils/consts');
+const utils = require('../utils/utils');
 
 const getDepartmentFrom = co.wrap(function* (departmentId) {
     return yield DepartmentForm.findOne({
@@ -135,7 +136,7 @@ router.post('/public/departments/:departmentId/forms/events/:eventId/answer', co
 
 // PUBLIC - Returns the general form
 router.get("/public/form", co.wrap(function* (req, res) {
-    const departmentForm = yield getDepartmentFrom(GENERAL);
+    const departmentForm = yield getDepartmentFrom(consts.GENERAL_FORM);
 
     return res.json(departmentForm ? departmentForm.form : []);
 }));
@@ -149,7 +150,7 @@ router.post("/form", co.wrap(function* (req, res) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
     }
 
-    const departmentForm = yield saveDepartmentFrom(GENERAL, form);
+    const departmentForm = yield saveDepartmentFrom(consts.GENERAL_FORM, form);
 
     return res.json(departmentForm.form);
 }));
@@ -162,7 +163,7 @@ router.get('/form/events/:eventId/answer/:userId', co.wrap(function* (req, res) 
 
     const userId = req.params.userId;
     const eventId = req.params.eventId;
-    const answer = yield getAnswer(GENERAL, userId, eventId);
+    const answer = yield getAnswer(consts.GENERAL_FORM, userId, eventId);
     return res.json(answer);
 }));
 
@@ -179,12 +180,15 @@ router.get('/public/form/events/:eventId/hasAnswer', co.wrap(function* (req, res
     
     let answer = null;
     if (userId) {
-        answer = yield getAnswer(GENERAL, userId, eventId);
+        answer = yield getAnswer(consts.GENERAL_FORM, userId, eventId);
     }
     if (!answer && email) {
-        answer = yield getAnswer(GENERAL, email, eventId);
+        answer = yield getAnswer(consts.GENERAL_FORM, email, eventId);
     }
-    return res.json({hasAnswer: !!answer});
+
+    // HACK - if the user filled the old form (without the 18+ answer) he should fill again
+    const newForm = utils.isNewGeneralForm(answer);
+    return res.json({hasAnswer: !!answer && newForm});
 }));
 
 // PUBLIC - Submit answers to the general form
@@ -198,8 +202,14 @@ router.post('/public/form/events/:eventId/answer', co.wrap(function* (req, res) 
     const eventId = req.params.eventId;
     const answer = req.body;
 
+    const oldAnswer = yield getAnswer(consts.GENERAL_FORM, userId, eventId);
+    if (oldAnswer) {
+        // has old answer. delete it.
+        yield oldAnswer.remove();
+    }
+
     const formAnswer = new DepartmentFormAnswer({
-        departmentId: GENERAL,
+        departmentId: consts.GENERAL_FORM,
         userId,
         eventId,
         form: answer

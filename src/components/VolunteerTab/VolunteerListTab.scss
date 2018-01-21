@@ -12,7 +12,7 @@
         display: flex;
 
         &:hover {
-          background-color: #e2d5d5;
+          background-color: #e0e0e0;
           cursor: pointer;
         }
 
@@ -22,6 +22,18 @@
 
         &.invalid:not(:hover) {
           background-color: #ffcece;
+        }
+
+        &.invalid:hover {
+          background-color: #dac5c5;
+        }
+
+        &.missing-sign:not(:hover) {
+          background-color: #fce1b9;
+        }
+
+        &.missing-sign:hover {
+          background-color: #dad2c3;
         }
       }
     }
