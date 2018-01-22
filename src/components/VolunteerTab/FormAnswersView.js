@@ -12,8 +12,11 @@ export default class FromAnswersView extends Component {
     render(){
         const rtl = true;
 
-        if (!this.props.answers || !this.props.answers.length) {
+        if (!this.props.answers) {
             return <div>Loading...</div>
+        }
+        if (!this.props.answers.length) {
+            return <div>Nothing to show</div>
         }
         return (
             <div className="form-answers-view">

@@ -15,8 +15,9 @@
       flex-direction: row-reverse;
 
       .department {
-        button {
+        button, .closed {
           left: 2rem;
+          text-align: left;
         }
       }
     }
@@ -63,7 +64,7 @@
         }
       }
 
-      button {
+      button, .closed {
         position: absolute;
         bottom: 2rem;
         right: 2rem;

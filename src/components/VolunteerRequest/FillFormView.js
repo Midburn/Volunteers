@@ -85,7 +85,7 @@ export default class FillFormView extends Component {
             return false;
         }
         for (let i=0; i<this.state.questions.length; i++) {
-            if (!this.state.questions[i].answer) {
+            if (!this.state.questions[i].answer && !this.state.questions[i].optional) {
                 return false;
             }
         }

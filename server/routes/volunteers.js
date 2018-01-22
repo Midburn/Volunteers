@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Volunteer = require("../models/volunteer");
+const VolunteerRequest = require("../models/volunteerRequest");
 const Department = require('../models/deparment');
+const DepartmentFormsAnswer = require('../models/departmentFormsAnswers');
 const co = require("co");
 const _ = require('lodash');
 const uuid = require('uuid/v1');
 const sparkApi = require('../spark/sparkApi');
 const permissionsUtils = require('../utils/permissions');
+const consts = require('../utils/consts');
+const utils = require('../utils/utils');
 
 const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
     const departmentVolunteersOtherDepartments = yield Volunteer
@@ -31,7 +35,7 @@ const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departm
 });
 
 const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
-    const sparkInfos = yield volunteers.map(volunteer => sparkApi.getProfileByMail([volunteer.userId], 5 * 1000))
+    const sparkInfos = yield volunteers.map(volunteer => sparkApi.getProfileByMail([volunteer.userId], 15 * 1000))
     for (let i=0; i<volunteers.length; i++) {
         const volunteer = volunteers[i];
         const sparkInfo = sparkInfos[i] && sparkInfos[i][volunteer.userId] ? sparkInfos[i][volunteer.userId] : null;
@@ -43,6 +47,27 @@ const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
             volunteer._doc.lastName = sparkInfo['last_name'];
             volunteer._doc.hasTicket = sparkInfo['has_ticket'];
             volunteer._doc.phone = sparkInfo['phone'];
+        }
+    };
+
+    return volunteers;
+});
+
+const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
+    const generalForms = yield volunteers.map(volunteer => DepartmentFormsAnswer.findOne({
+        departmentId: consts.GENERAL_FORM,
+        userId: volunteer.userId,
+        eventId: volunteer.eventId
+    }));
+    for (let i=0; i<volunteers.length; i++) {
+        const volunteer = volunteers[i];
+        const form = generalForms[i];
+        if (!form) {
+            volunteer._doc.needToFillGeneralForm = !form;
+        } else {
+            // HACK - This is a hack to catch users that filled the old form - without the 18+ question
+            const newForm = utils.isNewGeneralForm(form)
+            volunteer._doc.needToRefillGeneralForm = !newForm;
         }
     };
 
@@ -71,6 +96,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     if (departmentVolunteers) {
         yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
         yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
+        yield enrichVolunteerDetailsFromGeneralForm(departmentVolunteers);
     }
 
     return res.json(departmentVolunteers);
@@ -92,6 +118,13 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
     if (!(userId in volunteerDetailsByEmail)) {
         return res.status(404).json({error: 'Invalid Midburn Profile'})
     }
+
+    // remove request
+    yield VolunteerRequest.findOneAndRemove({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId
+    });
 
     // already volunteering
     const existingVolunteer = yield Volunteer.findOne({
@@ -210,8 +243,8 @@ router.delete('/departments/:departmentId/volunteer/:volunteerId', co.wrap(funct
     }
 
     const volunteerId = req.params.volunteerId;
-  const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
-  if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
+    const volunteer = yield Volunteer.findOne({_id: volunteerId, departmentId: departmentId, deleted: false});
+    if (_.isEmpty(volunteer)) return res.status(404).json({error: `Volunteer ${volunteerId} does not exist`});
 
     volunteer.deleted = true;
     yield volunteer.save();

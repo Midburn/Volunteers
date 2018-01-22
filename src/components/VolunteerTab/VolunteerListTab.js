@@ -335,7 +335,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={!volunteer.validProfile ? 'invalid' : ''}
+                                        className={!volunteer.validProfile ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')}
                                         onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
@@ -405,7 +405,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleRequests.map(volunteerRequest =>
                                     <tr key={volunteerRequest._id}
-                                        className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : ''}`}
+                                        className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : (volunteerRequest.needToFillGeneralForm || volunteerRequest.needToRefillGeneralForm ? 'missing-sign' : '')}`}
                                         onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <td className="ellipsis-text flex2">

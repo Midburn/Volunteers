@@ -12,7 +12,8 @@ const DepartmentFormSchema = new Schema({
         options: [{
             en:String,
             he: String
-        }]
+        }],
+        optional: Boolean
     }]
 }, {timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
