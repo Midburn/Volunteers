@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Button, Form, FormControl, FormGroup, ControlLabel, Checkbox, Radio} from 'react-bootstrap';
+import Linkify from 'react-linkify';
 import axios from 'axios';
 
 require('./FillFormView.scss')
@@ -101,43 +102,45 @@ export default class FillFormView extends Component {
             <div className="fill-form-view">
                 <Form>
                     {this.state.questions && this.state.questions.map((question, index) => 
-                        <div key={`question-${index}`} className={rtl ? 'rtl' : ''}>
-                            {question.questionType === 'text' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question[language]}</ControlLabel>
-                                    <FormControl onChange={this.handleTextChange}/>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'textarea' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question[language]}</ControlLabel>
-                                    <FormControl componentClass="textarea" onChange={this.handleTextChange}/>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'checkbox' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <Checkbox inline onChange={this.handleCheckboxChange(index)}><b>{question.question[language]}</b></Checkbox>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'radio' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question[language]}</ControlLabel>
-                                    {question.options.map((option, optionIndex) =>
-                                        <Radio name={`radio-${index}`} onChange={this.handleSelectionChange(index, optionIndex)} 
-                                            value={option[language]} key={optionIndex}><span>{option[language]}</span></Radio>
-                                    )}
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'checkboxes' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question[language]}</ControlLabel>
-                                    {question.options.map((option, optionIndex) =>
-                                        <Checkbox key={optionIndex} onChange={this.handleMulSelectionChange(index)}
-                                            value={option[language]}><span>{option[language]}</span></Checkbox>
-                                    )}
-                                </FormGroup>
-                            )}
-                        </div>
+                        <Linkify properties={{target: '_blank'}}>
+                            <div key={`question-${index}`} className={rtl ? 'rtl' : ''}>
+                                {question.questionType === 'text' && (
+                                    <FormGroup controlId={`id-${index}`}>
+                                        <ControlLabel>{question.question[language]}</ControlLabel>
+                                        <FormControl onChange={this.handleTextChange}/>
+                                    </FormGroup>
+                                )}
+                                {question.questionType === 'textarea' && (
+                                    <FormGroup controlId={`id-${index}`}>
+                                        <ControlLabel>{question.question[language]}</ControlLabel>
+                                        <FormControl componentClass="textarea" onChange={this.handleTextChange}/>
+                                    </FormGroup>
+                                )}
+                                {question.questionType === 'checkbox' && (
+                                    <FormGroup controlId={`id-${index}`}>
+                                        <Checkbox inline onChange={this.handleCheckboxChange(index)}><b>{question.question[language]}</b></Checkbox>
+                                    </FormGroup>
+                                )}
+                                {question.questionType === 'radio' && (
+                                    <FormGroup controlId={`id-${index}`}>
+                                        <ControlLabel>{question.question[language]}</ControlLabel>
+                                        {question.options.map((option, optionIndex) =>
+                                            <Radio name={`radio-${index}`} onChange={this.handleSelectionChange(index, optionIndex)} 
+                                                value={option[language]} key={optionIndex}><span>{option[language]}</span></Radio>
+                                        )}
+                                    </FormGroup>
+                                )}
+                                {question.questionType === 'checkboxes' && (
+                                    <FormGroup controlId={`id-${index}`}>
+                                        <ControlLabel>{question.question[language]}</ControlLabel>
+                                        {question.options.map((option, optionIndex) =>
+                                            <Checkbox key={optionIndex} onChange={this.handleMulSelectionChange(index)}
+                                                value={option[language]}><span>{option[language]}</span></Checkbox>
+                                        )}
+                                    </FormGroup>
+                                )}
+                            </div>
+                        </Linkify>
                     )}
                     {this.state.showTheCheckbox &&
                         <div className={rtl ? 'rtl' : ''}>
