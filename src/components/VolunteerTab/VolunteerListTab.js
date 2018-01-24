@@ -102,12 +102,6 @@ export default class VolunteerListTab extends Component {
         }
     }
 
-    compareDates = (a, b) => {
-        let dateA = a ? new Date(a).getTime() : 0;
-        let dateB = b ? new Date(b).getTime() : 0;
-        return dateA < dateB
-    }
-
     updateVisibleVolunteers = _ => {
         const searchTerm = this.state.filter.search ? this.state.filter.search.toLowerCase().trim() : "";
         const isVisible = volunteer => {
@@ -130,10 +124,20 @@ export default class VolunteerListTab extends Component {
             }
             return true;
         };
+        const compareDates = (a, b) => {
+            let dateA = a ? new Date(a).getTime() : 0;
+            let dateB = b ? new Date(b).getTime() : 0;
+            return dateB - dateA
+        }
 
-        const visibleVolunteers = this.state.volunteers.filter(isVisible).sort((a, b) => this.compareDates(a.createdAt, b.createdAt));
-        const visibleRequests = this.state.requests.filter(isVisible).sort((a, b) => this.compareDates(a.createdAt, b.createdAt));
-        this.setState({visibleVolunteers, visibleRequests});
+
+        const visibleVolunteers = this.state.volunteers.filter(isVisible).sort((a, b) => compareDates(a.createdAt, b.createdAt));
+        const visibleRequests = this.state.requests.filter(isVisible).sort((a, b) => compareDates(a.createdAt, b.createdAt));
+        this.setState({
+            ...this.state,
+            visibleVolunteers, 
+            visibleRequests
+        });
     }
 
     searchChanged = event => {
