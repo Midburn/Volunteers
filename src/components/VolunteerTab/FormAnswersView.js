@@ -23,8 +23,8 @@ export default class FromAnswersView extends Component {
         return (
             <div className="form-answers-view">
                 {this.props.answers && this.props.answers.map((question, index) => 
-                    <Linkify properties={{target: '_blank'}}>
-                        <div key={`question-${index}`} className={rtl ? 'rtl' : ''}>
+                    <Linkify key={`question-${index}`} properties={{target: '_blank'}}>
+                        <div className={rtl ? 'rtl' : ''}>
                             {question.questionType === 'text' && (
                                 <FormGroup controlId={`id-${index}`}>
                                     <ControlLabel>{question.question}</ControlLabel>

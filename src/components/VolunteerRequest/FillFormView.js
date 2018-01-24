@@ -102,8 +102,8 @@ export default class FillFormView extends Component {
             <div className="fill-form-view">
                 <Form>
                     {this.state.questions && this.state.questions.map((question, index) => 
-                        <Linkify properties={{target: '_blank'}}>
-                            <div key={`question-${index}`} className={rtl ? 'rtl' : ''}>
+                        <Linkify key={`question-${index}`} properties={{target: '_blank'}}>
+                            <div  className={rtl ? 'rtl' : ''}>
                                 {question.questionType === 'text' && (
                                     <FormGroup controlId={`id-${index}`}>
                                         <ControlLabel>{question.question[language]}</ControlLabel>

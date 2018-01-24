@@ -33,8 +33,8 @@ export default class FormViewer extends Component {
                 <FormLanguagePicker value={language} onChange={this.setLanguage}/>
 
                 {questions.map((question, index) =>
-                    <Linkify properties={{target: '_blank'}}>
-                        <div key={index} className={classNames({rtl: rtl})}>
+                    <Linkify key={index} properties={{target: '_blank'}}>
+                        <div className={classNames({rtl: rtl})}>
                             {question.questionType === 'text' && (
                                 <FormGroup>
                                     <ControlLabel>{question.question[language]}</ControlLabel>
