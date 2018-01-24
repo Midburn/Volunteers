@@ -68,6 +68,24 @@ const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
             // HACK - This is a hack to catch users that filled the old form - without the 18+ question
             const newForm = utils.isNewGeneralForm(form)
             volunteer._doc.needToRefillGeneralForm = !newForm;
+            volunteer._doc.generalForm = form;
+        }
+    };
+
+    return volunteers;
+});
+
+const enrichVolunteerDetailsFromDepartmentForm = co.wrap(function* (volunteers) {
+    const departmentsForms = yield volunteers.map(volunteer => DepartmentFormsAnswer.findOne({
+        departmentId: volunteer.departmentId,
+        userId: volunteer.userId,
+        eventId: volunteer.eventId
+    }));
+    for (let i=0; i<volunteers.length; i++) {
+        const volunteer = volunteers[i];
+        const form = departmentsForms[i];
+        if (form) {
+            volunteer._doc.departmentForm = form;
         }
     };
 
@@ -97,6 +115,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
         yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
         yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
         yield enrichVolunteerDetailsFromGeneralForm(departmentVolunteers);
+        yield enrichVolunteerDetailsFromDepartmentForm(departmentVolunteers);
     }
 
     return res.json(departmentVolunteers);

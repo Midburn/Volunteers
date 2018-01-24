@@ -43,6 +43,24 @@ const enrichRequestDetailsFromGeneralForm = co.wrap(function* (requests) {
             // HACK - This is a hack to catch users that filled the old form - without the 18+ question
             const newForm = utils.isNewGeneralForm(form)
             request._doc.needToRefillGeneralForm = !newForm;
+            request._doc.generalForm = form;
+        }
+    };
+
+    return requests;
+});
+
+const enrichRequestDetailsFromDepartmentForm = co.wrap(function* (requests) {
+    const departmentForms = yield requests.map(request => DepartmentFormsAnswer.findOne({
+        departmentId: request.departmentId,
+        userId: request.userId,
+        eventId: request.eventId
+    }));
+    for (let i=0; i<requests.length; i++) {
+        const request = requests[i];
+        const form = departmentForms[i];
+        if (form) {
+            request._doc.departmentForm = form;
         }
     };
 
@@ -88,6 +106,7 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
     });
     volunteerRequests = yield enrichRequestDetailsFromSpark(volunteerRequests)
     volunteerRequests = yield enrichRequestDetailsFromGeneralForm(volunteerRequests)
+    volunteerRequests = yield enrichRequestDetailsFromDepartmentForm(volunteerRequests)
     return res.json(volunteerRequests);
 }));
 
