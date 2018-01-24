@@ -240,17 +240,19 @@ export default class VolunteerListTab extends Component {
             }
             if (volunteer.generalForm && volunteer.generalForm.form) {
                 volunteer.generalForm.form.forEach(question => {
-                    volData[question.question] = question.answer;
-                    if (generalQuestions.indexOf(question.question) === -1) {
-                        generalQuestions.push(question.question);
+                    const que = question.question.replace(/\r?\n|\r/g, '');
+                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '') : '';
+                    if (generalQuestions.indexOf(que) === -1) {
+                        generalQuestions.push(que);
                     }
                 })
             }
             if (volunteer.departmentForm && volunteer.departmentForm.form) {
                 volunteer.departmentForm.form.forEach(question => {
-                    volData[question.question] = question.answer;
-                    if (departmentQuestions.indexOf(question.question) === -1) {
-                        departmentQuestions.push(question.question);
+                    const que = question.question.replace(/\r?\n|\r/g, '');
+                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '') : '';
+                    if (departmentQuestions.indexOf(que) === -1) {
+                        departmentQuestions.push(que);
                     }
                 })
             }
@@ -281,17 +283,19 @@ export default class VolunteerListTab extends Component {
             }
             if (request.generalForm && request.generalForm.form) {
                 request.generalForm.form.forEach(question => {
-                    reqData[question.question] = question.answer;
-                    if (generalQuestions.indexOf(question.question) === -1) {
-                        generalQuestions.push(question.question);
+                    const que = question.question.replace(/\r?\n|\r/g, '');
+                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '') : '';
+                    if (generalQuestions.indexOf(que) === -1) {
+                        generalQuestions.push(que);
                     }
                 })
             }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
-                    reqData[question.question] = question.answer;
-                    if (departmentQuestions.indexOf(question.question) === -1) {
-                        departmentQuestions.push(question.question);
+                    const que = question.question.replace(/\r?\n|\r/g, '');
+                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '') : '';
+                    if (departmentQuestions.indexOf(que) === -1) {
+                        departmentQuestions.push(que);
                     }
                 })
             }
