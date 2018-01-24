@@ -98,13 +98,20 @@
 
   .volunteer-list-list-title {
     margin-top: 25px;
-    font-size: 20px;
+    font-size: 30px;
+    font-weight: 500;
     display: flex;
     justify-content: space-between;
   }
 
   .volunteer-list-list-title span {
     padding: 0;
+
+    .counter {
+      font-weight: 100;
+      font-size: 20px;
+
+    }
   }
 
   .volunteer-list-list-title .btn {

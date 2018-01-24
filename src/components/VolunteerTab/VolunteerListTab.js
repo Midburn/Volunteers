@@ -358,7 +358,7 @@ export default class VolunteerListTab extends Component {
                     <TagFilter selected={filter.tags} options={allTags} onChange={this.handleOnTagFilterChange}/>}
 
                     <div className="volunteer-list-list-title">
-                        <span>Volunteers:</span>
+                        <span>Volunteers: <span className="counter">({`${this.state.visibleVolunteers.length} / ${this.state.volunteers.length}`})</span></span> 
                         {this.downloadVolunteers()}
                     </div>
 
@@ -433,7 +433,7 @@ export default class VolunteerListTab extends Component {
                             </Table>}
 
                     <div className="volunteer-list-list-title">
-                        <span>Join Requests:</span>
+                        <span>Join Requests: <span className="counter">({`${this.state.visibleRequests.length} / ${this.state.requests.length}`})</span></span>
                         {this.downloadRequests()}
                     </div>
                     {this.state.numberOfRequests > 0 ?
