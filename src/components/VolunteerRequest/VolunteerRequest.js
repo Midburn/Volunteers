@@ -62,31 +62,30 @@ class VolunteerRequest extends React.Component {
                                 return aName.localeCompare(bName);
                             })
                             .map(department => {
-                            const basicInfo = department.basicInfo;
-                            const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : Consts.DEFAULT_LOGO;
-                            const requestState = volunteerRequestModel.requestState(department._id);
-                            return (
-                                <div className="department" key={department._id}>
-                                    <div className="requests-department-top">
-                                        <Image src={departmentLogo} className="request-department-logo"/>
-                                        <h2 className="requests-department-title">
-                                            {rtl ? basicInfo.nameHe : basicInfo.nameEn}
-                                        </h2>
+                                const basicInfo = department.basicInfo;
+                                const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : Consts.DEFAULT_LOGO;
+                                const requestState = volunteerRequestModel.requestState(department._id);
+                                return (
+                                    <div className="department" key={department._id}>
+                                        <div className="requests-department-top">
+                                            <Image src={departmentLogo} className="request-department-logo"/>
+                                            <h2 className="requests-department-title">
+                                                {rtl ? basicInfo.nameHe : basicInfo.nameEn}
+                                            </h2>
+                                        </div>
+                                        <p className="requests-department-text">
+                                            {rtl ? basicInfo.descriptionHe : basicInfo.descriptionEn}
+                                        </p>
+                                        {(requestState === 'Opened') ?
+                                            <Button bsStyle="primary" className="request-join-button"
+                                                    onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>
+                                                {rtl ? "הצטרף" : "Join"}
+                                            </Button> :
+                                            <div className="closed">{rtl ? "סגור" : "Closed"}</div>
+                                        }
                                     </div>
-                                    <p className="requests-department-text">
-                                        {rtl ? basicInfo.descriptionHe : basicInfo.descriptionEn}
-                                    </p>
-                                    {(requestState === 'Opened') ?
-                                    <Button bsStyle="primary" className="request-join-button"
-                                            onClick={() => volunteerRequestModel.startJoinProcess(department._id)}>
-                                        {rtl ? "הצטרף" : "Join"}
-                                    </Button> : 
-                                    <div className="closed">{rtl ? "סגור" : "Closed"}</div>
-                                    }
-
-                                </div>
-                            )
-                        })}
+                                )
+                            })}
                     </div>
                 </div>
 
