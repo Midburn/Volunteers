@@ -467,6 +467,8 @@ export default class VolunteerListTab extends Component {
                                             <Select.Creatable multi
                                                               value={volunteer.tags}
                                                               options={tagOptions}
+                                                              shouldKeyDownEventCreateNewOption={key => key === 9 || key === 13}
+                                                              promptTextCreator={label => label}
                                                               onChange={(tags) => this.onTagsChange(volunteer.userId, tags)}
                                             />
                                         </td>}
@@ -542,6 +544,8 @@ export default class VolunteerListTab extends Component {
                                             <Select.Creatable multi
                                                               value={volunteerRequest.tags}
                                                               options={requestTagOptions}
+                                                              shouldKeyDownEventCreateNewOption={key => key === 9 || key === 13}
+                                                              promptTextCreator={label => label}
                                                               onChange={(tags) => this.onVolunteerRequestTagsChange(volunteerRequest.userId, tags)}
                                             />
                                         </td>}
