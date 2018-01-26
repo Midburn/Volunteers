@@ -16,7 +16,7 @@
 
       .department {
         button, .closed {
-          left: 2rem;
+          float: left;
           text-align: left;
         }
       }
@@ -37,11 +37,11 @@
     border: 1px solid #dddddd;
 
     & > .department {
-      position: relative;
       width: 33.3%;
       height: 40rem;
       padding: 1rem;
       flex-shrink: 0;
+      overflow: hidden;
 
       background-color: white;
       border: 1px solid #dddddd;
@@ -49,6 +49,7 @@
       .requests-department-top {
         display: flex;
         align-items: center;
+        height: 100px;
 
         & > * {
           flex-shrink: 0;
@@ -56,7 +57,7 @@
 
         h2 {
           margin: 0 1rem;
-          width: 25rem;
+          width: 35rem;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
@@ -64,10 +65,15 @@
         }
       }
 
+      p {
+        height: calc(40rem - 100px - 10rem);
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       button, .closed {
-        position: absolute;
-        bottom: 2rem;
-        right: 2rem;
+        float: right;
+        height: 5rem;
       }
     }
   }
