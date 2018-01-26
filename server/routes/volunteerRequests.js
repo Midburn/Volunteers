@@ -182,6 +182,30 @@ router.put("/public/departments/:departmentId/events/:eventId/join", co.wrap(fun
     return res.json(volunteerRequest);
 }));
 
+// Edit volunteer
+router.put("/departments/:departmentId/events/:eventId/requests/:userId", co.wrap(function* (req, res) {
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const userId = req.params.userId;
+    const tags= req.body.tags;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const volunteerRequest = yield VolunteerRequest.findOne({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId
+    });
+
+    volunteerRequest.tags = tags;
+
+    yield volunteerRequest.save();
+
+    return res.json(volunteerRequest);
+}));
+
 // MANAGER - Removes a request and the relvant department form
 router.delete("/departments/:departmentId/events/:eventId/request/:userId", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;

@@ -2,7 +2,7 @@ import React from "react";
 import "./TagFilter.scss";
 
 function TagFilter({options, selected, onChange}) {
-  if (!options) return null;
+  if (options.size === 0) return null;
 
   return (
     <div className="tag-filter">

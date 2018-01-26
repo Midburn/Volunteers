@@ -1,0 +1,9 @@
+@media (max-width: 1900px) {
+  .requests-view {
+    .requests-list {
+      & > .department {
+        width: 100%;
+      }
+    }
+  }
+}

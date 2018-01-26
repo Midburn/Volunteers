@@ -5,6 +5,7 @@ import VolunteerRequestModel from "../../model/VolunteerRequestModel";
 import * as Consts from '../../model/consts'
 import {observer} from "mobx-react/index";
 import './VolunteerRequest.scss';
+import './VolunteerRequestMobile.scss';
 import FormLanguagePicker from "../FormLanguagePicker/FormLanguagePicker";
 import classNames from "classnames";
 
