@@ -35,10 +35,10 @@ const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departm
 });
 
 const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
-    const sparkInfos = yield volunteers.map(volunteer => sparkApi.getProfileByMail([volunteer.userId], 15 * 1000))
+    const sparkInfos = yield volunteers.map(volunteer => sparkApi.getProfile(volunteer.userId))
     for (let i=0; i<volunteers.length; i++) {
         const volunteer = volunteers[i];
-        const sparkInfo = sparkInfos[i] && sparkInfos[i][volunteer.userId] ? sparkInfos[i][volunteer.userId] : null;
+        const sparkInfo = sparkInfos[i];
         if (!sparkInfo) {
             volunteer._doc.validProfile = false;
         } else {

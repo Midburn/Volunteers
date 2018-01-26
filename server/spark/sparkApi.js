@@ -1,4 +1,6 @@
 const axios = require('axios');
+const cache = require('js-cache');
+const co = require("co");
 
 const SPARK_HOST = (process.env.LOCAL_SPARK !== 'true') ? process.env.SPARK_HOST : 'http://localhost:3000';
 const SECRET = process.env.SECRET;
@@ -32,6 +34,23 @@ function getProfileByMail(emails, timeout) {
         })
 }
 
+// Retunrs profile info , using the cached data if available
+const getProfile = co.wrap(function* (email) {
+    let info = cache.get(email)
+    if (info) {
+        return info;
+    }
+
+    const profiles = yield getProfileByMail([email], 15 * 1000);
+    info = profiles[email];
+    if (info) {
+        cache.set(email, info, 2 * 60 * 60 * 1000) // 2 hours
+        return info;
+    }
+    return null;
+})
+
 module.exports = {
-    getProfileByMail: getProfileByMail
+    getProfileByMail: getProfileByMail,
+    getProfile
 };
