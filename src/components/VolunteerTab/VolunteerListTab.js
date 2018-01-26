@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Dropdown, MenuItem, Button, FormControl, ListGroup, ListGroupItem, Image, Table} from 'react-bootstrap'
+import {Button, Dropdown, FormControl, Image, MenuItem, Table} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
 import * as Consts from '../../model/consts'
 import Select from 'react-select';
@@ -11,6 +11,8 @@ import {CSVLink} from 'react-csv';
 import TagFilter from "../TagFilter";
 
 import './VolunteerListTab.scss';
+
+const eventId = "1";
 
 function formatTag(tag) {
     const max = 5;
@@ -35,20 +37,24 @@ export default class VolunteerListTab extends Component {
             filter: {
                 search: '',
                 departmentId: null,
-                tags: new Set()
+                tags: new Set(),
+                requestTags: new Set()
             },
 
             showAddModal: false,
             editModalVolunteer: '',
             editModalRequest: '',
-            showTags: true
+            showTags: true,
+            showRequestTags: true
         };
 
         this.onTagsChange = this.onTagsChange.bind(this);
-        this.updateVolunteer = this.updateVolunteer.bind(this);
+        this.onVolunteerRequestTagsChange = this.onVolunteerRequestTagsChange.bind(this);
         this.handleOnTagFilterChange = this.handleOnTagFilterChange.bind(this);
         this.updateVisibleVolunteers = this.updateVisibleVolunteers.bind(this);
         this.handleOnShowTagToggle = this.handleOnShowTagToggle.bind(this);
+        this.handleOnShowRequestTagToggle = this.handleOnShowRequestTagToggle.bind(this);
+        this.handleOnRequestTagFilterChange = this.handleOnRequestTagFilterChange.bind(this);
         this.showEditModal = this.showEditModal.bind(this);
     }
 
@@ -104,7 +110,7 @@ export default class VolunteerListTab extends Component {
 
     updateVisibleVolunteers = _ => {
         const searchTerm = this.state.filter.search ? this.state.filter.search.toLowerCase().trim() : "";
-        const isVisible = volunteer => {
+        const isVisible = (volunteer, isRequest) => {
             if (this.state.filter.departmentId && this.state.filter.departmentId !== volunteer.departmentId) {
                 return false;
             }
@@ -117,7 +123,7 @@ export default class VolunteerListTab extends Component {
                 }
             }
 
-            const selectedTags = this.state.filter.tags;
+            const selectedTags = isRequest ? this.state.filter.requestTags : this.state.filter.tags;
             if (volunteer.tags && selectedTags.size !== 0) {
                 const intersection = volunteer.tags.filter(tag => selectedTags.has(tag));
                 if (intersection.length === 0) return false;
@@ -131,11 +137,11 @@ export default class VolunteerListTab extends Component {
         }
 
 
-        const visibleVolunteers = this.state.volunteers.filter(isVisible).sort((a, b) => compareDates(a.createdAt, b.createdAt));
-        const visibleRequests = this.state.requests.filter(isVisible).sort((a, b) => compareDates(a.createdAt, b.createdAt));
+        const visibleVolunteers = this.state.volunteers.filter(volunteer => isVisible(volunteer, false)).sort((a, b) => compareDates(a.createdAt, b.createdAt));
+        const visibleRequests = this.state.requests.filter(volunteer => isVisible(volunteer, true)).sort((a, b) => compareDates(a.createdAt, b.createdAt));
         this.setState({
             ...this.state,
-            visibleVolunteers, 
+            visibleVolunteers,
             visibleRequests
         });
     }
@@ -180,16 +186,19 @@ export default class VolunteerListTab extends Component {
         this.setState(this.state);
     }
 
-    updateVolunteer(volunteer) {
-        const {departmentId} = this.state.filter;
-
-        axios.put(`/api/v1/departments/${departmentId}/volunteer/${volunteer._id}`, {
+    static updateVolunteer(volunteer) {
+        axios.put(`/api/v1/departments/${volunteer.departmentId}/volunteer/${volunteer._id}`, {
             permission: volunteer.permission,
             yearly: volunteer.yearly === 'true',
             tags: volunteer.tags
         });
     }
 
+    static updateVolunteerRequest(volunteer) {
+        axios.put(`/api/v1/departments/${volunteer.departmentId}/events/${eventId}/requests/${volunteer.userId}`, {
+            tags: volunteer.tags
+        });
+    }
 
     onTagsChange(userId, tags) {
         const {visibleVolunteers} = this.state;
@@ -197,7 +206,16 @@ export default class VolunteerListTab extends Component {
         volunteer['tags'] = tags.map(tag => tag.value);
 
         this.setState({visibleVolunteers});
-        this.updateVolunteer(volunteer);
+        VolunteerListTab.updateVolunteer(volunteer);
+    }
+
+    onVolunteerRequestTagsChange(userId, tags) {
+        const {visibleRequests} = this.state;
+        const volunteer = visibleRequests.find(volunteer => volunteer.userId === userId);
+        volunteer['tags'] = tags.map(tag => tag.value);
+
+        this.setState({visibleRequests});
+        VolunteerListTab.updateVolunteerRequest(volunteer);
     }
 
     handleOnTagFilterChange(event, option) {
@@ -212,9 +230,27 @@ export default class VolunteerListTab extends Component {
         this.updateVisibleVolunteers();
     }
 
+    handleOnRequestTagFilterChange(event, option) {
+        const selectedTags = this.state.filter.requestTags;
+        if (event.target.checked) {
+            selectedTags.add(option);
+        } else {
+            selectedTags.delete(option);
+        }
+
+        this.setState({filter: {...this.state.filter, requestTags: selectedTags}});
+        this.updateVisibleVolunteers();
+    }
+
     handleOnShowTagToggle(event) {
         this.setState(
             {showTags: event.target.checked, filter: {...this.state.filter, tags: new Set()}},
+            this.updateVisibleVolunteers);
+    }
+
+    handleOnShowRequestTagToggle(event) {
+        this.setState(
+            {showRequestTags: event.target.checked, filter: {...this.state.filter, requestTags: new Set()}},
             this.updateVisibleVolunteers);
     }
 
@@ -225,7 +261,7 @@ export default class VolunteerListTab extends Component {
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleVolunteers.map(volunteer => {
-            const volData =  {
+            const volData = {
                 Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
                 "Midubrn Profile": volunteer.userId,
                 "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
@@ -259,7 +295,8 @@ export default class VolunteerListTab extends Component {
             return volData;
         })
         return (
-            <CSVLink headers={headers.concat(departmentQuestions).concat(generalQuestions)} data={data} target="_blank" filename={filename}>
+            <CSVLink headers={headers.concat(departmentQuestions).concat(generalQuestions)} data={data} target="_blank"
+                     filename={filename}>
                 <Button bsStyle="link">Download</Button>
             </CSVLink>
         )
@@ -302,14 +339,15 @@ export default class VolunteerListTab extends Component {
             return reqData;
         })
         return (
-            <CSVLink headers={headers.concat(departmentQuestions).concat(generalQuestions)} data={data} target="_blank" filename={filename}>
+            <CSVLink headers={headers.concat(departmentQuestions).concat(generalQuestions)} data={data} target="_blank"
+                     filename={filename}>
                 <Button bsStyle="link">Download</Button>
             </CSVLink>
         )
     }
 
     render() {
-        const {filter, visibleVolunteers, departments, showTags} = this.state;
+        const {filter, visibleVolunteers, visibleRequests, departments, showTags, showRequestTags} = this.state;
         const department = departments.find(department => department._id === filter.departmentId);
         const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : Consts.DEFAULT_LOGO;
         const title = department ? `${department.basicInfo.nameEn} Volunteers` : 'All Volunteers';
@@ -317,6 +355,10 @@ export default class VolunteerListTab extends Component {
         const allTags = new Set([].concat.apply([], visibleVolunteers.map(volunteer => volunteer.tags)));
         const tagOptions = [];
         allTags.forEach(tag => tagOptions.push({value: tag, label: formatTag(tag)}));
+
+        const allRequestTags = new Set([].concat.apply([], visibleRequests.map(volunteer => volunteer.tags)));
+        const requestTagOptions = [];
+        allRequestTags.forEach(tag => requestTagOptions.push({value: tag, label: formatTag(tag)}));
 
         return (
             <div className="volunteer-list-tab-component">
@@ -358,7 +400,8 @@ export default class VolunteerListTab extends Component {
                     <TagFilter selected={filter.tags} options={allTags} onChange={this.handleOnTagFilterChange}/>}
 
                     <div className="volunteer-list-list-title">
-                        <span>Volunteers: <span className="counter">({`${this.state.visibleVolunteers.length} / ${this.state.volunteers.length}`})</span></span> 
+                        <span>Volunteers: <span
+                            className="counter">({`${this.state.visibleVolunteers.length} / ${this.state.volunteers.length}`})</span></span>
                         {this.downloadVolunteers()}
                     </div>
 
@@ -432,8 +475,19 @@ export default class VolunteerListTab extends Component {
                                 </tbody>
                             </Table>}
 
+                    <div className="tags-header">
+                        <input type="checkbox"
+                               checked={showRequestTags}
+                               onChange={this.handleOnShowRequestTagToggle}/>
+                        <h4>Filter by tags</h4>
+                    </div>
+
+                    {showRequestTags &&
+                    <TagFilter selected={filter.requestTags} options={allRequestTags} onChange={this.handleOnRequestTagFilterChange}/>}
+
                     <div className="volunteer-list-list-title">
-                        <span>Join Requests: <span className="counter">({`${this.state.visibleRequests.length} / ${this.state.requests.length}`})</span></span>
+                        <span>Join Requests: <span
+                            className="counter">({`${this.state.visibleRequests.length} / ${this.state.requests.length}`})</span></span>
                         {this.downloadRequests()}
                     </div>
                     {this.state.numberOfRequests > 0 ?
@@ -453,6 +507,7 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex2">Phone</th>
                                     <th className="ellipsis-text flex3">Email</th>
                                     <th className="ellipsis-text flex2">Request Date</th>
+                                    {showRequestTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -482,6 +537,14 @@ export default class VolunteerListTab extends Component {
                                         <td className="ellipsis-text flex2">
                                             {volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}
                                         </td>
+                                        {showRequestTags &&
+                                        <td className="flex3" onClick={event => event.stopPropagation()}>
+                                            <Select.Creatable multi
+                                                              value={volunteerRequest.tags}
+                                                              options={requestTagOptions}
+                                                              onChange={(tags) => this.onVolunteerRequestTagsChange(volunteerRequest.userId, tags)}
+                                            />
+                                        </td>}
                                     </tr>
                                 )}
                                 </tbody>

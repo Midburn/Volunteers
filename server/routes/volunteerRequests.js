@@ -11,10 +11,10 @@ const consts = require('../utils/consts');
 const utils = require('../utils/utils');
 
 const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
-    const sparkInfos = yield requests.map(request => sparkApi.getProfileByMail([request.userId], 15 * 1000))
+    const sparkInfos = yield requests.map(request => sparkApi.getProfile(request.userId))
     for (let i=0; i<requests.length; i++) {
         const request = requests[i];
-        const sparkInfo = sparkInfos[i] && sparkInfos[i][request.userId] ? sparkInfos[i][request.userId] : null;
+        const sparkInfo = sparkInfos[i];
         if (!sparkInfo) {
             request._doc.validProfile = false;
         } else {
@@ -176,6 +176,30 @@ router.put("/public/departments/:departmentId/events/:eventId/join", co.wrap(fun
 
     volunteerRequest.approved = approved;
     comment && (volunteerRequest.comment = comment);
+
+    yield volunteerRequest.save();
+
+    return res.json(volunteerRequest);
+}));
+
+// Edit volunteer
+router.put("/departments/:departmentId/events/:eventId/requests/:userId", co.wrap(function* (req, res) {
+    const departmentId = req.params.departmentId;
+    const eventId = req.params.eventId;
+    const userId = req.params.userId;
+    const tags= req.body.tags;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const volunteerRequest = yield VolunteerRequest.findOne({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId
+    });
+
+    volunteerRequest.tags = tags;
 
     yield volunteerRequest.save();
 
