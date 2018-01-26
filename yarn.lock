@@ -1179,6 +1179,10 @@ babylon@^6.17.2, babylon@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
 
+backbone-events-standalone@*:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/backbone-events-standalone/-/backbone-events-standalone-0.2.7.tgz#32437d9d11c5cef041034a59c49473b86f0ce196"
+
 bail@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/bail/-/bail-1.0.2.tgz#f7d6c1731630a9f9f0d4d35ed1f962e2074a1764"
@@ -3291,6 +3295,10 @@ indexof@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/indexof/-/indexof-0.0.1.tgz#82dc336d232b9062179d05ab3293a66059fd435d"
 
+infinite-timeout@*:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/infinite-timeout/-/infinite-timeout-0.1.0.tgz#65da6567c7e017a636f281a0c1fe08421e33dc4c"
+
 inflight@^1.0.4:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/inflight/-/inflight-1.0.6.tgz#49bd6331d7d02d0c09bc910a1075ba8165b56df9"
@@ -3672,6 +3680,13 @@ joi@^6.10.1:
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.0.tgz#9e566fee624751a1d720c966cd6226d29d4025aa"
+
+js-cache@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/js-cache/-/js-cache-1.0.2.tgz#e04d6a1744f8fede1b3b875462d24343c70d3b54"
+  dependencies:
+    backbone-events-standalone "*"
+    infinite-timeout "*"
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"

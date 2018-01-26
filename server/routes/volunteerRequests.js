@@ -11,10 +11,10 @@ const consts = require('../utils/consts');
 const utils = require('../utils/utils');
 
 const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
-    const sparkInfos = yield requests.map(request => sparkApi.getProfileByMail([request.userId], 15 * 1000))
+    const sparkInfos = yield requests.map(request => sparkApi.getProfile(request.userId))
     for (let i=0; i<requests.length; i++) {
         const request = requests[i];
-        const sparkInfo = sparkInfos[i] && sparkInfos[i][request.userId] ? sparkInfos[i][request.userId] : null;
+        const sparkInfo = sparkInfos[i];
         if (!sparkInfo) {
             request._doc.validProfile = false;
         } else {
