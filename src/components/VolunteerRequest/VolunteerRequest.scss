@@ -38,7 +38,7 @@
 
     & > .department {
       width: 33.3%;
-      height: 40rem;
+      height: 50rem;
       padding: 1rem;
       flex-shrink: 0;
       overflow: hidden;
@@ -66,9 +66,8 @@
       }
 
       p {
-        height: calc(40rem - 100px - 10rem);
-        overflow: hidden;
-        text-overflow: ellipsis;
+        height: calc(50rem - 100px - 10rem);
+        overflow: auto;
       }
 
       button, .closed {
