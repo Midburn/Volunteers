@@ -33,12 +33,11 @@ export default class FillUserDataView extends Component {
 
     handleTextChange = event => {
         const id = event.target.id;
-        this.state[id] = event.target.value;
+        this.state[id] = event.target.value.trim();
         this.setState(this.state);
     }
 
     submit = form => {
-
         this.props.onAnswer(this.state)   
     }
 
