@@ -35,6 +35,10 @@
         &.missing-sign:hover {
           background-color: #dad2c3;
         }
+
+        &.manager {
+          font-weight: bold;
+        }
       }
     }
   }
