@@ -40,14 +40,19 @@ class VolunteerRequest extends React.Component {
                         <h1>{rtl ? "התנדבות במידברן" : "Volunteering"}</h1>
                         <FormLanguagePicker value={language} onChange={this.handleOnChangeLanguage}/>
                     </header>
-
+                    
+                    {rtl ?
                     <p>
-                        {rtl ?
-                            "התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה."
-                            :
-                            "Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city."
-                        }
+                        התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה.<br/>
+                        התנדבות במחלקות אינה שוללת לקיחת חלק במחנה נושא או מיצב אומנות.
                     </p>
+                        :
+                    <p>
+                        Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city.<br/>
+                        Volunteering in a department does not exclude participation in a theme camp or an art installation.
+                    </p>
+                    }
+                    
 
                     {/* <div><br/>* Join requests are coming soon</div> */}
                     <div className="requests-list">
