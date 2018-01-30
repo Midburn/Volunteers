@@ -130,15 +130,18 @@ export default class VolunteerListTab extends Component {
             }
             return true;
         };
-        const compareDates = (a, b) => {
-            let dateA = a ? new Date(a).getTime() : 0;
-            let dateB = b ? new Date(b).getTime() : 0;
+        const compareVolunteers = (a, b) => {
+            if (a.permission === 'manager' && b.permission !== 'manager') return -1;
+            else if (a.permission !== 'manager' && b.permission === 'manager') return 1;
+
+            let dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            let dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
             return dateB - dateA
-        }
+        };
 
 
-        const visibleVolunteers = this.state.volunteers.filter(volunteer => isVisible(volunteer, false)).sort((a, b) => compareDates(a.createdAt, b.createdAt));
-        const visibleRequests = this.state.requests.filter(volunteer => isVisible(volunteer, true)).sort((a, b) => compareDates(a.createdAt, b.createdAt));
+        const visibleVolunteers = this.state.volunteers.filter(volunteer => isVisible(volunteer, false)).sort((a, b) => compareVolunteers(a, b));
+        const visibleRequests = this.state.requests.filter(volunteer => isVisible(volunteer, true)).sort((a, b) => compareVolunteers(a, b));
         this.setState({
             ...this.state,
             visibleVolunteers,
@@ -431,7 +434,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={!volunteer.validProfile ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')}
+                                        className={`${!volunteer.validProfile ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
                                         onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
