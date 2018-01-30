@@ -33,7 +33,7 @@ module.exports = {
         }
 
         for (var i=0; i<generalForm.form.length; i++) {
-            if (generalForm.form[i].question === 'שם משפחה' || generalForm.form[i].question === 'Last name') {
+            if (generalForm.form[i].question === 'שם משפחה' || generalForm.form[i].question === 'Last Name') {
                 return generalForm.form[i].answer;
             }
         }
