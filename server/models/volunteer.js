@@ -12,7 +12,14 @@ const volunteersSchema = new Schema({
     contactEmail: String,
     contactPhone: String,
     deleted: Boolean,
-    tags: [String]
+    tags: [String],
+    sparkInfo: {
+        firstName: String,
+        lastName: String,
+        hasTicket: Boolean,
+        phone: String,
+        lastUpdate: Date
+    }
 }, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const Volunteer = mongoose.model('Volunteer', volunteersSchema);

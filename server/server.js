@@ -1,3 +1,5 @@
+const sparkInfoMigration = require("./schedule/sparkInfo");
+const schedule = require("node-schedule");
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -153,6 +155,11 @@ if (devMode) {
 /////////////////////////////
 mongoose.connect(process.env.DB_URL);
 mongoose.Promise = Promise;
+
+/////////////////////////////
+// Schedule
+/////////////////////////////
+schedule.scheduleJob("0 0 0 * * *", sparkInfoMigration.migrateSparkInfo);
 
 const server = app.listen(process.env.PORT, function () {
     const host = server.address().address;

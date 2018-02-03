@@ -434,7 +434,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={`${!volunteer.validProfile ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
+                                        className={`${!volunteer.sparkInfo ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
                                         onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
@@ -444,10 +444,10 @@ export default class VolunteerListTab extends Component {
                                         }
                                         <td className="ellipsis-text flex3">{volunteer.userId}</td>
                                         <td className="ellipsis-text flex2">
-                                            {volunteer.firstName ? volunteer.firstName : 'No Data'}
+                                            {(volunteer.sparkInfo && volunteer.sparkInfo.firstName) ? volunteer.sparkInfo.firstName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex2">
-                                            {volunteer.lastName ? volunteer.lastName : 'No Data'}
+                                            {(volunteer.sparkInfo && volunteer.sparkInfo.lastName) ? volunteer.sparkInfo.lastName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex3">
                                             {volunteer.contactEmail ?
