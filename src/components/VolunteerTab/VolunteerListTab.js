@@ -266,7 +266,7 @@ export default class VolunteerListTab extends Component {
         const data = this.state.visibleVolunteers.map(volunteer => {
             const volData = {
                 Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
-                "Midubrn Profile": volunteer.userId,
+                "Midburn Profile": volunteer.userId,
                 "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
                 "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
                 Email: volunteer.contactEmail ? volunteer.contactEmail : 'No Data',
@@ -311,19 +311,20 @@ export default class VolunteerListTab extends Component {
     downloadRequests = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-requests.csv`
-        const headers = ['Department', 'Midubrn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Added Date'];
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Added Date'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleRequests.map(request => {
             const reqData = {
                 Department: this.state.departments.find(d => d._id === request.departmentId).basicInfo.nameEn,
-                "Midubrn Profile": request.userId,
+                "Midburn Profile": request.userId,
                 "First Name": request.firstName ? request.firstName : 'No Data',
                 "Last Name": request.lastName ? request.lastName : 'No Data',
                 Email: request.contactEmail ? request.contactEmail : 'No Data',
                 Phone: request.contactPhone ? request.contactPhone : 'No Data',
-                "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A'
-            }
+                "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A',
+                Tags: request.tags.join(", ")
+            };
             if (request.generalForm && request.generalForm.form) {
                 request.generalForm.form.forEach(question => {
                     const que = question.question.replace(/\r?\n|\r/g, '');
@@ -341,6 +342,10 @@ export default class VolunteerListTab extends Component {
                         departmentQuestions.push(que);
                     }
                 })
+            }
+
+            for (const key in reqData) {
+                reqData[key] = reqData[key].toString().replace('"','\'\'');
             }
             return reqData;
         })
