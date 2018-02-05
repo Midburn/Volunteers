@@ -44,6 +44,12 @@ const enrichRequestDetailsFromGeneralForm = co.wrap(function* (requests) {
             const newForm = utils.isNewGeneralForm(form)
             request._doc.needToRefillGeneralForm = !newForm;
             request._doc.generalForm = form;
+            if (!request._doc.firstName) {
+                request._doc.firstName = utils.firstNameFromGeneralForm(form);
+            }
+            if (!request._doc.lastName) {
+                request._doc.lastName = utils.lastNameFromGeneralForm(form);
+            }
         }
     };
 

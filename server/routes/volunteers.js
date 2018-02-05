@@ -69,11 +69,18 @@ const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
             const newForm = utils.isNewGeneralForm(form)
             volunteer._doc.needToRefillGeneralForm = !newForm;
             volunteer._doc.generalForm = form;
+            if (!volunteer._doc.firstName) {
+                volunteer._doc.firstName = utils.firstNameFromGeneralForm(form);
+            }
+            if (!volunteer._doc.lastName) {
+                volunteer._doc.lastName = utils.lastNameFromGeneralForm(form);
+            }
         }
     };
 
     return volunteers;
 });
+
 
 const enrichVolunteerDetailsFromDepartmentForm = co.wrap(function* (volunteers) {
     const departmentsForms = yield volunteers.map(volunteer => DepartmentFormsAnswer.findOne({
