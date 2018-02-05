@@ -286,6 +286,11 @@ export default class VolunteerListTab extends Component {
                     }
                 })
             }
+
+            if (!this.state.filter.departmentId) {
+                // show department form data only for one department
+                return;
+            }
             if (volunteer.departmentForm && volunteer.departmentForm.form) {
                 volunteer.departmentForm.form.forEach(question => {
                     const que = question.question.replace(/\r?\n|\r/g, '');
@@ -333,6 +338,11 @@ export default class VolunteerListTab extends Component {
                         generalQuestions.push(que);
                     }
                 })
+            }
+
+            if (!this.state.filter.departmentId) {
+                // show department form data only for one department
+                return;
             }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
