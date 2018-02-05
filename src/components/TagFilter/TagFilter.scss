@@ -1,0 +1,22 @@
+div.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid #dddddd;
+  padding: 1rem;
+
+  & > label {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+    flex-shrink: 0;
+    font-weight: 200;
+
+    & > input {
+      margin-right: 0.2rem;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

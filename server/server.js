@@ -30,29 +30,26 @@ const SECRET = process.env.SECRET;
 // WEB middleware
 /////////////////////////////
 app.use(co.wrap(function* (req, res, next) {
-
-    if (req.path === '/login') {
+    if (req.path === '/api/v1/login') {
         return next();
     }
 
-    const token = req.cookies && req.cookies[JWT_KEY];
-
-    if (!token) {
-        return res.redirect(SPARK_HOST);
-    }
-
     try {
+        const token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
         const userDetails = jwt.verify(token, SECRET);
         req.token = token;
         req.userDetails = userDetails;
         req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
-
         next();
     }
     catch (err) {
-        console.log(err);
-        res.clearCookie(JWT_KEY);
-        return res.redirect(SPARK_HOST);
+        if (req.path.startsWith('/api/v1/') && !req.path.startsWith('/api/v1/public/') ) {
+            console.log(err);
+            res.clearCookie(JWT_KEY);
+            return res.redirect(SPARK_HOST);
+        } else {
+            next();
+        }
     }
 }));
 
@@ -65,8 +62,7 @@ app.use((err, req, res, next) => {
 
 /////////////////////////////
 // APIS
-/////////////////////////////\
-app.use('/api/v1', require('./routes/spark'));
+/////////////////////////////
 app.use('/api/v1', require('./routes/shifts'));
 app.use('/api/v1', require('./routes/departments'));
 app.use('/api/v1', require('./routes/volunteers'));
@@ -74,7 +70,7 @@ app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/api/v1', require('./routes/permissions'));
 app.use('/api/v1', require('./routes/departmentForms'));
 
-app.use('/login', (req, res) => {
+app.use('/api/v1/login', (req, res) => {
     let token = req.query.token;
     if (!token && devMode && process.env.LOCAL_SPARK === 'true') {
         token = jwt.sign({
@@ -93,8 +89,8 @@ app.use('/login', (req, res) => {
 
     try {
         jwt.verify(token, SECRET);
-        res.cookie(JWT_KEY, token);
-        res.redirect('/');
+        res.cookie(JWT_KEY, {token});
+        return servePage(req, res);
     }
     catch (err) {
         console.log(err);
@@ -105,16 +101,16 @@ app.use('/login', (req, res) => {
 /////////////////////////////
 // WEB
 /////////////////////////////
-app.use('/static', express.static(path.join(__dirname, '../public/')));
+app.use('/public', express.static(path.join(__dirname, '../public/')));
 
 function servePage(req, res) {
-    res.sendFile(path.join(__dirname, '../src/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 }
 
 app.use(express.static('public'));
 
 app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/static/')) {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/public/')) {
         next();
     } else {
         return servePage(req, res);
@@ -125,16 +121,27 @@ app.get('*', (req, res, next) => {
 // Dev Mode (webpack-dev-server, spark mock
 ////////////////////////////////////////////
 if (devMode) {
-    webpackConfig.entry.unshift('react-hot-loader/patch', 'webpack-dev-server/client?http://localhost:9090', 'webpack/hot/dev-server');
     const compiler = webpack(webpackConfig);
     const server = new webpackDevServer(compiler, {
-        contentBase: path.resolve(__dirname, '../public'),
-        publicPath: '/',
         hot: true,
-        stats: true
+        contentBase: path.join(__dirname, "..", "public"),
+        compress: true,
+        publicPath: "/",
+        stats: false,
+        proxy: {
+            "/api": "http://localhost:8080",
+            "/public": {
+                target: "http://localhost:9090",
+                pathRewrite: {"^/public": ""}
+            },
+            "/login": "http://localhost:8080/api/v1"
+        },
+        historyApiFallback: {
+            rewrites: [
+                {from: /^\/$/, to: '/index.html'}]
+        }
     });
     server.listen(9090);
-    app.get('/static/bundle.js', (req, res) => res.redirect('http://localhost:9090/bundle.js'));
 
     if (process.env.LOCAL_SPARK === 'true') {
         require('./spark/sparkMock')

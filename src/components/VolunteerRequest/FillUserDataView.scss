@@ -1,0 +1,29 @@
+.fill-userdata-view {
+
+    .rtl {
+        direction: rtl;
+
+        .en-input {
+            direction: ltr;
+        }
+    }
+
+    .form-group {
+        padding: 10px;
+    }
+
+
+    .button-container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        .send {
+            width: 150px;
+        }
+
+        .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+            opacity: 0.3;
+        }
+    }
+}

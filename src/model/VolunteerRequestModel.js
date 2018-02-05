@@ -1,12 +1,28 @@
 import {extendObservable} from 'mobx';
 import axios from 'axios';
 
+const eventId = "1";
+const createJoinProcess = () => ({
+        departmentId: '',
+        loading: false,
+        error: false,
+        userData: {
+            contactEmail: '',
+            contactPhoneNumber: '',
+            profileEmail: ''
+        },
+        generalQuestions: [],
+        filledGeneral: false,
+        departmentQuestions: [],
+        filledDepartment: false,
+        requestSent: false,
+        language: 'he'
+    });
+
 function VolunteerRequestModel() {
     extendObservable(this, {
-        requests: [],
         departments: [],
-        
-        joinProcess: null
+        joinProcess: createJoinProcess()
     });
 
     function logNetworkError(err) {
@@ -29,70 +45,153 @@ function VolunteerRequestModel() {
         }
     }
 
-    this.fetchRequests = tryNetworkRequest(async () => {
-        const requests = (await axios.get('/api/v1/volunteer-requests')).data;
-
-        const requestStatus = {};
-
-        for (let index = 0; index < requests.length; index++) {
-            requestStatus[requests.data[index]["departmentId"]] = requests.data[index]["approved"]
-        }
-
-        this.requests = requestStatus;
-    });
-
     this.fetchDepartments = tryNetworkRequest(async () => {
-        this.departments = (await axios.get('/api/v1/departments')).data;
+        this.departments = (await axios.get('/api/v1/public/departments')).data;
         this.departments = this.departments.filter(department => department.status.visibleToJoin)
     });
 
     this.requestState = departmentId => {
-      if (departmentId in this.requests) {
-        return this.requests[departmentId]
-      }
-
-      const department = this.departments.find(d => d._id === departmentId)
-      return department.status.availableToJoin ? 'Opened' : 'Closed'
+        const department = this.departments.find(d => d._id === departmentId)
+        return department.status.availableToJoin ? 'Opened' : 'Closed'
     }
+  
+    this.startJoinProcess = departmentId => {
+        const joinProcess = createJoinProcess();
+        joinProcess.departmentId = departmentId;
+        this.joinProcess = joinProcess;
+    }
+    
+    this.checkUserData = userData => {
+        const departmentId = this.joinProcess.departmentId;
+        const newUserData = userData;
+        if (!newUserData.profileEmail) {
+            newUserData.profileEmail = newUserData.contactEmail
+        }
+        const headers = {userdata: JSON.stringify(newUserData)};
+        Promise.all([
+            axios.get(`/api/v1/public/form`).then(req => req.data),
+            axios.get(`/api/v1/public/form/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/forms`).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/forms/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/events/${eventId}/hasRequest`, {headers}).then(req => req.data)
+        ]).then(([generalQuestions, generalAnswer, departmentQuestions, departmentAnswer, requestAnswer]) => {
+            if (this.joinProcess.departmentId !== departmentId) { 
+                return; 
+            }
+            this.joinProcess = {
+                ...this.joinProcess,
+                userData: newUserData,
+                generalQuestions: generalQuestions,
+                filledGeneral: generalAnswer && generalAnswer.hasAnswer,
+                departmentQuestions : departmentQuestions,
+                filledDepartment: departmentAnswer && departmentAnswer.hasAnswer,
+                requestSent: requestAnswer && requestAnswer.hasRequest,
+                loading: false
+            }
 
-    this.handleCancelRequest = departmentId => {
-        const requests = {...this.requests};
-        delete requests[departmentId];
-        this.requests = requests;
-        const eventId = "1";
-
-        axios.delete(`/api/v1/departments/${departmentId}/events/${eventId}/requests`, {data: {credentials: 'include'}});
-    };
-
-    this.handleSendRequest = departmentId => {
-        this.requests = {...this.requests, [departmentId]: false};
-
-        const eventId = "1";
-        axios.post(`/api/v1/departments/${departmentId}/events/${eventId}/join`, {
-            answer: [],
-            credentials: 'include'
+            if (this.joinProcess.filledGeneral && this.joinProcess.filledDepartment && !this.joinProcess.requestSent) {
+                this.sendRequest();
+            }
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
+            }
         });
     };
 
-    this.startJoinProcess = departmentId => {
-        // TODO add general form
-
-        return axios.get(`/api/v1/departments/${departmentId}/form`).then(res => {
-            const questions = res.data;
-            this.joinProcess = {
-                departmentId,
-                departmentForm: questions
+    this.sendGeneralForm = answers => {
+        this.joinProcess = {
+            ...this.joinProcess,
+            loading: false,
+        }
+        const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
+        const departmentId = this.joinProcess.departmentId;
+        axios.post(`/api/v1/public/form/events/${eventId}/answer`, answers, {headers}).then(res => {
+            if (this.joinProcess.departmentId !== departmentId) { 
+                return; 
             }
-        })
+            this.joinProcess = {
+                ...this.joinProcess,
+                filledGeneral: true,
+                loading: false,
+            }
+            if (this.joinProcess.filledGeneral && this.joinProcess.filledDepartment && !this.joinProcess.requestSent) {
+                this.sendRequest();
+            }
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
+            }
+        });
     }
 
+    this.sendDepartmentForm = answers => {
+        this.joinProcess = {
+            ...this.joinProcess,
+            loading: false,
+        }
+        const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
+        const departmentId = this.joinProcess.departmentId;
+        axios.post(`/api/v1/public/departments/${departmentId}/forms/events/${eventId}/answer`, answers, {headers}).then(res => {
+            if (this.joinProcess.departmentId !== departmentId) { 
+                return; 
+            }
+            this.joinProcess = {
+                ...this.joinProcess,
+                filledDepartment: true,
+                loading: false,
+            };
+            if (this.joinProcess.filledGeneral && this.joinProcess.filledDepartment && !this.joinProcess.requestSent) {
+                this.sendRequest();
+            }
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
+            }
+        });
+    }
+
+    this.sendRequest = () => {
+        this.joinProcess = {
+            ...this.joinProcess,
+            loading: false,
+        }
+        const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
+        const departmentId = this.joinProcess.departmentId;
+        axios.post(`/api/v1/public/departments/${departmentId}/events/${eventId}/join`,{}, {headers}).then(res => {
+            if (this.joinProcess.departmentId !== departmentId) { 
+                return; 
+            }
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                requestSent: true
+            }
+        }).catch(err => {
+            this.joinProcess = {
+                ...this.joinProcess,
+                loading: false,
+                error: true
+            }
+        });
+    };
+
     this.stopJoinProcess = _ => {
-        this.joinProcess = null;
+        this.joinProcess.departmentId = '';
+    }
+
+    this.toggleLanguage = _ => {
+        this.joinProcess.language = this.joinProcess.language === 'he' ? 'en' : 'he'; 
     }
 
     this.init = () => {
         this.fetchDepartments();
-        this.fetchRequests();
     };
 
     this.init()

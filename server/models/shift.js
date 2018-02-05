@@ -11,7 +11,7 @@ const shiftSchema = new Schema({
     endDate: Date,
     volunteers: {},
     reported: [String]
-}, {_id: false});
+}, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const Shift = mongoose.model('Shift', shiftSchema);
 

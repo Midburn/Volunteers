@@ -1,0 +1,11 @@
+.form-viewer {
+  .rtl {
+    direction: rtl;
+
+    div.form-group {
+      b, span {
+        margin-right: 20px;
+      }
+    }
+  }
+}

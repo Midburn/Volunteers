@@ -1,7 +1,13 @@
-.edit-volunteer-options {
+.add-section {
   display: flex;
-  margin-left: -5px;
-  margin-right: -5px;
+  flex-direction: row;
+}
+
+.edit-volunteer-save {
+    height: 43px;
+    width: 100px;
+    margin-top: 25px;
+    margin-left: 15px;
 }
 
 .edit-volunteer-form-group {
@@ -12,12 +18,6 @@
 
 .edit-volunteer-title {
   display: block;
-}
-
-.edit-volunteer-save {
-  float: right;
-  margin-top: -70px;
-  margin-right: 35PX;
 }
 
 .edit-volunteer-delete {

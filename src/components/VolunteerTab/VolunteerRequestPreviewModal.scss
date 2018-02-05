@@ -1,0 +1,22 @@
+.profile-alert {
+    margin: 20px 0px;
+}
+
+.status {
+    .add-section {
+        display: flex;
+        flex-direction: row;
+
+        .add-button {
+            height: 43px;
+            margin-top: 25px;
+            margin-left: 15px;
+        }
+        
+        .add-error {
+            text-align: center;
+            padding-top: 7px;
+            margin-left: 15px;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+.form-answers-view {
+
+    .rtl {
+        direction: rtl;
+
+        .radio-inline, .checkbox-inline {
+            padding-right: 20px;
+        }
+
+        .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+            margin-right: -20px;
+        }
+
+        .radio, .checkbox {
+            padding-right: 20px;
+        }
+    }
+
+    .form-group {
+        padding: 10px;
+    }
+
+    .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+        background-color: white;
+    }
+}

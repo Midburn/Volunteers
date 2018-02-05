@@ -1,0 +1,93 @@
+.requests-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .card {
+    width: 90%;
+  }
+
+  & > .rtl {
+    direction: rtl;
+    font-family: 'Open Sans Hebrew', Arial, sans-serif;;
+
+    .requests-list {
+      flex-direction: row-reverse;
+
+      .department {
+        button, .closed {
+          float: left;
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .requests-list {
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #dddddd;
+
+    & > .department {
+      width: 33.3%;
+      height: 50rem;
+      padding: 1rem;
+      flex-shrink: 0;
+      overflow: hidden;
+
+      background-color: white;
+      border: 1px solid #dddddd;
+
+      .requests-department-top {
+        display: flex;
+        align-items: center;
+        height: 100px;
+
+        & > * {
+          flex-shrink: 0;
+        }
+
+        h2 {
+          margin: 0 1rem;
+          width: 35rem;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+
+        }
+      }
+
+      p {
+        height: calc(50rem - 100px - 10rem);
+        overflow: auto;
+      }
+
+      button, .closed {
+        float: right;
+        height: 5rem;
+      }
+    }
+  }
+
+  .requests-department-text {
+    margin-top: 15px;
+    white-space: pre-line;
+  }
+
+  .request-department-logo {
+    flex: 0 0 auto;
+    width: 60px;
+    height: 60px;
+    padding: 1px;
+    border: 1px solid #6e7379;
+    border-radius: 5px;
+  }
+}
