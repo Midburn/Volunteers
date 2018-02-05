@@ -191,6 +191,13 @@ export default class EditDepartment extends Component {
                             </Checkbox>
                             <HelpBlock>New volunteers can fill the join form. You should close it if you're not ready
                                 yet or already full.</HelpBlock>
+                            {this.state.department._id && !this.state.department.status.visibleToJoin &&
+                            <HelpBlock>Here's a <a href={`../volunteer-requests?departmentId=${this.state.department._id}`}
+                                   target="_blank">
+                                    secret link
+                                </a> to join your department
+                            </HelpBlock>}
+
                             {this.state.department._id && Permissions.isAdmin() &&
                             <Button className="edit-department-delete" bsStyle="danger"
                                     onClick={this.delete}>Delete</Button>}

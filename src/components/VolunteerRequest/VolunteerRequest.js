@@ -8,6 +8,7 @@ import './VolunteerRequest.scss';
 import './VolunteerRequestMobile.scss';
 import FormLanguagePicker from "../FormLanguagePicker/FormLanguagePicker";
 import classNames from "classnames";
+const queryString = require('query-string');
 
 const volunteerRequestModel = new VolunteerRequestModel();
 
@@ -33,6 +34,10 @@ class VolunteerRequest extends React.Component {
 
         const rtl = language === "he";
 
+        const queryParams = queryString.parse(this.props.location.search);
+
+        const departmentId = queryParams['departmentId'];
+
         return (
             <div className="requests-view">
                 <div className={classNames("card", "container", {rtl: language === "he"})}>
@@ -57,6 +62,7 @@ class VolunteerRequest extends React.Component {
                     {/* <div><br/>* Join requests are coming soon</div> */}
                     <div className="requests-list">
                         {departments
+                            .filter(department => !departmentId || department._id === departmentId)
                             .sort((a, b) => {
                                 if (a.status.availableToJoin && !b.status.availableToJoin) return -1;
                                 if (!a.status.availableToJoin && b.status.availableToJoin) return 1;
