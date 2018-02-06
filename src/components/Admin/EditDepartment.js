@@ -191,11 +191,13 @@ export default class EditDepartment extends Component {
                             </Checkbox>
                             <HelpBlock>New volunteers can fill the join form. You should close it if you're not ready
                                 yet or already full.</HelpBlock>
-                            {this.state.department._id && !this.state.department.status.visibleToJoin &&
-                            <HelpBlock>Here's a <a href={`../volunteer-requests?departmentId=${this.state.department._id}`}
+                            {this.state.department._id && (!this.state.department.status.visibleToJoin || !this.state.department.status.availableToJoin) &&
+                            <HelpBlock><br/>Here's a <a href={`../volunteer-requests?departmentId=${this.state.department._id}`}
                                    target="_blank">
                                     secret link
-                                </a> to join your department
+                                </a> to join your department.
+                                <br/>You can send this link to other volunteers in your department, and they will be able to send join requests even if the department is closed or hidden.
+                                <br/>Don't publish this link!!! . Use carefully :)
                             </HelpBlock>}
 
                             {this.state.department._id && Permissions.isAdmin() &&

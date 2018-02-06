@@ -18,6 +18,13 @@ class VolunteerRequest extends React.Component {
 
         this.state = {language: "he"};
 
+        // auto open department
+        const queryParams = queryString.parse(this.props.location.search);
+        const departmentId = queryParams['departmentId'];
+        if (departmentId) {
+            volunteerRequestModel.startJoinProcess(departmentId)
+        }
+
         this.handleOnChangeLanguage = this.handleOnChangeLanguage.bind(this);
     }
 
@@ -33,10 +40,6 @@ class VolunteerRequest extends React.Component {
         const {language} = this.state;
 
         const rtl = language === "he";
-
-        const queryParams = queryString.parse(this.props.location.search);
-
-        const departmentId = queryParams['departmentId'];
 
         return (
             <div className="requests-view">
@@ -62,7 +65,6 @@ class VolunteerRequest extends React.Component {
                     {/* <div><br/>* Join requests are coming soon</div> */}
                     <div className="requests-list">
                         {departments
-                            .filter(department => !departmentId || department._id === departmentId)
                             .sort((a, b) => {
                                 if (a.status.availableToJoin && !b.status.availableToJoin) return -1;
                                 if (!a.status.availableToJoin && b.status.availableToJoin) return 1;
