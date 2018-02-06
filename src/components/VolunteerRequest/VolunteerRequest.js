@@ -8,6 +8,7 @@ import './VolunteerRequest.scss';
 import './VolunteerRequestMobile.scss';
 import FormLanguagePicker from "../FormLanguagePicker/FormLanguagePicker";
 import classNames from "classnames";
+const queryString = require('query-string');
 
 const volunteerRequestModel = new VolunteerRequestModel();
 
@@ -16,6 +17,13 @@ class VolunteerRequest extends React.Component {
         super(props);
 
         this.state = {language: "he"};
+
+        // auto open department
+        const queryParams = queryString.parse(this.props.location.search);
+        const departmentId = queryParams['departmentId'];
+        if (departmentId) {
+            volunteerRequestModel.startJoinProcess(departmentId)
+        }
 
         this.handleOnChangeLanguage = this.handleOnChangeLanguage.bind(this);
     }
