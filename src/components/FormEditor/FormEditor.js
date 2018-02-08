@@ -46,6 +46,7 @@ class FormEditor extends react.Component {
         questions[index].question[language] = value;
 
         this.setState({questions: questions, hasChanges: true});
+        this.props.getQuestionsState(questions[index])
     }
 
     handleOnQuestionTypeChange(index, value) {
@@ -53,6 +54,7 @@ class FormEditor extends react.Component {
         questions[index].questionType = value;
 
         this.setState({questions: questions, hasChanges: true});
+        this.props.getQuestionsState(questions[index]);
     }
 
     handleOnOptionsChange(index, options) {
@@ -60,6 +62,7 @@ class FormEditor extends react.Component {
         questions[index]["options"]  = options;
 
         this.setState({questions: questions, hasChanges: true});
+        this.props.getQuestionsState(questions[index]);
     }
 
     handleOnQuestionOptionalChange(index, value) {
@@ -67,12 +70,14 @@ class FormEditor extends react.Component {
         questions[index].optional = value;
 
         this.setState({questions: questions, hasChanges: true});
+        this.props.getQuestionsState(questions[index]);
     }
 
     deleteQuestion(index) {
         const questions = [...this.state.questions];
         questions.splice(index, 1);
         this.setState({hasChanges: true, questions});
+        this.props.getQuestionsState(null);
     }
 
     render() {

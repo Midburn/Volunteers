@@ -8,9 +8,19 @@ class FormManager extends react.Component {
     constructor(props) {
         super(props);
 
-        this.state = {showPreview: !!props.showPreview};
-
+        this.state = {
+                        showPreview: !!props.showPreview,
+                        questionState: {}
+                    };
+        
         this.togglePreviewMode = this.togglePreviewMode.bind(this);
+    }
+    shouldComponentUpdate(nextProps, nextState){
+        return nextState.showPreview !== this.state.showPreview;
+    }
+    emitQuestionState(questionState){
+        this.setState({questionState: questionState});
+        console.log("FormManager got the question state", this.state);
     }
 
     togglePreviewMode(showPreview) {
@@ -34,7 +44,7 @@ class FormManager extends react.Component {
 
             {showPreview ?
                 <FormViewer questions={questions}/> :
-                <FormEditor questions={questions}
+                <FormEditor getQuestionsState={(data) => this.emitQuestionState(data)} questions={questions}
                             onSave={onSave}
                 />}
         </div>;
