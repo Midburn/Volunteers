@@ -289,7 +289,7 @@ export default class VolunteerListTab extends Component {
 
             if (!this.state.filter.departmentId) {
                 // show department form data only for one department
-                return;
+                return volData;
             }
             if (volunteer.departmentForm && volunteer.departmentForm.form) {
                 volunteer.departmentForm.form.forEach(question => {
@@ -342,7 +342,7 @@ export default class VolunteerListTab extends Component {
 
             if (!this.state.filter.departmentId) {
                 // show department form data only for one department
-                return;
+                return reqData;
             }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
