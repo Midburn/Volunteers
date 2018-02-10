@@ -120,7 +120,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     const departmentVolunteers = yield Volunteer.find({departmentId: departmentId, deleted: false});
     if (departmentVolunteers) {
         yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
-        yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
+        // yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
         yield enrichVolunteerDetailsFromGeneralForm(departmentVolunteers);
         yield enrichVolunteerDetailsFromDepartmentForm(departmentVolunteers);
     }
@@ -139,9 +139,10 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
     const department = yield Department.findOne({_id: departmentId, deleted: false});
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
+    const sparkInfo = yield sparkApi.getVolunteerProfile(userId, 1000);
+
     // invalid profile
-    const volunteerDetailsByEmail = yield sparkApi.getProfileByMail([userId]);
-    if (!(userId in volunteerDetailsByEmail)) {
+    if (!sparkInfo) {
         return res.status(404).json({error: 'Invalid Midburn Profile'})
     }
 
@@ -159,6 +160,7 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
         eventId,
         deleted: false,
     });
+
     if (existingVolunteer) {
         return res.status(404).json({error: 'Already volunteering'})
     }
@@ -174,9 +176,18 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
         contactPhone: req.body.contactPhone,        
         permission: req.body.permission,
         yearly: req.body.yearly,
-        deleted: false
+        deleted: false,
+        sparkInfo: {
+            firstName: sparkInfo.firstName,
+            lastName: sparkInfo.lastName,
+            phone: sparkInfo.phone,
+            hasTicket: sparkInfo.hasTicket,
+            lastUpdate: Date.now()
+        }
     });
+
     yield volunteer.save();
+
     return res.json(volunteer);
 }));
 
@@ -228,7 +239,8 @@ router.post('/departments/:departmentId/volunteers/', co.wrap(function* (req, re
             userId: email,
             permission: req.body.permission,
             yearly: req.body.yearly,
-            deleted: false
+            deleted: false,
+            sparkInfo: null
         });
         newVolunteers.push(volunteer);
         responses.push({email: email, status: 'OK'});
