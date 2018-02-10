@@ -110,7 +110,7 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
         departmentId: departmentId,
         eventId: eventId
     });
-    volunteerRequests = yield enrichRequestDetailsFromSpark(volunteerRequests)
+    // volunteerRequests = yield enrichRequestDetailsFromSpark(volunteerRequests)
     volunteerRequests = yield enrichRequestDetailsFromGeneralForm(volunteerRequests)
     volunteerRequests = yield enrichRequestDetailsFromDepartmentForm(volunteerRequests)
     return res.json(volunteerRequests);
