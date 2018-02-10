@@ -80,7 +80,7 @@ const updateValidVolunteerSparkInfo = co.wrap(function* () {
             yield Volunteer
                 .find({deleted: false, "sparkInfo.validProfile": true})
                 .sort({"sparkInfo.lastUpdate": 1})
-                .limit(20);
+                .limit(50);
         const updatedVolunteers = yield updateVolunteersSparkInfo(volunteers);
 
         console.log(`${Date.now()}: Spark volunteers update was finished - ${updatedVolunteers}/${volunteers.length} updated successfully`);
@@ -129,7 +129,7 @@ const updateValidVolunteerRequestSparkInfo = co.wrap(function* () {
             yield VolunteerRequest
                 .find({"sparkInfo.validProfile": true})
                 .sort({"sparkInfo.lastUpdate": 1})
-                .limit(20);
+                .limit(50);
         const updatedVolunteers = yield updateVolunteersSparkInfo(volunteers);
 
         console.log(`${Date.now()}: Spark volunteers requests update was finished - ${updatedVolunteers}/${volunteers.length} updated successfully`);
