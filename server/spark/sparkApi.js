@@ -21,33 +21,43 @@ function getProfileByMail(emails, timeout) {
             }
 
             if (!response.data) {
-                return {};
+                return null;
             }
+
             response.data.forEach(profile => {
-                if (!('user_data' in profile)) return;
-                profileByMail[profile['email']] = profile['user_data'];
+                let sparkInfo = null;
+
+                if ("user_data" in profile) {
+                    sparkInfo = profile["user_data"]
+                }
+
+                profileByMail[profile["email"]] = sparkInfo;
             });
             return profileByMail;
         }).catch(error => {
             console.log(error);
-            return {};
+            return null;
         })
 }
 
+
 const getVolunteerProfile = co.wrap(function* (email, timeout) {
     try {
-        const response = yield axios.post(
-            `${SPARK_HOST}/volunteers/profiles`,
-            {emails: [email]},
-            {headers: getAuthHeader(), timeout: timeout});
+        const response =
+            yield axios
+                .post(`${SPARK_HOST}/volunteers/profiles`,
+                    {emails: [email]},
+                    {headers: getAuthHeader(), timeout: timeout});
 
+        const profile = response.data[0];
 
-        if (!response.data) return null;
-
-        return response.data[0]['user_data'];
+        if ("user_data" in profile) {
+            return profile["user_data"];
+        } else {
+            return null;
+        }
     } catch (error) {
-        console.log(error);
-        return null;
+        return undefined;
     }
 });
 

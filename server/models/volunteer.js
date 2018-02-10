@@ -14,6 +14,7 @@ const volunteersSchema = new Schema({
     deleted: Boolean,
     tags: [String],
     sparkInfo: {
+        validProfile: Boolean,
         firstName: String,
         lastName: String,
         hasTicket: Boolean,

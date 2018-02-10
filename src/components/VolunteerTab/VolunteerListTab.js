@@ -434,7 +434,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={`${!volunteer.sparkInfo ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
+                                        className={`${(volunteer.sparkInfo && volunteer.sparkInfo.validProfile === false) ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
                                         onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
@@ -518,7 +518,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleRequests.map(volunteerRequest =>
                                     <tr key={volunteerRequest._id}
-                                        className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : (volunteerRequest.needToFillGeneralForm || volunteerRequest.needToRefillGeneralForm ? 'missing-sign' : '')}`}
+                                        className={`volunteer-list-group-item ${(volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.validProfile === false)  ? 'invalid' : (volunteerRequest.needToFillGeneralForm || volunteerRequest.needToRefillGeneralForm ? 'missing-sign' : '')}`}
                                         onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <td className="ellipsis-text flex2">
@@ -526,10 +526,10 @@ export default class VolunteerListTab extends Component {
                                         </td>
                                         }
                                         <td className="ellipsis-text flex2">
-                                            {volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}
+                                            {volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.firstName ? volunteerRequest.sparkInfo.firstName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex2">
-                                            {volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}
+                                            {volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.lastName ? volunteerRequest.sparkInfo.lastName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex3">{volunteerRequest.userId}</td>
                                         <td className="ellipsis-text flex2">{volunteerRequest.contactPhone}</td>

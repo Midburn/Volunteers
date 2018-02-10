@@ -45,7 +45,7 @@ app.use(co.wrap(function* (req, res, next) {
         next();
     }
     catch (err) {
-        if (req.path.startsWith('/api/v1/') && !req.path.startsWith('/api/v1/public/') ) {
+        if (req.path.startsWith('/api/v1/') && !req.path.startsWith('/api/v1/public/')) {
             console.log(err);
             res.clearCookie(JWT_KEY);
             return res.redirect(SPARK_HOST);
@@ -159,7 +159,12 @@ mongoose.Promise = Promise;
 /////////////////////////////
 // Schedule
 /////////////////////////////
-schedule.scheduleJob("0 0 0 * * *", sparkInfoMigration.migrateSparkInfo);
+schedule.scheduleJob("*/10 * * * *", sparkInfoMigration.migrateVolunteerRequestSparkInfo);
+schedule.scheduleJob("*/10 * * * *", sparkInfoMigration.migrateVolunteerSparkInfo);
+schedule.scheduleJob("*/15 * * * *", sparkInfoMigration.updateValidVolunteerRequestSparkInfo);
+schedule.scheduleJob("*/15 * * * *", sparkInfoMigration.updateValidVolunteerSparkInfo);
+schedule.scheduleJob("* */3 * * *", sparkInfoMigration.updateInvalidVolunteerRequestSparkInfo);
+schedule.scheduleJob("* */3 * * *", sparkInfoMigration.updateInvalidVolunteerSparkInfo);
 
 const server = app.listen(process.env.PORT, function () {
     const host = server.address().address;
