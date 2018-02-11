@@ -198,7 +198,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
                 </div>
               </div>
 
-              <Button bsStyle="danger" disabled={!this.state.removeEnabled} onClick={this.remove}>Reomve</Button>
+              <Button bsStyle="danger" disabled={!this.state.removeEnabled} onClick={this.remove}>Remove</Button>
             </Tab>
             
             <Tab eventKey={2} title="Forms">

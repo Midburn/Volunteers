@@ -191,10 +191,11 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
         yearly: req.body.yearly,
         deleted: false,
         sparkInfo: {
-            firstName: sparkInfo.firstName,
-            lastName: sparkInfo.lastName,
-            phone: sparkInfo.phone,
-            hasTicket: sparkInfo.hasTicket,
+            validProfile: true,
+            firstName: sparkInfo['first_name'],
+            lastName: sparkInfo['last_name'],
+            hasTicket: sparkInfo['has_ticket'],
+            phone: sparkInfo['phone'],
             lastUpdate: Date.now()
         }
     });
