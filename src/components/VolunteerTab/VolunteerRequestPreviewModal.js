@@ -52,7 +52,8 @@ export default class VolunteerRequestPreviewModal extends React.Component {
   }
 
   errorMessage = _ => {
-    if (!this.state.request.validProfile) {
+    if (!this.state.request) return null;
+    if (!this.state.request.sparkInfo || !this.state.request.sparkInfo.validProfile) {
       return (
         <Alert className="profile-alert" bsStyle="danger">
           <big><strong>{this.state.request.userId}</strong> isn't a valid Midburn Profile.</big><br/>

@@ -14,12 +14,6 @@ function getProfileByMail(emails, timeout) {
     const profileByMail = {};
     return axios.post(`${SPARK_HOST}/volunteers/profiles`, {emails}, {headers: getAuthHeader(), timeout: timeout})
         .then(response => {
-            try {
-                console.log(`Spark res: ${JSON.stringify(response.data)}`);
-            } catch (error) {
-                console.log(`Spark res: ${response.data}`);
-            }
-
             if (!response.data) {
                 return null;
             }
