@@ -44,11 +44,14 @@ const enrichRequestDetailsFromGeneralForm = co.wrap(function* (requests) {
             const newForm = utils.isNewGeneralForm(form)
             request._doc.needToRefillGeneralForm = !newForm;
             request._doc.generalForm = form;
-            if (!request._doc.firstName) {
-                request._doc.firstName = utils.firstNameFromGeneralForm(form);
+            if (!request._doc.sparkInfo) {
+                request._doc.sparkInfo = {};
             }
-            if (!request._doc.lastName) {
-                request._doc.lastName = utils.lastNameFromGeneralForm(form);
+            if (!request._doc.sparkInfo.firstName) {
+                request._doc.sparkInfo.firstName = utils.firstNameFromGeneralForm(form);
+            }
+            if (!request._doc.sparkInfo.lastName) {
+                request._doc.sparkInfo.lastName = utils.lastNameFromGeneralForm(form);
             }
         }
     };
