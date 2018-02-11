@@ -63,7 +63,7 @@ export default class VolunteerEditModal extends React.Component {
 
   errorMessage = _ => {
     if (!this.props.volunteer) return null;
-    if (!this.props.volunteer.sparkInfo.validProfile) {
+    if (!this.props.volunteer.sparkInfo || !this.props.volunteer.sparkInfo.validProfile) {
       return (
         <Alert className="profile-alert" bsStyle="danger">
           <big><strong>{this.props.volunteer.userId}</strong> isn't a valid Midburn Profile.</big><br/>
