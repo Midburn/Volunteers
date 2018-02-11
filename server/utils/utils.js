@@ -14,7 +14,6 @@ module.exports = {
 
 
     firstNameFromGeneralForm: generalForm => {
-        console.log(generalForm);
         if (!generalForm || !generalForm.form) {
             return null;
         }

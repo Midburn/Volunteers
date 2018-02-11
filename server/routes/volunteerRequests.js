@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Volunteer = require("../models/volunteer");
 const VolunteerRequest = require("../models/volunteerRequest");
+const Department = require('../models/deparment');
 const DepartmentFormsAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
 const _ = require('lodash');
@@ -108,14 +109,26 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
     if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
     }
+    const department = yield Department.findOne({_id: departmentId, deleted: false});
+    if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+    console.time(`Get requests - ${department.basicInfo.nameEn} - full`);
 
+    console.time(`Get requests - ${department.basicInfo.nameEn} - find`);
     let volunteerRequests = yield VolunteerRequest.find({
         departmentId: departmentId,
         eventId: eventId
     });
-    // volunteerRequests = yield enrichRequestDetailsFromSpark(volunteerRequests)
+    console.timeEnd(`Get requests - ${department.basicInfo.nameEn} - find`);
+
+    console.time(`Get requests - ${department.basicInfo.nameEn} - enrich general form`);
     volunteerRequests = yield enrichRequestDetailsFromGeneralForm(volunteerRequests)
+    console.timeEnd(`Get requests - ${department.basicInfo.nameEn} - enrich general form`);
+
+    console.time(`Get requests - ${department.basicInfo.nameEn} - enrich department form`);
     volunteerRequests = yield enrichRequestDetailsFromDepartmentForm(volunteerRequests)
+    console.timeEnd(`Get requests - ${department.basicInfo.nameEn} - enrich department form`);
+
+    console.timeEnd(`Get requests - ${department.basicInfo.nameEn} - full`);
     return res.json(volunteerRequests);
 }));
 

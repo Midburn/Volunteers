@@ -112,22 +112,32 @@ const userExists = co.wrap(function* (email) {
 // Get all volunteers for department
 router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res) {
   const departmentId = req.params.departmentId;
-
     if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
     }
 
     const department = yield Department.findOne({_id: departmentId, deleted: false});
-  if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+    if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
+    console.time(`Get volunteers - ${department.basicInfo.nameEn} - full`);
 
+    console.time(`Get volunteers - ${department.basicInfo.nameEn} - find`);
     const departmentVolunteers = yield Volunteer.find({departmentId: departmentId, deleted: false});
+    console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - find`);
     if (departmentVolunteers) {
+        console.time(`Get volunteers - ${department.basicInfo.nameEn} - enrich other departments`);
         yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
-        // yield enrichVolunteerDetailsFromSpark(departmentVolunteers);
+        console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - enrich other departments`);
+
+        console.time(`Get volunteers - ${department.basicInfo.nameEn} - enrich general form`);
         yield enrichVolunteerDetailsFromGeneralForm(departmentVolunteers);
+        console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - enrich general form`);
+
+        console.time(`Get volunteers - ${department.basicInfo.nameEn} - enrich department form`);
         yield enrichVolunteerDetailsFromDepartmentForm(departmentVolunteers);
+        console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - enrich department form`);
     }
 
+    console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - full`);
     return res.json(departmentVolunteers);
 }));
 
