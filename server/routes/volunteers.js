@@ -152,7 +152,7 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
     const department = yield Department.findOne({_id: departmentId, deleted: false});
     if (_.isEmpty(department)) return res.status(404).json({error: `Department ${departmentId} does not exist`});
 
-    const sparkInfo = yield sparkApi.getVolunteerProfile(userId, 1000);
+    const sparkInfo = yield sparkApi.getVolunteerProfile(userId, 15 * 1000);
 
     // invalid profile
     if (!sparkInfo) {
