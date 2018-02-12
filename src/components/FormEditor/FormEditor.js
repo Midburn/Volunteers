@@ -9,7 +9,8 @@ class FormEditor extends react.Component {
 
         this.state = {
             questions: [...props.questions],
-            hasChanges: false
+            hasChanges: false,
+            isVisible: props.isVisible
         };
 
         this.handleOnAddQuestion = this.handleOnAddQuestion.bind(this);
@@ -75,10 +76,18 @@ class FormEditor extends react.Component {
         this.setState({hasChanges: true, questions});
     }
 
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            isVisible: nextProps.isVisible
+        })
+    }
+
     render() {
         const {questions, hasChanges} = this.state;
 
-
+        if(!this.state.isVisible) {
+            return null
+        }
         return (<div className="form-editor" style={{marginTop: 20}}>
                 <ListGroup>
                     {questions.map((question, index) =>
