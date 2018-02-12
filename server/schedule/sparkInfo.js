@@ -39,6 +39,7 @@ const updateVolunteersSparkInfo = co.wrap(function* (volunteers) {
 
         if (sparkInfo === null) {
             volunteer.sparkInfo.validProfile = false;
+            volunteer.sparkInfo.lastUpdate = Date.now();
         } else {
             volunteer.sparkInfo.firstName = sparkInfo["first_name"];
             volunteer.sparkInfo.lastName = sparkInfo["last_name"];
@@ -96,6 +97,7 @@ const updateInvalidVolunteerSparkInfo = co.wrap(function* () {
         const volunteers =
             yield Volunteer
                 .find({deleted: false, "sparkInfo.validProfile": false})
+                .sort({"sparkInfo.lastUpdate": 1})
                 .limit(20);
         const updatedVolunteers = yield updateVolunteersSparkInfo(volunteers);
 
@@ -145,6 +147,7 @@ const updateInvalidVolunteerRequestSparkInfo = co.wrap(function* () {
         const volunteers =
             yield VolunteerRequest
                 .find({"sparkInfo.validProfile": false})
+                .sort({"sparkInfo.lastUpdate": 1})
                 .limit(20);
         const updatedVolunteers = yield updateVolunteersSparkInfo(volunteers);
 

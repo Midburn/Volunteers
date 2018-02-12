@@ -13,14 +13,9 @@ clone repo
 
 Start the dev server
 
-`SPARK_HOST=http://localhost:3000/ yarn run local`
+`yarn run local`
 
 Volunteers should be available at http://localhost:9090/login
-
-
-### Testing with Spark staging / production
-
-`yarn run start`
 
 
 ### Workflow
