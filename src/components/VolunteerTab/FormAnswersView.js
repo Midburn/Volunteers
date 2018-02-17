@@ -23,6 +23,7 @@ export default class FromAnswersView extends Component {
         return (
             <div className="form-answers-view">
                 {this.props.answers && this.props.answers.map((question, index) => 
+
                     <Linkify key={`question-${index}`} properties={{target: '_blank'}}>
                         <div className={rtl ? 'rtl' : ''}>
                             {question.questionType === 'text' && (
