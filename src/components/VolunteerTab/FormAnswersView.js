@@ -23,42 +23,49 @@ export default class FromAnswersView extends Component {
         return (
             <div className="form-answers-view">
                 {this.props.answers && this.props.answers.map((question, index) => 
-
-                    <Linkify key={`question-${index}`} properties={{target: '_blank'}}>
-                        <div className={rtl ? 'rtl' : ''}>
-                            {question.questionType === 'text' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question}</ControlLabel>
-                                    <FormControl readOnly value={question.answer}/>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'textarea' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question}</ControlLabel>
-                                    <FormControl readOnly componentClass="textarea" value={question.answer}/>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'checkbox' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <Checkbox inline readOnly checked={question.answer}><b>{question.question}</b></Checkbox>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'radio' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question}</ControlLabel>
-                                    <FormControl readOnly value={question.answer}/>
-                                </FormGroup>
-                            )}
-                            {question.questionType === 'checkboxes' && (
-                                <FormGroup controlId={`id-${index}`}>
-                                    <ControlLabel>{question.question}</ControlLabel>
-                                    <FormControl readOnly value={question.answer}/>
-                                </FormGroup>
-                            )}
-                        </div>
-                    </Linkify>
+                    this._render_question(question, index, rtl)
                 )}
             </div>
+        )
+    }
+
+    _render_question(question, index, rtl) {
+        const componentType = (question.answer.length > 60)? "textarea":"input";
+
+        return (
+            <Linkify key={`question-${index}`} properties={{target: '_blank'}}>
+                <div className={rtl ? 'rtl' : ''}>
+                    {question.questionType === 'text' && (
+                        <FormGroup controlId={`id-${index}`}>
+                            <ControlLabel>{question.question}</ControlLabel>
+                            <FormControl readOnly value={question.answer}/>
+                        </FormGroup>
+                    )}
+                    {question.questionType === 'textarea' && (
+                        <FormGroup controlId={`id-${index}`}>
+                            <ControlLabel>{question.question}</ControlLabel>
+                            <FormControl readOnly componentClass="textarea" value={question.answer}/>
+                        </FormGroup>
+                    )}
+                    {question.questionType === 'checkbox' && (
+                        <FormGroup controlId={`id-${index}`}>
+                            <Checkbox inline readOnly checked={question.answer}><b>{question.question}</b></Checkbox>
+                        </FormGroup>
+                    )}
+                    {question.questionType === 'radio' && (
+                        <FormGroup controlId={`id-${index}`}>
+                            <ControlLabel>{question.question}</ControlLabel>
+                            <FormControl readOnly value={question.answer}/>
+                        </FormGroup>
+                    )}
+                    {question.questionType === 'checkboxes' && (
+                        <FormGroup controlId={`id-${index}`}>
+                            <ControlLabel>{question.question}</ControlLabel>
+                            <FormControl readOnly componentClass={componentType} value={question.answer}/>
+                        </FormGroup>
+                    )}
+                </div>
+            </Linkify>
         )
     }
 }
