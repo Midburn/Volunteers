@@ -31,12 +31,12 @@ class FormManager extends react.Component {
                     {showPreview ? "Edit" : "Preview"}
                 </Button>
             </header>
-
-            {showPreview ?
-                <FormViewer questions={questions}/> :
-                <FormEditor questions={questions}
+                <FormViewer questions={questions}
+                /> 
+                <FormEditor questions={questions} 
+                            isVisible={!showPreview}  
                             onSave={onSave}
-                />}
+                />
         </div>;
     }
 }
