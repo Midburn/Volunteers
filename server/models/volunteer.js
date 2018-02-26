@@ -18,6 +18,7 @@ const volunteersSchema = new Schema({
         firstName: String,
         lastName: String,
         hasTicket: Boolean,
+        numOfTickets: Number,
         phone: String,
         lastUpdate: Date
     }

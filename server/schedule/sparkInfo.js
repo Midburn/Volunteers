@@ -45,6 +45,7 @@ const updateVolunteersSparkInfo = co.wrap(function* (volunteers) {
             volunteer.sparkInfo.lastName = sparkInfo["last_name"];
             volunteer.sparkInfo.phone = sparkInfo.phone;
             volunteer.sparkInfo.hasTicket = sparkInfo["has_ticket"];
+            volunteer.sparkInfo.numOfTickets = sparkInfo["num_of_tickets"];
             volunteer.sparkInfo.lastUpdate = Date.now();
             volunteer.sparkInfo.validProfile = true;
 
