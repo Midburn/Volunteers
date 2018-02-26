@@ -10,7 +10,16 @@ const volunteerRequestSchema = new Schema({
     status: String,
     approved: Boolean,
     comment: String,
-    tags: [String]
+    tags: [String],
+    sparkInfo: {
+        validProfile: Boolean,
+        firstName: String,
+        lastName: String,
+        hasTicket: Boolean,
+        numOfTickets: Number,
+        phone: String,
+        lastUpdate: Date
+    }
 }, {timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const VolunteerRequest = mongoose.model('VolunteerRequest', volunteerRequestSchema);

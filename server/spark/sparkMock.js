@@ -12,7 +12,8 @@ const users = [
             "uid": "1",
             "email": "spark.superuser@midburn.org",
             "phone": "054112233555",
-            "has_ticket": true
+            "has_ticket": true,
+            "num_of_tickets": 2
         }
     },
     {

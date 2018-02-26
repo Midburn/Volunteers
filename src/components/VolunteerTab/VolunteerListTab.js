@@ -259,14 +259,14 @@ export default class VolunteerListTab extends Component {
 
     downloadVolunteers = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
-        const filename = `${departmentName}-volunteers.csv`
-        const headers = ['Department', 'Midubrn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', 'Tags', 'Other Departments', 'Added Date'];
+        const filename = `${departmentName}-volunteers.csv`;
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', 'Tags', 'Other Departments', 'Added Date'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleVolunteers.map(volunteer => {
             const volData = {
                 Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
-                "Midubrn Profile": volunteer.userId,
+                "Midburn Profile": volunteer.userId,
                 "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
                 "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
                 Email: volunteer.contactEmail ? volunteer.contactEmail : 'No Data',
@@ -276,7 +276,7 @@ export default class VolunteerListTab extends Component {
                 Yearly: volunteer.yearly ? 'Yes' : 'No',
                 "Other Departments": volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : '',
                 Tags: volunteer.tags.join(", ")
-            }
+            };
             if (volunteer.generalForm && volunteer.generalForm.form) {
                 volunteer.generalForm.form.forEach(question => {
                     const que = question.question.replace(/\r?\n|\r/g, '');
@@ -285,6 +285,11 @@ export default class VolunteerListTab extends Component {
                         generalQuestions.push(que);
                     }
                 })
+            }
+
+            if (!this.state.filter.departmentId) {
+                // show department form data only for one department
+                return volData;
             }
             if (volunteer.departmentForm && volunteer.departmentForm.form) {
                 volunteer.departmentForm.form.forEach(question => {
@@ -295,32 +300,36 @@ export default class VolunteerListTab extends Component {
                     }
                 })
             }
+            for (const key in volData) {
+                volData[key] = volData[key].toString().replace('"','\'\'');
+            }
             return volData;
-        })
+        });
         return (
             <CSVLink headers={headers.concat(departmentQuestions).concat(generalQuestions)} data={data} target="_blank"
                      filename={filename}>
                 <Button bsStyle="link">Download</Button>
             </CSVLink>
         )
-    }
+    };
 
     downloadRequests = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-requests.csv`
-        const headers = ['Department', 'Midubrn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Added Date'];
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Added Date'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleRequests.map(request => {
             const reqData = {
                 Department: this.state.departments.find(d => d._id === request.departmentId).basicInfo.nameEn,
-                "Midubrn Profile": request.userId,
+                "Midburn Profile": request.userId,
                 "First Name": request.firstName ? request.firstName : 'No Data',
                 "Last Name": request.lastName ? request.lastName : 'No Data',
                 Email: request.contactEmail ? request.contactEmail : 'No Data',
                 Phone: request.contactPhone ? request.contactPhone : 'No Data',
-                "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A'
-            }
+                "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A',
+                Tags: request.tags.join(", ")
+            };
             if (request.generalForm && request.generalForm.form) {
                 request.generalForm.form.forEach(question => {
                     const que = question.question.replace(/\r?\n|\r/g, '');
@@ -330,6 +339,11 @@ export default class VolunteerListTab extends Component {
                     }
                 })
             }
+
+            if (!this.state.filter.departmentId) {
+                // show department form data only for one department
+                return reqData;
+            }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
                     const que = question.question.replace(/\r?\n|\r/g, '');
@@ -338,6 +352,10 @@ export default class VolunteerListTab extends Component {
                         departmentQuestions.push(que);
                     }
                 })
+            }
+
+            for (const key in reqData) {
+                reqData[key] = reqData[key].toString().replace('"','\'\'');
             }
             return reqData;
         })
@@ -427,6 +445,7 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex2">Added Date</th>
                                     <th className="ellipsis-text flex2">Role</th>
                                     <th className="ellipsis-text flex1">Yearly</th>
+                                    <th className="ellipsis-text flex1">#Tickets</th>
                                     <th className="ellipsis-text flex2">Other Departments</th>
                                     {showTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
@@ -434,7 +453,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={`${!volunteer.validProfile ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
+                                        className={`${(!volunteer.sparkInfo || !volunteer.sparkInfo.validProfile) ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
                                         onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
@@ -444,10 +463,10 @@ export default class VolunteerListTab extends Component {
                                         }
                                         <td className="ellipsis-text flex3">{volunteer.userId}</td>
                                         <td className="ellipsis-text flex2">
-                                            {volunteer.firstName ? volunteer.firstName : 'No Data'}
+                                            {(volunteer.sparkInfo && volunteer.sparkInfo.firstName) ? volunteer.sparkInfo.firstName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex2">
-                                            {volunteer.lastName ? volunteer.lastName : 'No Data'}
+                                            {(volunteer.sparkInfo && volunteer.sparkInfo.lastName) ? volunteer.sparkInfo.lastName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex3">
                                             {volunteer.contactEmail ?
@@ -463,6 +482,9 @@ export default class VolunteerListTab extends Component {
                                             className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td>
                                         <td className="ellipsis-text flex2">{volunteer.permission}</td>
                                         <td className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</td>
+                                        <td className="ellipsis-text flex1">
+                                            {volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== "undefined" ? volunteer.sparkInfo.numOfTickets : '???'}
+                                        </td>
                                         <td
                                             className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
                                         {showTags &&
@@ -512,13 +534,14 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex2">Phone</th>
                                     <th className="ellipsis-text flex3">Email</th>
                                     <th className="ellipsis-text flex2">Request Date</th>
+                                    <th className="ellipsis-text flex1">#Tickets</th>
                                     {showRequestTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {this.state.visibleRequests.map(volunteerRequest =>
                                     <tr key={volunteerRequest._id}
-                                        className={`volunteer-list-group-item ${!volunteerRequest.validProfile ? 'invalid' : (volunteerRequest.needToFillGeneralForm || volunteerRequest.needToRefillGeneralForm ? 'missing-sign' : '')}`}
+                                        className={`volunteer-list-group-item ${(!volunteerRequest.sparkInfo || !volunteerRequest.sparkInfo.validProfile)  ? 'invalid' : (volunteerRequest.needToFillGeneralForm || volunteerRequest.needToRefillGeneralForm ? 'missing-sign' : '')}`}
                                         onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <td className="ellipsis-text flex2">
@@ -526,10 +549,10 @@ export default class VolunteerListTab extends Component {
                                         </td>
                                         }
                                         <td className="ellipsis-text flex2">
-                                            {volunteerRequest.firstName ? volunteerRequest.firstName : 'No Data'}
+                                            {volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.firstName ? volunteerRequest.sparkInfo.firstName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex2">
-                                            {volunteerRequest.lastName ? volunteerRequest.lastName : 'No Data'}
+                                            {volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.lastName ? volunteerRequest.sparkInfo.lastName : 'No Data'}
                                         </td>
                                         <td className="ellipsis-text flex3">{volunteerRequest.userId}</td>
                                         <td className="ellipsis-text flex2">{volunteerRequest.contactPhone}</td>
@@ -541,6 +564,9 @@ export default class VolunteerListTab extends Component {
                                         </td>
                                         <td className="ellipsis-text flex2">
                                             {volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}
+                                        </td>
+                                        <td className="ellipsis-text flex1">
+                                            {volunteerRequest.sparkInfo && typeof volunteerRequest.sparkInfo.numOfTickets !== "undefined" ? volunteerRequest.sparkInfo.numOfTickets : '???'}
                                         </td>
                                         {showRequestTags &&
                                         <td className="flex3" onClick={event => event.stopPropagation()}>
