@@ -23,6 +23,7 @@ const enrichRequestDetailsFromSpark = co.wrap(function* (requests) {
             request._doc.firstName = sparkInfo['first_name'];
             request._doc.lastName = sparkInfo['last_name'];
             request._doc.hasTicket = sparkInfo['has_ticket'];
+            request._doc.numOfTickets = sparkInfo['num_of_tickets'];
             request._doc.phone = sparkInfo['phone'];
         }
     };

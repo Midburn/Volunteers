@@ -46,6 +46,7 @@ const enrichVolunteerDetailsFromSpark = co.wrap(function* (volunteers) {
             volunteer._doc.firstName = sparkInfo['first_name'];
             volunteer._doc.lastName = sparkInfo['last_name'];
             volunteer._doc.hasTicket = sparkInfo['has_ticket'];
+            volunteer._doc.numOfTickets = sparkInfo['num_of_tickets'];
             volunteer._doc.phone = sparkInfo['phone'];
         }
     };
@@ -195,6 +196,7 @@ router.post('/departments/:departmentId/events/:eventId/volunteer', co.wrap(func
             firstName: sparkInfo['first_name'],
             lastName: sparkInfo['last_name'],
             hasTicket: sparkInfo['has_ticket'],
+            numOfTickets: sparkInfo['num_of_tickets'],
             phone: sparkInfo['phone'],
             lastUpdate: Date.now()
         }

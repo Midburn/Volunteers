@@ -445,6 +445,7 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex2">Added Date</th>
                                     <th className="ellipsis-text flex2">Role</th>
                                     <th className="ellipsis-text flex1">Yearly</th>
+                                    <th className="ellipsis-text flex1">#Tickets</th>
                                     <th className="ellipsis-text flex2">Other Departments</th>
                                     {showTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
@@ -481,6 +482,9 @@ export default class VolunteerListTab extends Component {
                                             className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td>
                                         <td className="ellipsis-text flex2">{volunteer.permission}</td>
                                         <td className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</td>
+                                        <td className="ellipsis-text flex1">
+                                            {volunteer.sparkInfo && volunteer.sparkInfo.numOfTickets ? volunteer.sparkInfo.numOfTickets : '???'}
+                                        </td>
                                         <td
                                             className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
                                         {showTags &&
@@ -530,6 +534,7 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex2">Phone</th>
                                     <th className="ellipsis-text flex3">Email</th>
                                     <th className="ellipsis-text flex2">Request Date</th>
+                                    <th className="ellipsis-text flex1">#Tickets</th>
                                     {showRequestTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
                                 </thead>
@@ -559,6 +564,9 @@ export default class VolunteerListTab extends Component {
                                         </td>
                                         <td className="ellipsis-text flex2">
                                             {volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}
+                                        </td>
+                                        <td className="ellipsis-text flex1">
+                                            {volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.numOfTickets ? volunteerRequest.sparkInfo.numOfTickets : '???'}
                                         </td>
                                         {showRequestTags &&
                                         <td className="flex3" onClick={event => event.stopPropagation()}>
