@@ -483,7 +483,7 @@ export default class VolunteerListTab extends Component {
                                         <td className="ellipsis-text flex2">{volunteer.permission}</td>
                                         <td className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</td>
                                         <td className="ellipsis-text flex1">
-                                            {volunteer.sparkInfo && volunteer.sparkInfo.numOfTickets ? volunteer.sparkInfo.numOfTickets : '???'}
+                                            {volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== "undefined" ? volunteer.sparkInfo.numOfTickets : '???'}
                                         </td>
                                         <td
                                             className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
@@ -566,7 +566,7 @@ export default class VolunteerListTab extends Component {
                                             {volunteerRequest.createdAt ? volunteerRequest.createdAt.split('T')[0] : 'N/A'}
                                         </td>
                                         <td className="ellipsis-text flex1">
-                                            {volunteerRequest.sparkInfo && volunteerRequest.sparkInfo.numOfTickets ? volunteerRequest.sparkInfo.numOfTickets : '???'}
+                                            {volunteerRequest.sparkInfo && typeof volunteerRequest.sparkInfo.numOfTickets !== "undefined" ? volunteerRequest.sparkInfo.numOfTickets : '???'}
                                         </td>
                                         {showRequestTags &&
                                         <td className="flex3" onClick={event => event.stopPropagation()}>
