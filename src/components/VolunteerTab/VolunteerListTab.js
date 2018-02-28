@@ -116,8 +116,8 @@ export default class VolunteerListTab extends Component {
             }
             if (searchTerm) {
                 const match = volunteer.userId.toLowerCase().indexOf(searchTerm) > -1 ||
-                    (volunteer.firstName && volunteer.firstName.toLowerCase().indexOf(searchTerm) > -1) ||
-                    (volunteer.lastName && volunteer.lastName.toLowerCase().indexOf(searchTerm) > -1);
+                    (volunteer.sparkInfo && volunteer.sparkInfo.firstName && volunteer.sparkInfo.firstName.toLowerCase().indexOf(searchTerm) > -1) ||
+                    (volunteer.sparkInfo && volunteer.sparkInfo.lastName && volunteer.sparkInfo.lastName.toLowerCase().indexOf(searchTerm) > -1);
                 if (!match) {
                     return false;
                 }
@@ -260,20 +260,21 @@ export default class VolunteerListTab extends Component {
     downloadVolunteers = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-volunteers.csv`;
-        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', 'Tags', 'Other Departments', 'Added Date'];
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', '#Tickets', 'Tags', 'Other Departments', 'Added Date'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleVolunteers.map(volunteer => {
             const volData = {
                 Department: this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn,
                 "Midburn Profile": volunteer.userId,
-                "First Name": volunteer.firstName ? volunteer.firstName : 'No Data',
-                "Last Name": volunteer.lastName ? volunteer.lastName : 'No Data',
+                "First Name": volunteer.sparkInfo && volunteer.sparkInfo.firstName ? volunteer.sparkInfo.firstName : 'No Data',
+                "Last Name": volunteer.sparkInfo && volunteer.sparkInfo.lastName ? volunteer.sparkInfo.lastName : 'No Data',
                 Email: volunteer.contactEmail ? volunteer.contactEmail : 'No Data',
                 Phone: volunteer.contactPhone ? volunteer.contactPhone : 'No Data',
                 "Added Date": volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A',
                 Role: volunteer.permission,
                 Yearly: volunteer.yearly ? 'Yes' : 'No',
+                "#Tickets": volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== 'undefined' ? volunteer.sparkInfo.numOfTickets : '',
                 "Other Departments": volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : '',
                 Tags: volunteer.tags.join(", ")
             };
@@ -316,17 +317,18 @@ export default class VolunteerListTab extends Component {
     downloadRequests = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-requests.csv`
-        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Added Date'];
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', '#Tickets', 'Added Date', 'Tags'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleRequests.map(request => {
             const reqData = {
                 Department: this.state.departments.find(d => d._id === request.departmentId).basicInfo.nameEn,
                 "Midburn Profile": request.userId,
-                "First Name": request.firstName ? request.firstName : 'No Data',
-                "Last Name": request.lastName ? request.lastName : 'No Data',
+                "First Name": request.sparkInfo && request.sparkInfo.firstName ? request.sparkInfo.firstName : 'No Data',
+                "Last Name": request.sparkInfo && request.sparkInfo.lastName ? request.sparkInfo.lastName : 'No Data',
                 Email: request.contactEmail ? request.contactEmail : 'No Data',
                 Phone: request.contactPhone ? request.contactPhone : 'No Data',
+                "#Tickets": request.sparkInfo && typeof request.sparkInfo.numOfTickets !== 'undefined' ? request.sparkInfo.numOfTickets : '',
                 "Added Date": request.createdAt ? request.createdAt.split('T')[0] : 'N/A',
                 Tags: request.tags.join(", ")
             };
