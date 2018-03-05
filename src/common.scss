@@ -40,3 +40,20 @@ body {
   border-color: #faebcc;
   color: #8a6d3b;
 }
+
+.Select--multi .Select-value {
+  display: block;
+}
+
+.Select-arrow-zone{
+  width: 0px;
+  padding-right: 0px;
+}
+
+.Select-clear-zone {
+  display: none;
+}
+
+.Select--multi .Select-multi-value-wrapper {
+  display: block;
+}
