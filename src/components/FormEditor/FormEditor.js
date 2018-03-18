@@ -76,7 +76,7 @@ class FormEditor extends react.Component {
     }
 
     render() {
-        const {questions, hasChanges} = this.state;
+        const {questions,   hasChanges} = this.state;
         
         return (<div className="form-editor" style={{marginTop: 20}}>
                 <ListGroup>
