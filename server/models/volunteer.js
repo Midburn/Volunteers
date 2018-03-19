@@ -21,6 +21,12 @@ const volunteersSchema = new Schema({
         numOfTickets: Number,
         phone: String,
         lastUpdate: Date
+    },
+    allocationsDetails: {
+        allocatedTickets: {type: Number, default: 0, min: 0, max: 2},
+        allocatedEarlyEntrancePhase1: {type: Boolean, default: false},
+        allocatedEarlyEntrancePhase2: {type: Boolean, default: false},
+        allocatedEarlyEntrancePhase3: {type: Boolean, default: false}
     }
 }, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 

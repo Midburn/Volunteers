@@ -11,7 +11,7 @@ import {
     Modal,
     Tab,
     Tabs
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 import * as Permissions from "../../model/permissionsUtils";
 import FormManager from "../FormManager/FormManager";
 
@@ -33,7 +33,14 @@ const defaultDepartment = {
         visibleToJoin: true,
         availableToJoin: true
     },
-    tags: []
+    tags: [],
+    allocationsDetails:
+        {
+            maxAllocatedTickets: 0,
+            maxAllocatedEarlyEntrancesPhase1: 0,
+            maxAllocatedEarlyEntrancesPhase2: 0,
+            maxAllocatedEarlyEntrancesPhase3: 0
+        }
 };
 
 export default class EditDepartment extends Component {
@@ -43,12 +50,14 @@ export default class EditDepartment extends Component {
         this.state = {
             department: props.department || defaultDepartment,
             departmentForm: [],
+            volunteersAllocations: {},
             hasChanges: false
         };
 
         this.handleOnSave = this.handleOnSave.bind(this);
         this.handleOnDepartmentFormSave = this.handleOnDepartmentFormSave.bind(this);
         this.handleOnStatusChange = this.handleOnStatusChange.bind(this);
+        this.handleOnAllocationsDetailsChange = this.hasOwnProperty.bind(this);
     }
 
     componentDidMount() {
@@ -56,6 +65,9 @@ export default class EditDepartment extends Component {
 
         axios.get(`/api/v1/public/departments/${this.state.department._id}/forms`)
             .then(res => this.setState({departmentForm: res.data}));
+
+        axios.get(`/api/v1/departments/${this.state.department._id}/volunteersAllocations`)
+            .then(res => this.setState({volunteersAllocations: res.data}));
     }
 
     handleBasicInfoChange = event => {
@@ -64,7 +76,15 @@ export default class EditDepartment extends Component {
 
         this.state.hasChanges = true;
         this.setState(this.state);
-    }
+    };
+
+    handleOnAllocatedEarlyEntrancesChange = event => {
+        const allocationsDetails = this.state.department.allocationsDetails;
+        allocationsDetails[event.target.id] = event.target.value;
+
+        this.state.hasChanges = true;
+        this.setState(this.state);
+    };
 
     handleOnStatusChange(key) {
         const status = {...this.state.department.status};
@@ -79,6 +99,15 @@ export default class EditDepartment extends Component {
 
         this.setState({hasChanges: true, department: {...this.state.department, status}});
     }
+
+    // handleOnAllocationsDetailsChange(key, value) {
+    //     console.log("key=" + key, ",value=" + value);
+    //     const allocationsDetails = {...this.state.department.allocationsDetails};
+    //     console.log(JSON.stringify(allocationsDetails));
+    //     allocationsDetails[key] = value;
+    //
+    //     this.setState({hasChanges: true, department: {...this.state.department, allocationsDetails}});
+    // }
 
     handleOnSave() {
         if (this.state.department._id) { // Edit
@@ -117,8 +146,8 @@ export default class EditDepartment extends Component {
     }
 
     render() {
-        const {department, departmentForm, hasChanges} = this.state;
-        const {basicInfo, status} = department;
+        const {department, volunteersAllocations, departmentForm, hasChanges} = this.state;
+        const {basicInfo, status, allocationsDetails} = department;
         const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
 
         return (
@@ -189,6 +218,7 @@ export default class EditDepartment extends Component {
                                       onChange={() => this.handleOnStatusChange('availableToJoin')}>
                                 <b>Opened to new volunteers</b>
                             </Checkbox>
+
                             <HelpBlock>New volunteers can fill the join form. You should close it if you're not ready
                                 yet or already full.</HelpBlock>
                             {this.state.department._id && (!this.state.department.status.visibleToJoin || !this.state.department.status.availableToJoin) &&
@@ -205,7 +235,35 @@ export default class EditDepartment extends Component {
                                     onClick={this.delete}>Delete</Button>}
                         </Tab>
 
-                        {department._id && <Tab eventKey={3} title="Join Form">
+                        <Tab eventKey={3} title="Early Entrance Details">
+                            <FormGroup controlId="maxAllocatedEarlyEntrancesPhase1">
+                                <ControlLabel># Allocated Early Entrances For Phase 1</ControlLabel>
+                                <FormControl type="text" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase1 || 0}
+                                             disabled={!Permissions.isAdmin()}
+                                             onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
+                                <HelpBlock>The amount of early entrances allocated for this department on Phase 1 (since 07/05/2018)
+                                    (<b>{volunteersAllocations.allocatedEarlyEntrancesPhase1}</b> are already allocated for the department volunteers)
+                                </HelpBlock>
+                            </FormGroup>
+                            <FormGroup controlId="maxAllocatedEarlyEntrancesPhase2">
+                                <ControlLabel># Allocated Early Entrances For Phase 2</ControlLabel>
+                                <FormControl type="text" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase2 || 0}
+                                             disabled={!Permissions.isAdmin()}
+                                             onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
+                                <HelpBlock>The amount of early entrances allocated for this department on Phase 2 (since 10/05/2018)
+                                    (<b>{volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> are already allocated for the department volunteers)
+                                </HelpBlock>
+                            </FormGroup>
+                            {/*<FormGroup controlId="maxAllocatedEarlyEntrancesPhase3">*/}
+                                {/*<ControlLabel># Allocated Early Entrances For Phase 3</ControlLabel>*/}
+                                {/*<FormControl type="text" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase3 || 0}*/}
+                                             {/*onChange={this.handleOnAllocatedEarlyEntrancesChange}/>*/}
+                                {/*<HelpBlock>The amount of early entrances allocated for this department on Phase 3 (since 10/05/2018)*/}
+                                    {/*(<b>{volunteersAllocations.allocatedEarlyEntrancesPhase3}</b> are already allocated for the department volunteers)*/}
+                                {/*</HelpBlock>*/}
+                            {/*</FormGroup>*/}
+                        </Tab>
+                        {department._id && <Tab eventKey={4} title="Join Form">
                             <FormManager questions={departmentForm} onSave={this.handleOnDepartmentFormSave}/>
                         </Tab>}
                     </Tabs>

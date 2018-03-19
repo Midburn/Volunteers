@@ -21,7 +21,13 @@ const departmentSchema = new Schema({
         availableToJoin: Boolean
     },
     deleted: Boolean,
-    tags: [String]
+    tags: [String],
+    allocationsDetails: {
+        maxAllocatedTickets: {type: Number, default: 0},
+        maxAllocatedEarlyEntrancesPhase1: {type: Number, default: 0},
+        maxAllocatedEarlyEntrancesPhase2: {type: Number, default: 0},
+        maxAllocatedEarlyEntrancesPhase3: {type: Number, default: 0}
+    }
 }, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
 const Department = mongoose.model('Department', departmentSchema);

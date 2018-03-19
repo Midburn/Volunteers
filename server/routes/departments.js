@@ -9,6 +9,13 @@ const uuid = require('uuid/v1');
 
 router.get('/public/departments', co.wrap(function* (req, res) {
     const departments = yield Department.find({deleted: false});
+
+    departments.forEach(department => {
+        if (!permissionsUtils.isDepartmentManager(req.userDetails, department._id)) {
+            delete department._doc.allocationsDetails;
+        }
+    });
+
     return res.json(departments);
 }));
 
@@ -20,7 +27,7 @@ router.get('/departments/:departmentId', co.wrap(function* (req, res) {
 }));
 
 router.post('/departments', co.wrap(function* (req, res) {
-    if (!permissionsUtils.isAdmin(req.userDetails)){
+    if (!permissionsUtils.isAdmin(req.userDetails)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
     }
 
@@ -36,7 +43,7 @@ router.post('/departments', co.wrap(function* (req, res) {
 
 router.put('/departments/:departmentId', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
-
+    const isAdminUser = permissionsUtils.isAdmin(req.userDetails);
     if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
     }
@@ -46,7 +53,12 @@ router.put('/departments/:departmentId', co.wrap(function* (req, res) {
 
     const updatedDepartment = req.body;
     for (const key in updatedDepartment) {
-        if (updatedDepartment.hasOwnProperty(key)) department[key] = updatedDepartment[key];
+        if (updatedDepartment.hasOwnProperty(key)) {
+            if ((isAdminUser && key === 'allocationsDetails') ||
+                (key !== 'allocationsDetails')) {
+                department[key] = updatedDepartment[key];
+            }
+        }
     }
     yield department.save();
 
@@ -54,7 +66,7 @@ router.put('/departments/:departmentId', co.wrap(function* (req, res) {
 }));
 
 router.delete('/departments/:departmentId', co.wrap(function* (req, res) {
-    if (!permissionsUtils.isAdmin(req.userDetails)){
+    if (!permissionsUtils.isAdmin(req.userDetails)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
     }
 
