@@ -8,17 +8,30 @@ class FormManager extends react.Component {
     constructor(props) {
         super(props);
 
-        this.state = {showPreview: !!props.showPreview};
+        this.state = {
+            showPreview: !!props.showPreview,
+            editedQuestions: []
+        };
 
         this.togglePreviewMode = this.togglePreviewMode.bind(this);
+        this.saveEdits = this.saveEdits.bind(this);
     }
 
     togglePreviewMode(showPreview) {
         this.setState({showPreview: showPreview});
     }
-
+    saveEdits(edits) {
+        console.log('edits: ', edits);
+        
+        // this.setState({editedQuestions: edits})
+    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     if(this.props.questions === nextState.questions) {
+    //         return false;
+    //     }
+    // }
     render() {
-        const {showPreview} = this.state;
+        const {showPreview, editedQuestions} = this.state;
         const {questions, onSave} = this.props;
 
         if (!questions) return null;
@@ -31,11 +44,14 @@ class FormManager extends react.Component {
                     {showPreview ? "Edit" : "Preview"}
                 </Button>
             </header>
-            {showPreview ?
-                <FormViewer questions={questions}/> :
-                <FormEditor questions={questions}
-                            onSave={onSave}
-                />}
+            <FormViewer questions={questions}
+                        isVisible={showPreview}
+            /> 
+            <FormEditor questions={questions}
+                        onSave={onSave}
+                        isVisible={!showPreview}
+                        emitQuestions={this.saveEdits}
+            />
         </div>;
     }
 }

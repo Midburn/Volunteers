@@ -10,6 +10,7 @@ class FormEditor extends react.Component {
         this.state = {
             questions: [...props.questions],
             hasChanges: false,
+            isVisible: props.isVisible
         };
 
         this.handleOnAddQuestion = this.handleOnAddQuestion.bind(this);
@@ -20,7 +21,10 @@ class FormEditor extends react.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({questions: [...nextProps.questions]});
+        this.setState({
+            questions: [...nextProps.questions], 
+            isVisible: nextProps.isVisible}
+        );
     }
 
     handleOnAddQuestion() {
@@ -44,13 +48,15 @@ class FormEditor extends react.Component {
     handleOnQuestionChange(index, language, value) {
         const questions = [...this.state.questions];
         questions[index].question[language] = value;
-
+        this.props.emitQuestions(questions);
+        
         this.setState({questions: questions, hasChanges: true});
     }
 
     handleOnQuestionTypeChange(index, value) {
         const questions = [...this.state.questions];
         questions[index].questionType = value;
+        this.props.emitQuestions(questions);
 
         this.setState({questions: questions, hasChanges: true});
     }
@@ -58,6 +64,7 @@ class FormEditor extends react.Component {
     handleOnOptionsChange(index, options) {
         const questions = [...this.state.questions];
         questions[index]["options"]  = options;
+        this.props.emitQuestions(questions);
 
         this.setState({questions: questions, hasChanges: true});
     }
@@ -65,19 +72,26 @@ class FormEditor extends react.Component {
     handleOnQuestionOptionalChange(index, value) {
         const questions = [...this.state.questions];
         questions[index].optional = value;
-
+        this.props.emitQuestions(questions);
+        
         this.setState({questions: questions, hasChanges: true});
     }
 
     deleteQuestion(index) {
         const questions = [...this.state.questions];
         questions.splice(index, 1);
+        this.props.emitQuestions(questions);
+        
         this.setState({hasChanges: true, questions});
     }
 
+    
     render() {
-        const {questions,   hasChanges} = this.state;
-        
+        const {questions, hasChanges, isVisible} = this.state;
+
+        if(!isVisible) {
+            return null
+        }
         return (<div className="form-editor" style={{marginTop: 20}}>
                 <ListGroup>
                     {questions.map((question, index) =>

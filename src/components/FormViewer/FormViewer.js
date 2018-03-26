@@ -9,23 +9,30 @@ export default class FormViewer extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {language: "he"};
+        this.state = {
+            language: "he",
+            isVisible: props.isVisible
+        };
 
         this.setLanguage = this.setLanguage.bind(this);
     }
-
+    
+    componentWillReceiveProps(nextProps) {
+        this.setState({isVisible: nextProps.isVisible});
+    }
     setLanguage(language) {
         this.setState({language})
     }
-
     render() {
         const {questions} = this.props;
-        const {language} = this.state;
+        const {language, isVisible} = this.state;
 
         if (questions.length === 0) {
             return <div>Nothing to show</div>
         }
-
+        if(!isVisible){
+            return null;
+        }
         const rtl = language === "he";
 
         return (
