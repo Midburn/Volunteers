@@ -80,7 +80,8 @@ const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
                 volunteer._doc.sparkInfo.lastName = utils.lastNameFromGeneralForm(form);
             }
         }
-    };
+    }
+    ;
 
     return volunteers;
 });
@@ -117,12 +118,12 @@ const getDepartmentVolunteers = co.wrap(function* (departmentId) {
 const getDepartmentUpdatedAllocationDetails = co.wrap(function* (departmentId) {
     const departmentVolunteersMongoDocs = yield getDepartmentVolunteers(departmentId);
     const departmentVolunteersAllocationsDetails = departmentVolunteersMongoDocs.map(volunteer => volunteer._doc.allocationsDetails).filter(volunteerAllocationsDetails => volunteerAllocationsDetails !== null);
-    const allocatedTicketsReducer =       (currentValue, volunteerAllocationsDetails) => currentValue + (volunteerAllocationsDetails.allocatedTickets || 0);
+    const allocatedTicketsReducer = (currentValue, volunteerAllocationsDetails) => currentValue + (volunteerAllocationsDetails.allocatedTickets || 0);
     return {
         allocatedTickets: departmentVolunteersAllocationsDetails.reduce(allocatedTicketsReducer, 0),
-        allocatedEarlyEntrancesPhase1: departmentVolunteersAllocationsDetails.filter(volunteerAllocationsDetails=>volunteerAllocationsDetails.allocatedEarlyEntrancePhase1 === true).length,
-        allocatedEarlyEntrancesPhase2: departmentVolunteersAllocationsDetails.filter(volunteerAllocationsDetails=>volunteerAllocationsDetails.allocatedEarlyEntrancePhase2 === true).length,
-        allocatedEarlyEntrancesPhase3: departmentVolunteersAllocationsDetails.filter(volunteerAllocationsDetails=>volunteerAllocationsDetails.allocatedEarlyEntrancePhase3 === true).length
+        allocatedEarlyEntrancesPhase1: departmentVolunteersAllocationsDetails.filter(volunteerAllocationsDetails => volunteerAllocationsDetails.allocatedEarlyEntrancePhase1 === true).length,
+        allocatedEarlyEntrancesPhase2: departmentVolunteersAllocationsDetails.filter(volunteerAllocationsDetails => volunteerAllocationsDetails.allocatedEarlyEntrancePhase2 === true).length,
+        allocatedEarlyEntrancesPhase3: departmentVolunteersAllocationsDetails.filter(volunteerAllocationsDetails => volunteerAllocationsDetails.allocatedEarlyEntrancePhase3 === true).length
     };
 });
 
@@ -173,6 +174,67 @@ const checkUpdatedVolunteerAllocationDetailsIsValid = co.wrap(function* (departm
 
     return errorMessage;
 });
+
+router.get('/public/volunteers/getEarlyEntrance', co.wrap(function* (req, res) {
+    let token = req.headers.token;
+    if (!token){
+        return res.status(401).json({"error": "Token is empty"});
+    }
+    const sparkToken = sparkApi.getAuthHeader().token;
+    if (token !== sparkToken){
+        return res.status(401).json({"error": "Sent token is wrong!"});
+    }
+    const NO_EARLY_ENTRANCES = "no";
+    const EARLY_ENTRANCES = {
+        "no": {earlyEntranceDate: null},
+        1: {
+            earlyEntranceDate: "2018-05-01"
+        },
+        2: {
+            earlyEntranceDate: "2018-05-13"
+        },
+        3: {earlyEntranceDate: "2018-05-14"}
+    };
+
+    const userEmail = req.query.userEmail;
+    console.log(userEmail);
+    if (!userEmail){
+        return res.status(401).json({"error": "User email is empty"});
+    }
+    const volunteerInDepartments = yield Volunteer
+        .find({
+            userId: new RegExp(["^", userEmail, "$"].join(""), "i"),
+            deleted: false
+        });
+    if (!volunteerInDepartments) {
+        return res.json(EARLY_ENTRANCES[NO_EARLY_ENTRANCES]);
+    } else {
+        console.log("volunteerInDepartments="+JSON.stringify(volunteerInDepartments));
+        let allocatedEarlyEntrancePhases = volunteerInDepartments.map(volunteer => {
+            if (!volunteer.allocationsDetails) {
+                return null;
+            } else if (volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 === true) {
+                return 1;
+            } else if (volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 === true) {
+                return 2;
+            } else if (volunteer.allocationsDetails.allocatedEarlyEntrancePhase3 === true) {
+                return 3;
+            }
+            return null;
+        }).filter(phase => phase !== null);
+        // if (allocatedEarlyEntrancePhases){
+        //     return res.json(EARLY_ENTRANCES[NO_EARLY_ENTRANCES]);
+        // }
+        console.log("all phases='"+allocatedEarlyEntrancePhases+"'");
+        let firstEarlyEntrancePhase = Math.min(...allocatedEarlyEntrancePhases);
+        console.log("first phase="+firstEarlyEntrancePhase);
+        if (firstEarlyEntrancePhase === null || firstEarlyEntrancePhase === Infinity) {
+            return res.json(EARLY_ENTRANCES[NO_EARLY_ENTRANCES]);
+        } else {
+            return res.json(EARLY_ENTRANCES[firstEarlyEntrancePhase]);
+        }
+    }
+}));
 
 router.get('/departments/:departmentId/volunteersAllocations', co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
