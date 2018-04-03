@@ -80,10 +80,13 @@ export default class EditDepartment extends Component {
 
     handleOnAllocatedEarlyEntrancesChange = event => {
         const allocationsDetails = this.state.department.allocationsDetails;
-        allocationsDetails[event.target.id] = event.target.value;
-
-        this.state.hasChanges = true;
-        this.setState(this.state);
+      
+        if(event.target.value >= 0) {
+            allocationsDetails[event.target.id] = event.target.value;
+            console.log("alocated tickets for phase: ", event.target.id.slice(-1) , " are: ",allocationsDetails[event.target.id]);
+            this.state.hasChanges = true;
+            this.setState(this.state);
+        }
     };
 
     handleOnStatusChange(key) {
@@ -238,7 +241,7 @@ export default class EditDepartment extends Component {
                         <Tab eventKey={3} title="Early Entrance Details">
                             <FormGroup controlId="maxAllocatedEarlyEntrancesPhase1">
                                 <ControlLabel># Allocated Early Entrances For Phase 1</ControlLabel>
-                                <FormControl type="text" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase1 || 0}
+                                <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase1 || 0}
                                              disabled={!Permissions.isAdmin()}
                                              onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
                                 <HelpBlock>The amount of early entrances allocated for this department on Phase 1 (since 07/05/2018)
@@ -247,7 +250,7 @@ export default class EditDepartment extends Component {
                             </FormGroup>
                             <FormGroup controlId="maxAllocatedEarlyEntrancesPhase2">
                                 <ControlLabel># Allocated Early Entrances For Phase 2</ControlLabel>
-                                <FormControl type="text" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase2 || 0}
+                                <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase2 || 0}
                                              disabled={!Permissions.isAdmin()}
                                              onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
                                 <HelpBlock>The amount of early entrances allocated for this department on Phase 2 (since 10/05/2018)

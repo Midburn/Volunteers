@@ -46,7 +46,9 @@ export default class VolunteerListTab extends Component {
             editModalVolunteer: '',
             editModalRequest: '',
             showTags: true,
-            showRequestTags: true
+            showRequestTags: true,
+            maxAllocationReachedPhase1: false,
+            maxAllocationReachedPhase2: false
         };
 
         this.onTagsChange = this.onTagsChange.bind(this);
@@ -59,6 +61,9 @@ export default class VolunteerListTab extends Component {
         this.handleOnShowRequestTagToggle = this.handleOnShowRequestTagToggle.bind(this);
         this.handleOnRequestTagFilterChange = this.handleOnRequestTagFilterChange.bind(this);
         this.showEditModal = this.showEditModal.bind(this);
+
+        // this.phase1CheckboxNode = React.createRef();
+        // this.phase2CheckboxNode = React.createRef();
     }
 
     componentWillMount() {
@@ -218,12 +223,27 @@ export default class VolunteerListTab extends Component {
 
     onEarlyEntranceAllocatedChange(userId, allocatedEarlyEntrance, phase) {
         console.log("new value for user id " + userId + ", phase " + phase + " is " + allocatedEarlyEntrance);
+        
         const {visibleVolunteers} = this.state;
         const volunteer = visibleVolunteers.find(volunteer => volunteer.userId === userId);
-        console.log("volunteer before=" + JSON.stringify(volunteer));
+        
+        // console.log("volunteer before=" + JSON.stringify(volunteer));
         volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] = allocatedEarlyEntrance;
-        console.log("volunteer after=" + JSON.stringify(volunteer));
-
+        // console.log("volunteer after=" + JSON.stringify(volunteer));
+        
+        const maxAllocationByPhase = this.state.departments.find(d => d._id === volunteer.departmentId).allocationsDetails['maxAllocatedEarlyEntrancesPhase' + phase]
+        
+        let currentPhaseAllocation = visibleVolunteers.reduce((acc, volunteer)=> {
+            if(volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] === true) {
+                return acc + 1;
+            }
+            else return acc
+        }, 0);
+        
+        currentPhaseAllocation === maxAllocationByPhase ? this.state['maxAllocationReachedPhase' + phase] = true :  this.state['maxAllocationReachedPhase' + phase] = false;
+        
+        console.log('maxAllocationByPhase', maxAllocationByPhase);
+        console.log('currentPhaseAllocation: ', currentPhaseAllocation);
         this.setState({visibleVolunteers});
         VolunteerListTab.updateVolunteer(volunteer);
     }
@@ -403,7 +423,7 @@ export default class VolunteerListTab extends Component {
     }
 
     render() {
-        const {filter, visibleVolunteers, visibleRequests, departments, showTags, showRequestTags} = this.state;
+        const {filter, visibleVolunteers, visibleRequests, departments, showTags, showRequestTags, maxAllocationReachedPhase1, maxAllocationReachedPhase2} = this.state;
         const department = departments.find(department => department._id === filter.departmentId);
         const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : Consts.DEFAULT_LOGO;
         const title = department ? `${department.basicInfo.nameEn} Volunteers` : 'All Volunteers';
@@ -493,35 +513,35 @@ export default class VolunteerListTab extends Component {
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
                                         className={`${(!volunteer.sparkInfo || !volunteer.sparkInfo.validProfile) ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
-                                        onClick={() => this.showEditModal(volunteer._id)}
+                                        // onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}
                                         </td>
                                         }
-                                        <td className="ellipsis-text flex3">{volunteer.userId}</td>
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex3" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.userId}</td>
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {(volunteer.sparkInfo && volunteer.sparkInfo.firstName) ? volunteer.sparkInfo.firstName : 'No Data'}
                                         </td>
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {(volunteer.sparkInfo && volunteer.sparkInfo.lastName) ? volunteer.sparkInfo.lastName : 'No Data'}
                                         </td>
-                                        <td className="ellipsis-text flex3">
+                                        <td className="ellipsis-text flex3" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.contactEmail ?
                                                 <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.contactEmail}`}
                                                    target="_blank">
                                                     {volunteer.contactEmail}
                                                 </a> : 'No Data'}
                                         </td>
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.contactPhone ? volunteer.contactPhone : 'No Data'}
                                         </td>
-                                        <td
+                                        <td onClick={() => this.showEditModal(volunteer._id)}
                                             className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td>
-                                        <td className="ellipsis-text flex2">{volunteer.permission}</td>
-                                        <td className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</td>
-                                        <td className="ellipsis-text flex1">
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.permission}</td>
+                                        <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.yearly ? 'Yes' : 'No'}</td>
+                                        <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== "undefined" ? volunteer.sparkInfo.numOfTickets : '???'}
                                         </td>
                                         {/*<td className="ellipsis-text flex1">*/}
@@ -532,13 +552,15 @@ export default class VolunteerListTab extends Component {
                                                    {/*onChange={(event) => this.onTicketsAllocatedChange(volunteer.userId, event.target.value)}/>*/}
                                         {/*</td>*/}
                                         <td className="ellipsis-text flex1">
-                                            <input type="checkbox"
+                                            <input type="checkbox" 
+                                                   disabled={maxAllocationReachedPhase1 && !volunteer.allocationsDetails.allocatedEarlyEntrancePhase1} 
                                                    checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 : false}
                                                    onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 1)}/>
 
                                         </td>
                                         <td className="ellipsis-text flex1">
-                                            <input type="checkbox"
+                                            <input type="checkbox" 
+                                                   disabled={maxAllocationReachedPhase2 && !volunteer.allocationsDetails.allocatedEarlyEntrancePhase2}
                                                    checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 : false}
                                                    onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 2)}/>
 
@@ -549,7 +571,7 @@ export default class VolunteerListTab extends Component {
                                                    {/*onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 3)}/>*/}
 
                                         {/*</td>*/}
-                                        <td
+                                        <td onClick={() => this.showEditModal(volunteer._id)}
                                             className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
                                         {showTags &&
                                         <td className="flex3" onClick={event => event.stopPropagation()}>
