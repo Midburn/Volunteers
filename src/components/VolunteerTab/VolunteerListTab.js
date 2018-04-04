@@ -61,13 +61,29 @@ export default class VolunteerListTab extends Component {
         this.handleOnShowRequestTagToggle = this.handleOnShowRequestTagToggle.bind(this);
         this.handleOnRequestTagFilterChange = this.handleOnRequestTagFilterChange.bind(this);
         this.showEditModal = this.showEditModal.bind(this);
+        this.updateAllocationMaxReached = this.updateAllocationMaxReached.bind(this);
 
-        // this.phase1CheckboxNode = React.createRef();
-        // this.phase2CheckboxNode = React.createRef();
     }
 
     componentWillMount() {
         this.fetchDepartments();
+    }
+ 
+    updateAllocationMaxReached(phase) {
+        if(this.state.visibleVolunteers[0]){
+            const  volunteer = this.state.visibleVolunteers[0]
+            const maxAllocationByPhase = this.state.departments.find(d => d._id === volunteer.departmentId).allocationsDetails['maxAllocatedEarlyEntrancesPhase' + phase]
+        
+            let currentPhaseAllocation = this.state.visibleVolunteers.reduce((acc, volunteer)=> {
+                if(volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] === true) {
+                    return acc + 1;
+                }
+                else return acc
+            }, 0);
+            
+            currentPhaseAllocation >= maxAllocationByPhase ? this.state['maxAllocationReachedPhase' + phase] = true :  this.state['maxAllocationReachedPhase' + phase] = false;
+            this.setState(this.state);
+        }  
     }
 
     fetchDepartments = () => {
@@ -155,6 +171,8 @@ export default class VolunteerListTab extends Component {
             visibleVolunteers,
             visibleRequests
         });
+        this.updateAllocationMaxReached(1);        
+        this.updateAllocationMaxReached(2);        
     }
 
     searchChanged = event => {
@@ -222,7 +240,7 @@ export default class VolunteerListTab extends Component {
     }
 
     onEarlyEntranceAllocatedChange(userId, allocatedEarlyEntrance, phase) {
-        console.log("new value for user id " + userId + ", phase " + phase + " is " + allocatedEarlyEntrance);
+        // console.log("new value for user id " + userId + ", phase " + phase + " is " + allocatedEarlyEntrance);
         
         const {visibleVolunteers} = this.state;
         const volunteer = visibleVolunteers.find(volunteer => volunteer.userId === userId);
@@ -231,19 +249,8 @@ export default class VolunteerListTab extends Component {
         volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] = allocatedEarlyEntrance;
         // console.log("volunteer after=" + JSON.stringify(volunteer));
         
-        const maxAllocationByPhase = this.state.departments.find(d => d._id === volunteer.departmentId).allocationsDetails['maxAllocatedEarlyEntrancesPhase' + phase]
-        
-        let currentPhaseAllocation = visibleVolunteers.reduce((acc, volunteer)=> {
-            if(volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] === true) {
-                return acc + 1;
-            }
-            else return acc
-        }, 0);
-        
-        currentPhaseAllocation === maxAllocationByPhase ? this.state['maxAllocationReachedPhase' + phase] = true :  this.state['maxAllocationReachedPhase' + phase] = false;
-        
-        console.log('maxAllocationByPhase', maxAllocationByPhase);
-        console.log('currentPhaseAllocation: ', currentPhaseAllocation);
+        this.updateAllocationMaxReached(phase);
+
         this.setState({visibleVolunteers});
         VolunteerListTab.updateVolunteer(volunteer);
     }
@@ -255,7 +262,7 @@ export default class VolunteerListTab extends Component {
     //     console.log("volunteer before=" + JSON.stringify(volunteer));
     //     volunteer['allocationsDetails']['allocatedTickets'] = numAllocatedTickets;
     //     console.log("volunteer after=" + JSON.stringify(volunteer));
-    //
+    
     //     this.setState({visibleVolunteers});
     //     VolunteerListTab.updateVolunteer(volunteer);
     // }
