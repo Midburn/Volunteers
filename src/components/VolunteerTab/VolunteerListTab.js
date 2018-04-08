@@ -315,7 +315,7 @@ export default class VolunteerListTab extends Component {
     downloadVolunteers = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-volunteers.csv`;
-        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', '#Tickets', 'Tags', 'Other Departments', 'Added Date'];
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', '#Tickets', 'Early Entrance 9.5', 'Early Entrance 13.5', 'Tags', 'Other Departments', 'Added Date'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleVolunteers.map(volunteer => {
@@ -331,8 +331,8 @@ export default class VolunteerListTab extends Component {
                 Yearly: volunteer.yearly ? 'Yes' : 'No',
                 "#Tickets": volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== 'undefined' ? volunteer.sparkInfo.numOfTickets : '',
                 // "#Tickets Allocated": volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedTickets : 0,
-                "Early Entrance Phase 1?": volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 : false,
-                "Early Entrance Phase 2?": volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 : false,
+                "Early Entrance 9.5": volunteer.allocationsDetails !== null ? (volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 ? 'Yes' : '') : '',
+                "Early Entrance 13.5": volunteer.allocationsDetails !== null ? (volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 ? 'Yes' : '') : '',
                 // "Early Entrance Phase 3?": volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase3 : false,
 
                 "Other Departments": volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : '',
@@ -502,17 +502,17 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex3">Midburn Profile</th>
                                     <th className="ellipsis-text flex2">First Name</th>
                                     <th className="ellipsis-text flex2">Last Name</th>
-                                    <th className="ellipsis-text flex3">Email</th>
+                                    {/* <th className="ellipsis-text flex3">Email</th> */}
                                     <th className="ellipsis-text flex2">Phone</th>
-                                    <th className="ellipsis-text flex2">Added Date</th>
+                                    {/* <th className="ellipsis-text flex2">Added Date</th> */}
                                     <th className="ellipsis-text flex2">Role</th>
                                     <th className="ellipsis-text flex1">Yearly</th>
                                     <th className="ellipsis-text flex1">#Tickets</th>
                                     {/*<th className="ellipsis-text flex1">#Tickets Allocated</th>*/}
-                                    <th className="ellipsis-text flex1">Early Entrance Phase 1?</th>
-                                    <th className="ellipsis-text flex1">Early Entrance Phase 2?</th>
+                                    <th className="ellipsis-text flex1">9.5</th>
+                                    <th className="ellipsis-text flex1">13.5</th>
                                     {/*<th className="ellipsis-text flex1">Early Entrance Phase 3?</th>*/}
-                                    <th className="ellipsis-text flex2">Other Departments</th>
+                                    {/* <th className="ellipsis-text flex2">Other Departments</th> */}
                                     {showTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
                                 </thead>
@@ -534,18 +534,18 @@ export default class VolunteerListTab extends Component {
                                         <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {(volunteer.sparkInfo && volunteer.sparkInfo.lastName) ? volunteer.sparkInfo.lastName : 'No Data'}
                                         </td>
-                                        <td className="ellipsis-text flex3" onClick={() => this.showEditModal(volunteer._id)}>
+                                        {/* <td className="ellipsis-text flex3" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.contactEmail ?
                                                 <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.contactEmail}`}
                                                    target="_blank">
                                                     {volunteer.contactEmail}
                                                 </a> : 'No Data'}
-                                        </td>
+                                        </td> */}
                                         <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.contactPhone ? volunteer.contactPhone : 'No Data'}
                                         </td>
-                                        <td onClick={() => this.showEditModal(volunteer._id)}
-                                            className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td>
+                                        {/* <td onClick={() => this.showEditModal(volunteer._id)}
+                                            className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td> */}
                                         <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.permission}</td>
                                         <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.yearly ? 'Yes' : 'No'}</td>
                                         <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>
@@ -578,8 +578,8 @@ export default class VolunteerListTab extends Component {
                                                    {/*onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 3)}/>*/}
 
                                         {/*</td>*/}
-                                        <td onClick={() => this.showEditModal(volunteer._id)}
-                                            className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
+                                        {/* <td onClick={() => this.showEditModal(volunteer._id)}
+                                            className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td> */}
                                         {showTags &&
                                         <td className="flex3" onClick={event => event.stopPropagation()}>
                                             <Select.Creatable multi

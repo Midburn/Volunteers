@@ -23,3 +23,23 @@
 .edit-volunteer-delete {
   margin-top: 10px;
 }
+
+.volunteer-edit-data-section {
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+.volunteer-edit-data {
+  display: flex;
+  margin-top: 3px;
+}
+
+.volunteer-edit-data-title {
+  display: inline;
+  flex: 1;
+  color: #737373
+}
+
+.volunteer-edit-data-info {
+  flex: 4;
+}

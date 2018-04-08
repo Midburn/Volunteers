@@ -238,23 +238,27 @@ export default class EditDepartment extends Component {
                                     onClick={this.delete}>Delete</Button>}
                         </Tab>
 
-                        <Tab eventKey={3} title="Early Entrance Details">
+                        <Tab eventKey={3} title="Early Entrance">
+                            <br/>
                             <FormGroup controlId="maxAllocatedEarlyEntrancesPhase1">
-                                <ControlLabel># Allocated Early Entrances For Phase 1</ControlLabel>
+                                <ControlLabel># Early Entrances 9.5.18</ControlLabel>
                                 <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase1 || 0}
                                              disabled={!Permissions.isAdmin()}
                                              onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
-                                <HelpBlock>The amount of early entrances allocated for this department on Phase 1 (since 07/05/2018)
-                                    (<b>{volunteersAllocations.allocatedEarlyEntrancesPhase1}</b> are already allocated for the department volunteers)
+                                <HelpBlock>The number of volunteers for this department that can enter on 09/05/2018 - 09:00 or after<br/>
+                                    <b>{volunteersAllocations.allocatedEarlyEntrancesPhase1}</b> were already assigned to volunteers -  
+                                    <b> {allocationsDetails.maxAllocatedEarlyEntrancesPhase1 - volunteersAllocations.allocatedEarlyEntrancesPhase1}</b> left
                                 </HelpBlock>
                             </FormGroup>
+                            <br/>
                             <FormGroup controlId="maxAllocatedEarlyEntrancesPhase2">
-                                <ControlLabel># Allocated Early Entrances For Phase 2</ControlLabel>
+                                <ControlLabel># Early Entrances 13.5.18</ControlLabel>
                                 <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase2 || 0}
                                              disabled={!Permissions.isAdmin()}
                                              onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
-                                <HelpBlock>The amount of early entrances allocated for this department on Phase 2 (since 10/05/2018)
-                                    (<b>{volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> are already allocated for the department volunteers)
+                                <HelpBlock>The number of volunteers for this department that can enter on 13/05/2018 - 14:00 or after.<br/>
+                                    <b>{volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> were already assigned to volunteers - 
+                                    <b> {allocationsDetails.maxAllocatedEarlyEntrancesPhase2 - volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> left
                                 </HelpBlock>
                             </FormGroup>
                             {/*<FormGroup controlId="maxAllocatedEarlyEntrancesPhase3">*/}
