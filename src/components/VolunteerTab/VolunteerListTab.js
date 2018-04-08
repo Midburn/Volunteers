@@ -166,11 +166,10 @@ export default class VolunteerListTab extends Component {
 
         const visibleVolunteers = this.state.volunteers.filter(volunteer => isVisible(volunteer, false)).sort((a, b) => compareVolunteers(a, b));
         const visibleRequests = this.state.requests.filter(volunteer => isVisible(volunteer, true)).sort((a, b) => compareVolunteers(a, b));
-        this.setState({
-            ...this.state,
-            visibleVolunteers,
-            visibleRequests
-        });
+        this.state.visibleVolunteers = visibleVolunteers;
+        this.state.visibleRequests = visibleRequests;
+        this.setState(this.state);
+
         this.updateAllocationMaxReached(1);        
         this.updateAllocationMaxReached(2);        
     }
