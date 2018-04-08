@@ -18,7 +18,7 @@ export default class VolunteerEditModal extends React.Component {
       departmentAnswer: null,
 
       volunteer: {
-        permission: this.props.volunteer.permission,
+        ...this.props.volunteer,
         yearly: this.props.volunteer.yearly ? 'true' : 'false'
       },
       hasChanges: false,
@@ -120,25 +120,75 @@ export default class VolunteerEditModal extends React.Component {
     })
   }
 
+  renderInfoData = (title, data) => {
+    return (
+      <div className="volunteer-edit-data">
+        <div className="volunteer-edit-data-title" >{title}:</div>
+        <span className="volunteer-edit-data-info">{data}</span>
+      </div>)
+  }
+
   render() {
-    const name = this.props.volunteer ? 
-                  `${this.props.volunteer.firstName} ${this.props.volunteer.lastName}` :
-                  'No Data'
-    const email = this.props.volunteer ? this.props.volunteer.userId : 'No Data'
+    const volunteer = this.state.volunteer;
+    const firstName = volunteer && volunteer.sparkInfo && volunteer.sparkInfo.firstName ? volunteer.sparkInfo.firstName : 'No Data';
+    const lastName = volunteer && volunteer.sparkInfo && volunteer.sparkInfo.lastName ? volunteer.sparkInfo.lastName : 'No Data';
+    const name = `${firstName} ${lastName}`;
+    const profile = volunteer ? volunteer.userId : 'No Data'
+    const email = volunteer && volunteer.contactEmail ? volunteer.contactEmail : 'No Data';
+    const phone = volunteer && volunteer.contactPhone ? volunteer.contactPhone : 'No Data';
+    const tickets = volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== "undefined" ? volunteer.sparkInfo.numOfTickets : '???'
+
+    const permission = volunteer.permission;
+    const yearly = volunteer.yearly ? 'Yes' : 'No';
+    const addedDate = volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A';
+    const otherDep = volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : '';
+    var early = 'None';
+    if (volunteer.allocationsDetails && volunteer.allocationsDetails.allocatedEarlyEntrancePhase1) {
+      early = 'from 09/05/2018 - 09:00';
+    } else if (volunteer.allocationsDetails && volunteer.allocationsDetails.allocatedEarlyEntrancePhase2) {
+      early = 'from 13/05/2018 - 14:00';
+    }
+
     const errorMessage = this.errorMessage();
+
+    const personalDataSection = 
+      <div className="volunteer-edit-data-section">
+        {this.renderInfoData('First Name', firstName)}
+        {this.renderInfoData('Last Name', lastName)}
+        {this.renderInfoData('Midburn Profile', profile)}
+        {this.renderInfoData('Contact Email', email)}
+        {this.renderInfoData('Contact Phone', phone)}
+        {this.renderInfoData('Num of Tickets', tickets)}
+      </div>
+
+    const systemDataSection = 
+      <div className="volunteer-edit-data-section">
+        {this.renderInfoData('Permission', permission)}
+        {this.renderInfoData('Yearly', yearly)}
+        {this.renderInfoData('Added Date', addedDate)}
+        {otherDep ? this.renderInfoData('Also in', otherDep) : null}
+        {this.renderInfoData('Early Entrance', early)}
+      </div>
 
     return (
       <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
         <Modal.Header closeButton>
           <span className="edit-volunteer-title">
             <h2>{name}</h2>
-            <h4>{email}</h4>
+            <h4>{profile}</h4>
           </span>
         </Modal.Header>
         <Modal.Body>
           <Tabs id="volunteer-edit-tabs">
             <Tab eventKey={1} title="Info">
               {errorMessage}
+
+              <h3 style={{textAlign: 'left'}}>Personal Details</h3>
+             {personalDataSection}
+
+              <h3 style={{textAlign: 'left'}}>Volunteering Details</h3>
+             {systemDataSection}
+
               <div className="add-section">
                 <FormGroup className="edit-volunteer-form-group" controlId="permission">
                   <ControlLabel>Role</ControlLabel>

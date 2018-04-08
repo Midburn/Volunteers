@@ -74,5 +74,6 @@ const getProfile = co.wrap(function* (email) {
 module.exports = {
     getProfileByMail: getProfileByMail,
     getVolunteerProfile: getVolunteerProfile,
-    getProfile
+    getProfile,
+    getAuthHeader
 };
