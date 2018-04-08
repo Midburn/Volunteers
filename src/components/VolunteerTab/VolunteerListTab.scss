@@ -1,12 +1,12 @@
 .volunteer-list-tab-component {
   .container {
-    width: 80%;
+    width: 90%;
   }
 
   table {
     background-color: white;
     margin-top: 3px;
-
+    table-layout: fixed;
     tbody {
       tr {
         display: flex;
@@ -38,6 +38,9 @@
 
         &.manager {
           font-weight: bold;
+        }
+        input[type=checkbox] {
+          transform: scale(1.5);
         }
       }
     }

@@ -4,6 +4,7 @@ import {Button, Dropdown, FormControl, Image, MenuItem, Table} from 'react-boots
 import * as Permissions from "../../model/permissionsUtils"
 import * as Consts from '../../model/consts'
 import Select from 'react-select';
+import Checkbox from 'react-checkbox';
 import VolunteerAddModal from "./VolunteerAddModal"
 import VolunteerEditModal from "./VolunteerEditModal"
 import VolunteerRequestPreviewModal from "./VolunteerRequestPreviewModal"
@@ -45,10 +46,14 @@ export default class VolunteerListTab extends Component {
             editModalVolunteer: '',
             editModalRequest: '',
             showTags: true,
-            showRequestTags: true
+            showRequestTags: true,
+            maxAllocationReachedPhase1: false,
+            maxAllocationReachedPhase2: false
         };
 
         this.onTagsChange = this.onTagsChange.bind(this);
+        this.onEarlyEntranceAllocatedChange = this.onEarlyEntranceAllocatedChange.bind(this);
+        // this.onTicketsAllocatedChange = this.onTicketsAllocatedChange.bind(this);
         this.onVolunteerRequestTagsChange = this.onVolunteerRequestTagsChange.bind(this);
         this.handleOnTagFilterChange = this.handleOnTagFilterChange.bind(this);
         this.updateVisibleVolunteers = this.updateVisibleVolunteers.bind(this);
@@ -56,10 +61,29 @@ export default class VolunteerListTab extends Component {
         this.handleOnShowRequestTagToggle = this.handleOnShowRequestTagToggle.bind(this);
         this.handleOnRequestTagFilterChange = this.handleOnRequestTagFilterChange.bind(this);
         this.showEditModal = this.showEditModal.bind(this);
+        this.updateAllocationMaxReached = this.updateAllocationMaxReached.bind(this);
+
     }
 
     componentWillMount() {
         this.fetchDepartments();
+    }
+ 
+    updateAllocationMaxReached(phase) {
+        if(this.state.visibleVolunteers[0]){
+            const  volunteer = this.state.visibleVolunteers[0]
+            const maxAllocationByPhase = this.state.departments.find(d => d._id === volunteer.departmentId).allocationsDetails['maxAllocatedEarlyEntrancesPhase' + phase]
+        
+            let currentPhaseAllocation = this.state.visibleVolunteers.reduce((acc, volunteer)=> {
+                if(volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] === true) {
+                    return acc + 1;
+                }
+                else return acc
+            }, 0);
+            
+            currentPhaseAllocation >= maxAllocationByPhase ? this.state['maxAllocationReachedPhase' + phase] = true :  this.state['maxAllocationReachedPhase' + phase] = false;
+            this.setState(this.state);
+        }  
     }
 
     fetchDepartments = () => {
@@ -147,6 +171,8 @@ export default class VolunteerListTab extends Component {
             visibleVolunteers,
             visibleRequests
         });
+        this.updateAllocationMaxReached(1);        
+        this.updateAllocationMaxReached(2);        
     }
 
     searchChanged = event => {
@@ -193,7 +219,8 @@ export default class VolunteerListTab extends Component {
         axios.put(`/api/v1/departments/${volunteer.departmentId}/volunteer/${volunteer._id}`, {
             permission: volunteer.permission,
             yearly: volunteer.yearly === 'true',
-            tags: volunteer.tags
+            tags: volunteer.tags,
+            allocationsDetails: volunteer.allocationsDetails
         });
     }
 
@@ -211,6 +238,34 @@ export default class VolunteerListTab extends Component {
         this.setState({visibleVolunteers});
         VolunteerListTab.updateVolunteer(volunteer);
     }
+
+    onEarlyEntranceAllocatedChange(userId, allocatedEarlyEntrance, phase) {
+        // console.log("new value for user id " + userId + ", phase " + phase + " is " + allocatedEarlyEntrance);
+        
+        const {visibleVolunteers} = this.state;
+        const volunteer = visibleVolunteers.find(volunteer => volunteer.userId === userId);
+        
+        // console.log("volunteer before=" + JSON.stringify(volunteer));
+        volunteer['allocationsDetails']['allocatedEarlyEntrancePhase' + phase] = allocatedEarlyEntrance;
+        // console.log("volunteer after=" + JSON.stringify(volunteer));
+        
+        this.updateAllocationMaxReached(phase);
+
+        this.setState({visibleVolunteers});
+        VolunteerListTab.updateVolunteer(volunteer);
+    }
+
+    // onTicketsAllocatedChange(userId, numAllocatedTickets) {
+    //     console.log("new value for user id " + userId + "=" + numAllocatedTickets);
+    //     const {visibleVolunteers} = this.state;
+    //     const volunteer = visibleVolunteers.find(volunteer => volunteer.userId === userId);
+    //     console.log("volunteer before=" + JSON.stringify(volunteer));
+    //     volunteer['allocationsDetails']['allocatedTickets'] = numAllocatedTickets;
+    //     console.log("volunteer after=" + JSON.stringify(volunteer));
+    
+    //     this.setState({visibleVolunteers});
+    //     VolunteerListTab.updateVolunteer(volunteer);
+    // }
 
     onVolunteerRequestTagsChange(userId, tags) {
         const {visibleRequests} = this.state;
@@ -260,7 +315,7 @@ export default class VolunteerListTab extends Component {
     downloadVolunteers = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-volunteers.csv`;
-        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', '#Tickets', 'Tags', 'Other Departments', 'Added Date'];
+        const headers = ['Department', 'Midburn Profile', 'First Name', 'Last Name', 'Email', 'Phone', 'Role', 'Yearly', '#Tickets', 'Early Entrance 9.5', 'Early Entrance 13.5', 'Tags', 'Other Departments', 'Added Date'];
         const generalQuestions = [];
         const departmentQuestions = [];
         const data = this.state.visibleVolunteers.map(volunteer => {
@@ -275,6 +330,11 @@ export default class VolunteerListTab extends Component {
                 Role: volunteer.permission,
                 Yearly: volunteer.yearly ? 'Yes' : 'No',
                 "#Tickets": volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== 'undefined' ? volunteer.sparkInfo.numOfTickets : '',
+                // "#Tickets Allocated": volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedTickets : 0,
+                "Early Entrance 9.5": volunteer.allocationsDetails !== null ? (volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 ? 'Yes' : '') : '',
+                "Early Entrance 13.5": volunteer.allocationsDetails !== null ? (volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 ? 'Yes' : '') : '',
+                // "Early Entrance Phase 3?": volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase3 : false,
+
                 "Other Departments": volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : '',
                 Tags: volunteer.tags.join(", ")
             };
@@ -370,7 +430,7 @@ export default class VolunteerListTab extends Component {
     }
 
     render() {
-        const {filter, visibleVolunteers, visibleRequests, departments, showTags, showRequestTags} = this.state;
+        const {filter, visibleVolunteers, visibleRequests, departments, showTags, showRequestTags, maxAllocationReachedPhase1, maxAllocationReachedPhase2} = this.state;
         const department = departments.find(department => department._id === filter.departmentId);
         const logoImage = department && department.basicInfo.imageUrl ? department.basicInfo.imageUrl : Consts.DEFAULT_LOGO;
         const title = department ? `${department.basicInfo.nameEn} Volunteers` : 'All Volunteers';
@@ -442,13 +502,17 @@ export default class VolunteerListTab extends Component {
                                     <th className="ellipsis-text flex3">Midburn Profile</th>
                                     <th className="ellipsis-text flex2">First Name</th>
                                     <th className="ellipsis-text flex2">Last Name</th>
-                                    <th className="ellipsis-text flex3">Email</th>
+                                    {/* <th className="ellipsis-text flex3">Email</th> */}
                                     <th className="ellipsis-text flex2">Phone</th>
-                                    <th className="ellipsis-text flex2">Added Date</th>
+                                    {/* <th className="ellipsis-text flex2">Added Date</th> */}
                                     <th className="ellipsis-text flex2">Role</th>
                                     <th className="ellipsis-text flex1">Yearly</th>
                                     <th className="ellipsis-text flex1">#Tickets</th>
-                                    <th className="ellipsis-text flex2">Other Departments</th>
+                                    {/*<th className="ellipsis-text flex1">#Tickets Allocated</th>*/}
+                                    <th className="ellipsis-text flex1">9.5</th>
+                                    <th className="ellipsis-text flex1">13.5</th>
+                                    {/*<th className="ellipsis-text flex1">Early Entrance Phase 3?</th>*/}
+                                    {/* <th className="ellipsis-text flex2">Other Departments</th> */}
                                     {showTags && <th className="ellipsis-text flex3">Tags</th>}
                                 </tr>
                                 </thead>
@@ -456,39 +520,66 @@ export default class VolunteerListTab extends Component {
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
                                         className={`${(!volunteer.sparkInfo || !volunteer.sparkInfo.validProfile) ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
-                                        onClick={() => this.showEditModal(volunteer._id)}
+                                        // onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {this.state.departments.find(d => d._id === volunteer.departmentId).basicInfo.nameEn}
                                         </td>
                                         }
-                                        <td className="ellipsis-text flex3">{volunteer.userId}</td>
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex3" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.userId}</td>
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {(volunteer.sparkInfo && volunteer.sparkInfo.firstName) ? volunteer.sparkInfo.firstName : 'No Data'}
                                         </td>
-                                        <td className="ellipsis-text flex2">
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {(volunteer.sparkInfo && volunteer.sparkInfo.lastName) ? volunteer.sparkInfo.lastName : 'No Data'}
                                         </td>
-                                        <td className="ellipsis-text flex3">
+                                        {/* <td className="ellipsis-text flex3" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.contactEmail ?
                                                 <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${volunteer.contactEmail}`}
                                                    target="_blank">
                                                     {volunteer.contactEmail}
                                                 </a> : 'No Data'}
-                                        </td>
-                                        <td className="ellipsis-text flex2">
+                                        </td> */}
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.contactPhone ? volunteer.contactPhone : 'No Data'}
                                         </td>
-                                        <td
-                                            className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td>
-                                        <td className="ellipsis-text flex2">{volunteer.permission}</td>
-                                        <td className="ellipsis-text flex1">{volunteer.yearly ? 'Yes' : 'No'}</td>
-                                        <td className="ellipsis-text flex1">
+                                        {/* <td onClick={() => this.showEditModal(volunteer._id)}
+                                            className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td> */}
+                                        <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.permission}</td>
+                                        <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.yearly ? 'Yes' : 'No'}</td>
+                                        <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== "undefined" ? volunteer.sparkInfo.numOfTickets : '???'}
                                         </td>
-                                        <td
-                                            className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td>
+                                        {/*<td className="ellipsis-text flex1">*/}
+                                            {/*<input type="number"*/}
+                                                   {/*min="1"*/}
+                                                   {/*max="2"*/}
+                                                   {/*required value={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedTickets : 0}*/}
+                                                   {/*onChange={(event) => this.onTicketsAllocatedChange(volunteer.userId, event.target.value)}/>*/}
+                                        {/*</td>*/}
+                                        <td className="ellipsis-text flex1">
+                                            <input type="checkbox" 
+                                                   disabled={maxAllocationReachedPhase1 && !volunteer.allocationsDetails.allocatedEarlyEntrancePhase1} 
+                                                   checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 : false}
+                                                   onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 1)}/>
+
+                                        </td>
+                                        <td className="ellipsis-text flex1">
+                                            <input type="checkbox" 
+                                                   disabled={maxAllocationReachedPhase2 && !volunteer.allocationsDetails.allocatedEarlyEntrancePhase2}
+                                                   checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 : false}
+                                                   onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 2)}/>
+
+                                        </td>
+                                        {/*<td className="ellipsis-text flex1">*/}
+                                            {/*<input type="checkbox"*/}
+                                                   {/*checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrance : false}*/}
+                                                   {/*onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 3)}/>*/}
+
+                                        {/*</td>*/}
+                                        {/* <td onClick={() => this.showEditModal(volunteer._id)}
+                                            className="ellipsis-text flex2">{volunteer.otherDepartments ? volunteer.otherDepartments.map(deptBasicInfo => deptBasicInfo.nameEn ? deptBasicInfo.nameEn : deptBasicInfo.nameHe).join() : ''}</td> */}
                                         {showTags &&
                                         <td className="flex3" onClick={event => event.stopPropagation()}>
                                             <Select.Creatable multi
