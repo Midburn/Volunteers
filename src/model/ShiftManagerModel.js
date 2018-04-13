@@ -38,13 +38,18 @@ function ShiftManagerModel() {
 
     this.initDepartments = async() => {
         const resp = await axios('/api/v1/public/departments', {credentials: 'include'})
-        this.departments = resp.data
-            .filter(dep => Permissions.isAdmin() || Permissions.isManagerOfDepartment(dep._id))
-            .sort((a, b) => {
-                if (!a.basicInfo.nameHe) return -1;
-                if (!b.basicInfo.nameHe) return 1;
-                return a.basicInfo.nameHe.localeCompare(b.basicInfo.nameHe);
-            })
+        if (!document.roles) {
+            debugger;
+            setTimeout(this.initDepartments, 1000);
+        } else {
+            this.departments = resp.data
+                .filter(dep => Permissions.isAdmin() || Permissions.isManagerOfDepartment(dep._id))
+                .sort((a, b) => {
+                    if (!a.basicInfo.nameHe) return -1;
+                    if (!b.basicInfo.nameHe) return 1;
+                    return a.basicInfo.nameHe.localeCompare(b.basicInfo.nameHe);
+                })
+        }
     }
 
     this.refreshShifts = async() => {
@@ -166,7 +171,7 @@ console.log(profileId, checkinTime, comment)
         }, []);
     })
 
-    this.initDepartments()
+    this.initDepartments();
 }
 
 export default ShiftManagerModel;
