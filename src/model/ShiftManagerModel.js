@@ -39,7 +39,6 @@ function ShiftManagerModel() {
     this.initDepartments = async() => {
         const resp = await axios('/api/v1/public/departments', {credentials: 'include'})
         if (!document.roles) {
-            debugger;
             setTimeout(this.initDepartments, 1000);
         } else {
             this.departments = resp.data
