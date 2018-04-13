@@ -1,16 +1,13 @@
 .shift-manager {
     display: flex;
     flex-direction: column;
+    background-color: #f1f1f5;
     .rbc-selected {
         z-index: 3;
     }
 
     .rbc-row-segment {
         position: relative;
-    }
-
-    #departments {
-        width: 100%;
     }
 
     overflow: scroll;
@@ -36,6 +33,10 @@
     }
     .shift-manager-header {
         display: flex;
+
+        .glyphicon {
+            top: 0px;
+        }
     }
 
     input[type="color"] {

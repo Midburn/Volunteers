@@ -2,11 +2,13 @@ import {extendObservable, reaction, toJS} from 'mobx';
 import moment from 'moment';
 import axios from 'axios'
 import _ from 'lodash'
+import * as Permissions from './permissionsUtils';
 
+const eventId = "1";
 const createGuid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (
     (r => c == 'x' ? r : (r & 0x3 | 0x8))(Math.random() * 16 | 0).toString(16)
 ));
-const getNameById = (collection, id, dfault = "All") => (obj => obj ? obj.name : dfault)(collection.find(d => d.id === id));
+const getNameById = (collection, id, dfault = "All") => (obj => obj ? obj.basicInfo.nameEn : dfault)(collection.find(d => d._id === id));
 function ShiftManagerModel() {
     extendObservable(this, {
         departmentID: null,
@@ -25,7 +27,7 @@ function ShiftManagerModel() {
         volunteers: [],
         editError: "",
         specialDates: [
-            {name: "Midburn 2017", date: moment("20170528", "YYYYMMDD")}
+            {name: "Midburn 2018", date: moment("20180514", "YYYYMMDD")}
         ],
         get dateRange() {
             return ((t, d) => [moment(d).startOf(t), moment(d).endOf(t)])(this.weekView ? 'week' : 'day', this.date);
@@ -35,12 +37,22 @@ function ShiftManagerModel() {
 
 
     this.initDepartments = async() => {
-        const resp = await axios('/api/v1/departments', {credentials: 'include'})
-        this.departments = resp.data.sort((a, b)=> a.name.localeCompare(b.name));
+        const resp = await axios('/api/v1/public/departments', {credentials: 'include'})
+        if (!document.roles) {
+            setTimeout(this.initDepartments, 1000);
+        } else {
+            this.departments = resp.data
+                .filter(dep => Permissions.isAdmin() || Permissions.isManagerOfDepartment(dep._id))
+                .sort((a, b) => {
+                    if (!a.basicInfo.nameHe) return -1;
+                    if (!b.basicInfo.nameHe) return 1;
+                    return a.basicInfo.nameHe.localeCompare(b.basicInfo.nameHe);
+                })
+        }
     }
 
     this.refreshShifts = async() => {
-        const resp = await axios(`/api/v1/departments/${this.departmentID}/shifts`, {credentials: 'include'})
+        const resp = await axios(`/api/v1/departments/${this.departmentID}/events/${eventId}/shifts`, {credentials: 'include'})
         this.shifts = resp.data
     }
 
@@ -61,7 +73,7 @@ function ShiftManagerModel() {
 
         try {
             const method = this.currentShift.isNew ? 'post' : 'put'
-            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift._id}`,
+            await axios(`/api/v1/departments/${this.departmentID}/events/${eventId}/shifts/${this.currentShift._id}`,
                 {credentials: 'include', data: transformShift(this.currentShift), method}
             );
 
@@ -98,7 +110,7 @@ console.log(profileId, checkinTime, comment)
     }
 
     this.deleteShift = async shift => {
-        await axios.delete(`/api/v1/departments/${this.departmentID}/shifts/${shift._id}`)
+        await axios.delete(`/api/v1/departments/${this.departmentID}/events/${eventId}/shifts/${shift._id}`)
         this.refreshShifts()
     }
 
@@ -108,17 +120,17 @@ console.log(profileId, checkinTime, comment)
 
     reaction(() => this.departments, async depts => {
         this.departmentID = this.departmentID || +localStorage.getItem('currentDepartment');
-        if (!this.departmentID || !depts.find(d => d.id === this.departmentID)) {
-            this.departmentID = _.size(depts) && _.first(depts).id;
+        if (!this.departmentID || !depts.find(d => d._id === this.departmentID)) {
+            this.departmentID = _.size(depts) && _.first(depts)._id;
         }
     })
 
     reaction(() => this.departmentID, async dept => {
         // Can optimize by connecting with volunteer-list model
-        // this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
-        // location.href = `#${dept}`
-        // localStorage.setItem('currentDepartment', dept);
-        // this.refreshShifts()
+        this.volunteers = (await axios(`/api/v1/departments/${dept}/volunteers`)).data
+        location.href = `#${dept}`
+        localStorage.setItem('currentDepartment', dept);
+        this.refreshShifts()
     })
 
     const deptFromHash = () => {
@@ -158,7 +170,7 @@ console.log(profileId, checkinTime, comment)
         }, []);
     })
 
-    //this.initDepartments()
+    this.initDepartments();
 }
 
 export default ShiftManagerModel;
