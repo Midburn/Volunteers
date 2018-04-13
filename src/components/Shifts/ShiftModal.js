@@ -25,8 +25,9 @@ function changeEndDate(shift, date) {
   shift.endDate = moment(shift.endDate).add(diff, 'minutes')
 }
 
-const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) => (
-  shift ? <Modal onHide={onCancel} show={true}>
+const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) => {
+  return shift ? 
+    <Modal onHide={onCancel} show={true}>
       <Modal.Header>
         <Modal.Title>{shift.isNew ? 'Create Shift' : "Edit Shift"}</Modal.Title>
       </Modal.Header>
@@ -65,31 +66,32 @@ const ShiftModal = observer(({shift, onSubmit, onCancel, departmentVolunteers}) 
         <FormGroup controlId="volunteers">
           <ControlLabel>Volunteers</ControlLabel>
           <Select multi simpleValue
-                  value={shift.volunteers && Object.keys(shift.volunteers).join(',')}
+                  value={shift.volunteers && shift.volunteers.map(volunteer => volunteer.userId).join(',')}
                   options={departmentVolunteers.map(volunteer => ({
-                    value: volunteer.profile_id.toString(),
-                    label: `${volunteer.first_name} ${volunteer.last_name}`,
-                    email: volunteer.email
+                    value: volunteer._id.toString(),
+                    label: `${volunteer.sparkInfo.firstName} ${volunteer.sparkInfo.lastName}`,
+                    profile: volunteer.userId
                   }))}
-                  onChange={selectedVolunteerProfileIds => shift.volunteers =
-                    selectedVolunteerProfileIds.split(',').reduce((acc, profileId, index) => {
-
-                      acc[profileId] = _.get(shift, ['volunteers', profileId], {
+                  onChange={selectedVolunteerProfileIds => {
+                    shift.volunteers = selectedVolunteerProfileIds.split(',').map(id => {
+                      const data = {
+                        userId: id,
                         isCheckedIn: null,
                         comment: ''
-                      });
-                      return acc;
-                    }, {})}
-                  filterOption={(object, filter) => Object.keys(object).some((element, index, array) => object[element].toLowerCase().includes(filter))
+                      }
+                      return data;
+                    })
+                  }}
+                  filterOption={(object, filter) =>Object.keys(object).some((element, index, array) => object[element] && object[element].toLowerCase().includes(filter))
                   }/>
         </FormGroup>
 
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onSubmit}>OK</Button>
+        <Button bsStyle="success" onClick={onSubmit}>OK</Button>
         <Button onClick={onCancel}>Cancel</Button>
       </Modal.Footer>
     </Modal> : null
-))
+})
 
 export default ShiftModal
