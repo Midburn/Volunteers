@@ -11,7 +11,7 @@ export default class VolunteerEditModal extends React.Component {
   }
 
   initState = _ => {
-    this.state = { 
+    this.state = {
       loading: true,
 
       generalAnswer: null,
@@ -103,7 +103,7 @@ export default class VolunteerEditModal extends React.Component {
         this.state.isButtonEnabled = true
         this.state.hasChanges = false
         this.setState(this.state)
-        this.props.onSuccess() 
+        this.props.onSuccess()
     })
   }
 
@@ -116,24 +116,52 @@ export default class VolunteerEditModal extends React.Component {
         this.state.hasChanges = false
         this.setState(this.state)
         this.props.onSuccess()
-        this.props.onHide() 
+        this.props.onHide()
     })
   }
 
+  formatingUserDetails = val => {
+    return val? val: ''
+  }
+
+  renderUserDetails = _=> {
+    if (!this.props.volunteer){
+      return (
+        <span className="edit-volunteer-title">
+          No Data
+        </span>
+        )
+    }
+    let {firstName, lastName, contactEmail, email, contactPhone, tags} = this.props.volunteer;
+
+    if (!tags || tags.length==0){ tags='No Tags'}
+    else{
+      let tagList = tags.map((tag, index) => {
+        return <li key={index}>{tag}</li>
+      })
+      tags = <ul>{tagList}</ul>
+    }
+
+    return (
+      <span className="edit-volunteer-title">
+        <h2>{`${firstName} ${lastName}`}</h2>
+        <h4>{email}</h4>
+        <h5>{`${(this.formatingUserDetails(contactEmail))} , ${this.formatingUserDetails(contactPhone)}`}<br/>
+          tags: {tags}
+
+        </h5>
+      </span>
+    )
+  }
+
+
   render() {
-    const name = this.props.volunteer ? 
-                  `${this.props.volunteer.firstName} ${this.props.volunteer.lastName}` :
-                  'No Data'
-    const email = this.props.volunteer ? this.props.volunteer.userId : 'No Data'
     const errorMessage = this.errorMessage();
 
     return (
       <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
         <Modal.Header closeButton>
-          <span className="edit-volunteer-title">
-            <h2>{name}</h2>
-            <h4>{email}</h4>
-          </span>
+          {this.renderUserDetails()}
         </Modal.Header>
         <Modal.Body>
           <Tabs id="volunteer-edit-tabs">

@@ -12,7 +12,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
   }
 
   initState = _ => {
-    this.state = { 
+    this.state = {
       loading: true,
       request: this.props.request,
       status: '',
@@ -82,12 +82,12 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     }
     return null;
   }
-  
-  handleOptionsChange = event => {    
+
+  handleOptionsChange = event => {
     const field = event.target.id;
     this.state[field] = event.target.value
     this.setState(this.state);
-  }  
+  }
 
   onHide = _ => {
     //TODO: check if there are unsaved changes and show "are you sure" alert
@@ -104,7 +104,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
         this.state.isButtonEnabled = true
         this.state.hasChanges = false
         this.setState(this.state)
-        this.props.onSuccess() 
+        this.props.onSuccess()
     })
   }
 
@@ -119,7 +119,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
         this.state.removeEnabled = true
         this.setState(this.state)
         this.props.onSuccess()
-        this.props.onHide() 
+        this.props.onHide()
     })
   }
 
@@ -139,7 +139,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
       this.state.addEnabled = true
       this.setState(this.state)
       this.props.onSuccess()
-      this.props.onHide() 
+      this.props.onHide()
     })
     .catch(error => {
       this.state.status = error.response.data && error.response.data.error ? error.response.data.error : 'Server Error'
@@ -148,13 +148,44 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     });
   }
 
+    formatingUserDetails = val => {
+    return val? val: ''
+  }
+
+  renderUserDetails = _=> {
+    if (!this.props.volunteer){
+      return (
+        <span className="edit-volunteer-title">
+          No Data
+        </span>
+        )
+    }
+    let {firstName, lastName, contactEmail, email, contactPhone, tags} = this.props.volunteer;
+
+    if (!tags || tags.length==0){ tags='No Tags'}
+    else{
+      let tagList = tags.map((tag, index) => {
+        return <li key={index}>{tag}</li>
+      })
+      tags = <ul>{tagList}</ul>
+    }
+
+    return (
+      <span className="edit-volunteer-title">
+        <h2>{`${firstName} ${lastName}`}</h2>
+        <h4>{email}</h4>
+        <h5>{`${(this.formatingUserDetails(contactEmail))} , ${this.formatingUserDetails(contactPhone)}`}<br/>
+          tags: {tags}
+
+        </h5>
+      </span>
+    )
+  }
+
   render() {
     if (!this.props.request) {
       return (<span/>)
     }
-
-    const name = this.props.request ? `${this.props.request.firstName} ${this.props.request.lastName}` : 'No Data';
-    const email = this.props.request ? this.props.request.userId : 'No Data';
 
     const errorMessage = this.errorMessage();
 
@@ -162,16 +193,13 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     return (
       <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
         <Modal.Header closeButton>
-          <span className="edit-volunteer-title">
-            <h2>{name}</h2>
-            <h4>{email}</h4>
-          </span>
+          {this.renderUserDetails()}
           {/* {this.state.hasChanges &&
           <Button className="edit-volunteer-save" bsStyle="success" onClick={this.save}>Save</Button>} */}
         </Modal.Header>
         <Modal.Body>
           <Tabs id="edit-department-tabs">
-            
+
             <Tab eventKey={1} title="Status" className="status">
               {errorMessage}
               <div className="add-section">
@@ -200,7 +228,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
 
               <Button bsStyle="danger" disabled={!this.state.removeEnabled} onClick={this.remove}>Remove</Button>
             </Tab>
-            
+
             <Tab eventKey={2} title="Forms">
               <h4>General</h4>
                 <FromAnswersView answers={this.state.generalAnswer}/>
