@@ -5,11 +5,16 @@ const shiftSchema = new Schema({
     _id: String,
     title: String,
     color: String,
-    departmentId: Number,
+    departmentId: String,
+    eventId: String,
     comment: String,
     startDate: Date,
     endDate: Date,
-    volunteers: {},
+    volunteers: [{
+        userId: String,
+        isCheckedIn: String,
+        comment: String
+    }],
     reported: [String]
 }, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 

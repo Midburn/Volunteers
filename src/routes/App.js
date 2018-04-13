@@ -24,9 +24,9 @@ class App extends React.Component {
       routes.push({ name:'Volunteers', path: '/volunteer-list-tab',component: VolunteerListTab });
     }
 
-    // if (isAdmin || isManager) {
-    //   routes.push({ name:'Shifts Managment', path: '/shift-manager',component: ShiftManager });
-    // }
+    if (isAdmin || isManager) {
+      routes.push({ name:'Shifts', path: '/shift-manager',component: ShiftManager });
+    }
 
     // if (isAdmin || isManager) {
     //   routes.push({ name:'Shifts Managment', path: '/time-clock',component: TimeClock });
