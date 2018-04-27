@@ -97,7 +97,7 @@ const updateInvalidVolunteerSparkInfo = co.wrap(function* () {
     try {
         const volunteers =
             yield Volunteer
-                .find({deleted: false, "sparkInfo.validProfile": false})
+                .find({deleted: false, "sparkInfo.validProfile": { $ne: true }})
                 .sort({"sparkInfo.lastUpdate": 1})
                 .limit(20);
         const updatedVolunteers = yield updateVolunteersSparkInfo(volunteers);
@@ -147,7 +147,7 @@ const updateInvalidVolunteerRequestSparkInfo = co.wrap(function* () {
     try {
         const volunteers =
             yield VolunteerRequest
-                .find({"sparkInfo.validProfile": false})
+                .find({"sparkInfo.validProfile": { $ne: true }})
                 .sort({"sparkInfo.lastUpdate": 1})
                 .limit(20);
         const updatedVolunteers = yield updateVolunteersSparkInfo(volunteers);
