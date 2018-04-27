@@ -188,7 +188,7 @@ router.get('/public/volunteers/getEarlyEntrance', co.wrap(function* (req, res) {
     const EARLY_ENTRANCES = {
         "no": {earlyEntranceDate: null},
         1: {
-            earlyEntranceDate: "2018-05-01"
+            earlyEntranceDate: "2018-05-09"
         },
         2: {
             earlyEntranceDate: "2018-05-13"
