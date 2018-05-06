@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Button, Dropdown, FormControl, Image, MenuItem, Table} from 'react-bootstrap'
+import {Button, Dropdown, FormControl, Image, MenuItem, Table, Modal, Alert} from 'react-bootstrap'
 import * as Permissions from "../../model/permissionsUtils"
 import * as Consts from '../../model/consts'
 import Select from 'react-select';
@@ -48,7 +48,9 @@ export default class VolunteerListTab extends Component {
             showTags: true,
             showRequestTags: true,
             maxAllocationReachedPhase1: false,
-            maxAllocationReachedPhase2: false
+            maxAllocationReachedPhase2: false,
+            successAlert: false,
+            errorAlert: false
         };
 
         this.onTagsChange = this.onTagsChange.bind(this);
@@ -62,7 +64,10 @@ export default class VolunteerListTab extends Component {
         this.handleOnRequestTagFilterChange = this.handleOnRequestTagFilterChange.bind(this);
         this.showEditModal = this.showEditModal.bind(this);
         this.updateAllocationMaxReached = this.updateAllocationMaxReached.bind(this);
-
+        this.showSuccessAlert = this.showSuccessAlert.bind(this);
+        this.hideSuccessAlert = this.hideSuccessAlert.bind(this);
+        this.showErrorAlert = this.showErrorAlert.bind(this);
+        this.hideErrorAlert = this.hideErrorAlert.bind(this);
     }
 
     componentWillMount() {
@@ -214,19 +219,42 @@ export default class VolunteerListTab extends Component {
         this.setState(this.state);
     }
 
-    static updateVolunteer(volunteer) {
+    updateVolunteer(volunteer) {
         axios.put(`/api/v1/departments/${volunteer.departmentId}/volunteer/${volunteer._id}`, {
             permission: volunteer.permission,
             yearly: volunteer.yearly === 'true',
             tags: volunteer.tags,
             allocationsDetails: volunteer.allocationsDetails
-        });
+        })
+        .then(err => {
+            this.showSuccessAlert();
+        })
+        .catch(err => {
+            this.showErrorAlert();
+        })
     }
 
-    static updateVolunteerRequest(volunteer) {
+    updateVolunteerRequest(volunteer) {
         axios.put(`/api/v1/departments/${volunteer.departmentId}/events/${eventId}/requests/${volunteer.userId}`, {
             tags: volunteer.tags
         });
+    }
+
+    showSuccessAlert = _ => {
+        this.state.successAlert = true;
+        this.setState(this.state);
+    }
+    hideSuccessAlert = _ => {
+        this.state.successAlert = false;
+        this.setState(this.state);
+    }
+    showErrorAlert = _ => {
+        this.state.errorAlert = true;
+        this.setState(this.state);
+    }
+    hideErrorAlert = _ => {
+        this.state.errorAlert = false;
+        this.setState(this.state);
     }
 
     onTagsChange(userId, tags) {
@@ -235,7 +263,7 @@ export default class VolunteerListTab extends Component {
         volunteer['tags'] = tags.map(tag => tag.value);
 
         this.setState({visibleVolunteers});
-        VolunteerListTab.updateVolunteer(volunteer);
+        this.updateVolunteer(volunteer);
     }
 
     onEarlyEntranceAllocatedChange(userId, allocatedEarlyEntrance, phase) {
@@ -251,7 +279,7 @@ export default class VolunteerListTab extends Component {
         this.updateAllocationMaxReached(phase);
 
         this.setState({visibleVolunteers});
-        VolunteerListTab.updateVolunteer(volunteer);
+        this.updateVolunteer(volunteer);
     }
 
     // onTicketsAllocatedChange(userId, numAllocatedTickets) {
@@ -272,7 +300,7 @@ export default class VolunteerListTab extends Component {
         volunteer['tags'] = tags.map(tag => tag.value);
 
         this.setState({visibleRequests});
-        VolunteerListTab.updateVolunteerRequest(volunteer);
+        this.updateVolunteerRequest(volunteer);
     }
 
     handleOnTagFilterChange(event, option) {
@@ -684,6 +712,29 @@ export default class VolunteerListTab extends Component {
                                     onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
                 <VolunteerRequestPreviewModal show={!!this.state.editModalRequest} request={this.state.editModalRequest}
                                               onHide={this.hideModals} onSuccess={this.fetchVolunteers}/>
+
+                <Modal show={this.state.errorAlert} onHide={this.hideErrorAlert} bsSize="sm">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Error</Modal.Title>
+                    </Modal.Header>
+                    
+                    <Modal.Body>
+                        <Alert bsStyle="danger">
+                            <strong>Failed</strong>
+                        </Alert>
+                    </Modal.Body>
+                </Modal>}
+
+                <Modal show={this.state.successAlert} onHide={this.hideSuccessAlert} bsSize="sm">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Yay</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Alert bsStyle="success">
+                            <strong>All good</strong>
+                        </Alert>
+                    </Modal.Body>
+                </Modal>
             </div>
         );
     }
