@@ -62,3 +62,11 @@
 .admin-department-line-right.Inactive {
   color: #cbcbcb
 }
+
+.admin-report {
+  padding: 10px 3px;
+}
+
+.admin-report-comment {
+  color: #333333;
+}
