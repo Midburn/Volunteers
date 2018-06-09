@@ -8,6 +8,8 @@ import FormManager from "../FormManager/FormManager";
 
 require('./AdminView.css');
 
+const eventId = "1";
+
 export default class AdminView extends Component {
     constructor(props) {
         super(props);
@@ -137,6 +139,16 @@ export default class AdminView extends Component {
                             )
                         })}
                     </ListGroup>
+                </div>
+
+
+                <div className="card container">
+                    <h1 className="admin-departments">Reports</h1>
+                    {Permissions.isAdmin() && <div className="admin-report">
+                        <a href={`/api/v1/reports/events/${eventId}/allShiftsHours`}>Volunteers Hours</a>
+                        <span className="admin-report-comment"> - Volunteering hours from all the shifts</span>
+                    </div>}
+
                 </div>
 
                 {Permissions.isAdmin() &&
