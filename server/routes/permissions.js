@@ -11,7 +11,6 @@ const addLocalAdmin = co.wrap(function* (userDetails) {
             return;
         }
 
-
         const admin = yield Admin.find({userId: 'user@midburn.org'});
         if (admin && admin.length) {
             return;
