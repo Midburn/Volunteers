@@ -22,7 +22,6 @@ app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(compression()); // compress all responses
 
-
 const devMode = (process.env.ENVIRONMENT == 'debug');
 const SPARK_HOST = process.env.SPARK_HOST;
 const JWT_KEY = process.env.JWT_KEY;
@@ -42,6 +41,7 @@ app.use(co.wrap(function* (req, res, next) {
         req.token = token;
         req.userDetails = userDetails;
         req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
+        req.userDetails.eventId = req.cookies[JWT_KEY].currentEventId;
         next();
     }
     catch (err) {
@@ -50,17 +50,17 @@ app.use(co.wrap(function* (req, res, next) {
             res.clearCookie(JWT_KEY);
             return res.redirect(SPARK_HOST);
         } else {
+            // TODO: (may) maybe read the default value from spark
+            req.userDetails = { eventId: process.env.DEFAULT_EVENT_ID }
             next();
         }
     }
 }));
 
-
 app.use((err, req, res, next) => {
     console.log(err);
     return res.status(500).json({error: err});
 });
-
 
 /////////////////////////////
 // APIS
@@ -92,7 +92,7 @@ app.use('/api/v1/login', (req, res) => {
 
     try {
         jwt.verify(token, SECRET);
-        res.cookie(JWT_KEY, {token});
+        res.cookie(JWT_KEY, {token, currentEventId: process.env.DEFAULT_EVENT_ID});
         return servePage(req, res);
     }
     catch (err) {
