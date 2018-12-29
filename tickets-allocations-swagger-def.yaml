@@ -1,0 +1,287 @@
+swagger: '2.0'
+info:
+  title: Midburn IL ticket allocation service API
+  description: |
+    This api is the backend for taggle platform service
+  version: 1.0.0-beta
+host: api.tickets-allocation.midurn.org
+schemes:
+  - https
+basePath: /v1/tickets-allocation
+produces:
+  - application/json
+  - application/x-gzip
+securityDefinitions:
+  Basic Authentication:
+    type: basic
+    description: >
+      Basic http authentication using username and password. Used only for the
+      /auth/token endpoint to exchage it with a new bearer token.
+  Bearer Token:
+    type: apiKey
+    description: >
+      A bearer token to be used for all endpoints except for the /users/login
+      endpoint.
+    name: Authorization
+    in: header
+paths:
+  '/{eventId}/allocations/{entityType}/{entityId}':
+    get:
+      summary: >-
+        Get the allocations for entity *entityId* of type *entityType*
+        (camp/volunteer department/etc) for the specific event *eventId* -
+        Allocation - Event - Entity - Profile
+      security:
+        - Bearer Token: []
+      parameters:
+        - name: eventId
+          in: path
+          description: The event id
+          required: true
+          type: string
+          default: Midburn2019
+        - name: entityType
+          in: path
+          description: 'the entity type - whether it''s a camp, a volunteers department, etc'
+          required: true
+          type: string
+        - name: entityId
+          in: path
+          description: >-
+            the entity id - the id/name of the camp, volunteers department, or
+            any other entity that has tickets allocation
+          required: true
+          type: string
+      responses:
+        '201':
+          description: >-
+            The response for the entity allocation request - includes the
+            original request, the request status, and the entity update
+            allocations
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityProfileAllocation'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: >-
+        Allocate for entity *entityId* of type *entityType* (camp/volunteer
+        department/etc) *numAllocations*of type *allocType* for the specific
+        event *eventId*
+      tags:
+        - Allocation
+        - Event
+        - Entity
+      security:
+        - Bearer Token: []
+      parameters:
+        - name: eventId
+          in: path
+          description: The event id
+          required: true
+          type: string
+          default: Midburn2019
+        - name: entityType
+          in: path
+          description: 'the entity type - whether it''s a camp, a volunteers department, etc'
+          required: true
+          type: string
+        - name: entityId
+          in: path
+          description: >-
+            the entity id - the id/name of the camp, volunteers department, or
+            any other entity that has tickets allocation
+          required: true
+          type: string
+        - name: allocation
+          in: body
+          description: The actual allocation.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityAllocation'
+      responses:
+        '201':
+          description: >-
+            The response for the entity allocation request - includes the
+            original request, the request status, and the entity update
+            allocations
+          schema:
+            $ref: '#/definitions/EntityAllocationResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: >-
+        Adds an allocation of type *allocType* for profile *profileId* from
+        entity *entityId* of type *entityType* (camp/volunteer department/etc) 
+        for the specific event *eventId*
+      tags:
+        - Allocation
+        - Event
+        - Entity
+        - Profile
+      security:
+        - Bearer Token: []
+      parameters:
+        - name: eventId
+          in: path
+          description: The event id
+          required: true
+          type: string
+          default: Midburn2019
+        - name: entityType
+          in: path
+          description: 'the entity type - whether it''s a camp, a volunteers department, etc'
+          required: true
+          type: string
+        - name: entityId
+          in: path
+          description: >-
+            the entity id - the id/name of the camp, volunteers department, or
+            any other entity that has tickets allocation
+          required: true
+          type: string
+        - name: allocation
+          in: body
+          description: The actual profile allocation.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityProfileAllocation'
+      responses:
+        '201':
+          description: >-
+            The response for the entity allocation request - includes the
+            original request, the request status, and the entity update
+            allocations
+          schema:
+            $ref: '#/definitions/EntityProfileAllocationResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  '/{eventId}/allocations':
+    get:
+      summary: >-
+        Get all allocations for profile *profileId* [optional filters - from
+        entity *entityId*, of type *entityType* (camp/volunteer department/etc),
+        allocation of type *allocType*]  for the specific event *eventId* -
+        Allocation - Event - Entity - Profile
+      security:
+        - Bearer Token: []
+      parameters:
+        - name: eventId
+          in: path
+          description: The event id
+          required: true
+          type: string
+          default: Midburn2019
+        - name: entityType
+          in: query
+          description: 'the entity type - whether it''s a camp, a volunteers department, etc'
+          required: false
+          type: string
+        - name: entityId
+          in: query
+          description: >-
+            the entity id - the id/name of the camp, volunteers department, or
+            any other entity that has tickets allocation
+          required: false
+          type: string
+        - name: allocType
+          in: query
+          description: >-
+            The allocation type - whether it's for appreciation, yearly
+            volunteers, past participants, etc
+          required: false
+          type: string
+      responses:
+        '201':
+          description: >-
+            The response for the entity allocation request - includes the
+            original request, the request status, and the entity update
+            allocations
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityProfileAllocation'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  EntityAllocation:
+    type: object
+    properties:
+      allocationType:
+        type: string
+        description: >-
+          The allocation type - whether it's for appreciation, yearly
+          volunteers, past participants, etc
+      numAllocations:
+        type: integer
+        format: int32
+  EntityAllocationResponse:
+    type: object
+    properties:
+      originalRequest:
+        $ref: '#/definitions/EntityAllocation'
+      entityAllocationStatus:
+        type: string
+        enum:
+          - ALLOCATED
+          - NOT_PERMITTED
+          - ERROR
+      entityAllocationStatusDetailsMessage:
+        type: string
+  EntityProfileAllocation:
+    type: object
+    properties:
+      allocationType:
+        type: string
+        description: >-
+          The allocation type - whether it's for appreciation, yearly
+          volunteers, past participants, etc
+      profileId:
+        type: string
+  EntityProfileAllocationResponse:
+    type: object
+    properties:
+      originalRequest:
+        $ref: '#/definitions/EntityProfileAllocation'
+      entityProfileAllocationStatus:
+        type: string
+        enum:
+          - ALLOCATED
+          - ALREADY_ALLOCATED_FOR_ENTITY
+          - ALREADY_ALLOCATED_FOR_DIFFERENT_ENTITY
+          - ERROR
+      entityProfileAllocationStatusDetailsMessage:
+        type: string
+  Error:
+    type: object
+    properties:
+      timestamp:
+        type: integer
+        format: int64
+      status:
+        type: integer
+        format: int32
+      error:
+        type: string
+      message:
+        type: string
+      path:
+        type: string
+    required:
+      - timestamp
+      - status
+      - error
+      - message
