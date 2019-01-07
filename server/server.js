@@ -41,7 +41,8 @@ app.use(co.wrap(function* (req, res, next) {
         req.token = token;
         req.userDetails = userDetails;
         req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
-        req.userDetails.eventId = req.cookies[JWT_KEY].currentEventId;
+        const eventId = process.env.SUPPORTED_EVENTS.split('|').includes(eventId) ? req.cookies[JWT_KEY].currentEventId : process.env.DEFAULT_EVENT_ID;
+        req.userDetails.eventId = eventId
         next();
     }
     catch (err) {
