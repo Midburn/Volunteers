@@ -68,7 +68,7 @@
     "start": "node server/server.js",
     "build": "webpack --config webpack.prod.config.js",
     "test": "mocha",
-    "local": "cross-env LOCAL_SPARK=true node server/server.js"
+    "local": "cross-env LOCAL_SPARK=true nodemon server/server.js"
   },
   "repository": {
     "type": "git",
