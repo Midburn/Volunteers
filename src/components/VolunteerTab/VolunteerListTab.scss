@@ -128,7 +128,9 @@
   .no-volunteers {
     margin-top: 3px;
   }
-
+  .round-ticket-count {
+    overflow: hidden;
+  }
   .volunteer-list-group-item-header {
     display: flex;
     font-weight: bold;
