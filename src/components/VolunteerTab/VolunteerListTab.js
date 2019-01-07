@@ -13,8 +13,6 @@ import TagFilter from "../TagFilter";
 
 import './VolunteerListTab.scss';
 
-const eventId = "1";
-
 function formatTag(tag) {
     const max = 5;
     if (tag.length <= max) return tag;
@@ -122,8 +120,7 @@ export default class VolunteerListTab extends Component {
                     this.state.numberOfRequests--;
                     this.setState(this.state);
                 });
-            const eventId = '1';
-            axios.get(`/api/v1/departments/${departmentId}/events/${eventId}/requests`)
+            axios.get(`/api/v1/departments/${departmentId}/requests`)
                 .then(res => {
                     this.state.requests = this.state.requests.concat(res.data);
                     this.state.numberOfRequests--;
@@ -235,7 +232,7 @@ export default class VolunteerListTab extends Component {
     }
 
     updateVolunteerRequest(volunteer) {
-        axios.put(`/api/v1/departments/${volunteer.departmentId}/events/${eventId}/requests/${volunteer.userId}`, {
+        axios.put(`/api/v1/departments/${volunteer.departmentId}/requests/${volunteer.userId}`, {
             tags: volunteer.tags
         });
     }

@@ -80,14 +80,14 @@ const enrichRequestDetailsFromDepartmentForm = co.wrap(function* (requests) {
 
 
 // PUBLIC - Returns if the user has request in this department
-router.get("/public/departments/:departmentId/events/:eventId/hasRequest", co.wrap(function* (req, res) {
+router.get("/public/departments/:departmentId/hasRequest", co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
     const userdata = JSON.parse(req.headers.userdata);
     const userId = userdata.profileEmail;
     const departmentId = req.params.departmentId;
-    const eventId = req.params.eventId;
+    const eventId = req.userDetails.eventId;
     const request = yield VolunteerRequest.findOne({
         departmentId,
         userId,
@@ -104,9 +104,9 @@ router.get("/volunteer-requests", co.wrap(function* (req, res) {
 }));
 
 // MANAGER - Get all join requests of a department 
-router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(function* (req, res) {
+router.get("/departments/:departmentId/requests", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
-    const eventId = req.params.eventId;
+    const eventId = req.userDetails.eventId;
     if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
     }
@@ -134,14 +134,14 @@ router.get("/departments/:departmentId/events/:eventId/requests", co.wrap(functi
 }));
 
 // PUBLIC - Creates a new join requst
-router.post("/public/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
+router.post("/public/departments/:departmentId/join", co.wrap(function* (req, res) {
     if (!req.headers.userdata) {
         return res.status(400).json({error: "invalid request"});
     }
     const userdata = JSON.parse(req.headers.userdata);
     const userId = userdata.profileEmail;
     const departmentId = req.params.departmentId;
-    const eventId = req.params.eventId;
+    const eventId = req.userDetails.eventId;
 
     // if already request exists - update
     const request = yield VolunteerRequest.findOne({
@@ -184,9 +184,9 @@ router.post("/public/departments/:departmentId/events/:eventId/join", co.wrap(fu
 }));
 
 // A new join request
-router.put("/public/departments/:departmentId/events/:eventId/join", co.wrap(function* (req, res) {
+router.put("/public/departments/:departmentId/join", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
-    const eventId = req.params.eventId;
+    const eventId = req.userDetails.eventId;
     const approved = req.body.approved;
     const comment = req.body.comment;
     const email = req.userDetails.email;
@@ -205,10 +205,10 @@ router.put("/public/departments/:departmentId/events/:eventId/join", co.wrap(fun
     return res.json(volunteerRequest);
 }));
 
-// Edit volunteer
-router.put("/departments/:departmentId/events/:eventId/requests/:userId", co.wrap(function* (req, res) {
+// Edit Request
+router.put("/departments/:departmentId/requests/:userId", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
-    const eventId = req.params.eventId;
+    const eventId = req.userDetails.eventId;
     const userId = req.params.userId;
     const tags= req.body.tags;
 
@@ -221,7 +221,6 @@ router.put("/departments/:departmentId/events/:eventId/requests/:userId", co.wra
         eventId: eventId,
         departmentId: departmentId
     });
-
     volunteerRequest.tags = tags;
 
     yield volunteerRequest.save();
@@ -230,9 +229,9 @@ router.put("/departments/:departmentId/events/:eventId/requests/:userId", co.wra
 }));
 
 // MANAGER - Removes a request and the relvant department form
-router.delete("/departments/:departmentId/events/:eventId/request/:userId", co.wrap(function* (req, res) {
+router.delete("/departments/:departmentId/request/:userId", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;
-    const eventId = req.params.eventId;
+    const eventId = req.userDetails.eventId;
     const userId = req.params.userId;
     if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
         return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
