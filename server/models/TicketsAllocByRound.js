@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const TicketsAllocSchema = new Schema({
+const TicketsAllocByRoundSchema = new Schema({
     _id: String,
     eventId: String,
     startDate: Date,
@@ -11,6 +11,6 @@ const TicketsAllocSchema = new Schema({
     description: String
 }, {_id: false, timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}});
 
-const TicketsAlloc = mongoose.model('TicketsAlloc', TicketsAllocSchema);
+const TicketsAlloc = mongoose.model('TicketsAlloc', TicketsAllocByRoundSchema);
 
 module.exports = TicketsAlloc;
