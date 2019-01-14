@@ -41,8 +41,10 @@ app.use(co.wrap(function* (req, res, next) {
         req.token = token;
         req.userDetails = userDetails;
         req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
-        const eventId = process.env.SUPPORTED_EVENTS.split('|').includes(eventId) ? req.cookies[JWT_KEY].currentEventId : process.env.DEFAULT_EVENT_ID;
+        let eventId = req.cookies[JWT_KEY].currentEventId
+        eventId = process.env.SUPPORTED_EVENTS.split('|').includes(eventId) ? eventId : process.env.DEFAULT_EVENT_ID;
         req.userDetails.eventId = eventId
+        req.userDetails.anonymousAccess = false
         next();
     }
     catch (err) {
@@ -52,7 +54,7 @@ app.use(co.wrap(function* (req, res, next) {
             return res.redirect(SPARK_HOST);
         } else {
             // TODO: (may) maybe read the default value from spark
-            req.userDetails = { eventId: process.env.DEFAULT_EVENT_ID }
+            req.userDetails = { eventId: process.env.DEFAULT_EVENT_ID, anonymousAccess: true }
             next();
         }
     }
@@ -66,6 +68,7 @@ app.use((err, req, res, next) => {
 /////////////////////////////
 // APIS
 /////////////////////////////
+app.use('/api/v1', require('./routes/events'));
 app.use('/api/v1', require('./routes/shifts'));
 app.use('/api/v1', require('./routes/departments'));
 app.use('/api/v1', require('./routes/volunteers'));
@@ -100,7 +103,7 @@ app.use('/api/v1/login', (req, res) => {
         console.log(err);
         res.status(500).json({error: 'Invalid token'});
     }
-});
+}); 
 
 /////////////////////////////
 // WEB
