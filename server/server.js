@@ -31,7 +31,7 @@ const SECRET = process.env.SECRET;
 // WEB middleware
 /////////////////////////////
 app.use(co.wrap(function* (req, res, next) {
-    if (req.path === '/api/v1/login') {
+    if (req.path === '/api/v1/login' || req.path === '/api/v1/verifyCookie') {
         return next();
     }
 
@@ -76,6 +76,30 @@ app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/api/v1', require('./routes/permissions'));
 app.use('/api/v1', require('./routes/departmentForms'));
 app.use('/api/v1', require('./routes/reports'));
+
+app.use('/api/v1/verifyCookie', (req, res) => {
+    let token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
+    let eventId = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].currentEventId;
+
+    const errors = []
+    if (!token) {
+        errors.push('token is missing');
+    } else {
+        try {
+            jwt.verify(token, SECRET);
+        }
+        catch (err) {
+            errors.push('invalid token');
+        }
+    }
+    if (!eventId) {
+        errors.push('event is missing');
+    } else if (!process.env.SUPPORTED_EVENTS.split('|').includes(eventId)) {
+        errors.push(`event id isn't supported - using ${process.env.DEFAULT_EVENT_ID} instead`); 
+    }
+
+    res.json(errors);
+})
 
 app.use('/api/v1/login', (req, res) => {
     let token = req.query.token;
