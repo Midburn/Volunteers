@@ -30,5 +30,3 @@ services:
     - SECRET=secret
     - JWT_KEY=authToken
     - LOCAL_SPARK=true
-    - DEFAULT_EVENT_ID=MIDBURN2018
-    - SUPPORTED_EVENTS=MIDBURN2018|MIDBURN2019

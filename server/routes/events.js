@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const co = require('co');
+const consts = require('../utils/consts');
 const JWT_KEY = process.env.JWT_KEY;
 
 router.get('/public/events', co.wrap(function*(req, res) {
     const events = {
-        events: process.env.SUPPORTED_EVENTS.split('|'),
+        events: consts.SUPPORTED_EVENTS,
         current: req.userDetails.eventId,
         canChange: !req.userDetails.anonymousAccess
     }
@@ -14,7 +15,7 @@ router.get('/public/events', co.wrap(function*(req, res) {
 
 router.post('/events/change', co.wrap(function*(req, res) {
     const new_event = req.body.event;
-    if (!process.env.SUPPORTED_EVENTS.split('|').includes(new_event)){
+    if (!consts.SUPPORTED_EVENTS.includes(new_event)){
         res.status(404).json({error: `Event ${new_event} does not exist`});
         return
     }

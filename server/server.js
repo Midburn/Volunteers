@@ -13,6 +13,7 @@ const jwt = require('jsonwebtoken');
 const compression = require('compression');
 const co = require('co');
 const permissionsUtils = require('./utils/permissions');
+const consts = require('./utils/consts');
 
 // Load environment variables default values
 require('dotenv').config();
@@ -42,7 +43,7 @@ app.use(co.wrap(function* (req, res, next) {
         req.userDetails = userDetails;
         req.userDetails.permissions = yield permissionsUtils.getPermissions(userDetails);
         let eventId = req.cookies[JWT_KEY].currentEventId
-        eventId = process.env.SUPPORTED_EVENTS.split('|').includes(eventId) ? eventId : process.env.DEFAULT_EVENT_ID;
+        eventId = consts.SUPPORTED_EVENTS.includes(eventId) ? eventId : consts.DEFAULT_EVENT_ID;
         req.userDetails.eventId = eventId
         req.userDetails.anonymousAccess = false
         next();
@@ -54,7 +55,7 @@ app.use(co.wrap(function* (req, res, next) {
             return res.redirect(SPARK_HOST);
         } else {
             // TODO: (may) maybe read the default value from spark
-            req.userDetails = { eventId: process.env.DEFAULT_EVENT_ID, anonymousAccess: true }
+            req.userDetails = { eventId: consts.DEFAULT_EVENT_ID, anonymousAccess: true }
             next();
         }
     }
@@ -94,8 +95,8 @@ app.use('/api/v1/verifyCookie', (req, res) => {
     }
     if (!eventId) {
         errors.push('event is missing');
-    } else if (!process.env.SUPPORTED_EVENTS.split('|').includes(eventId)) {
-        errors.push(`event id isn't supported - using ${process.env.DEFAULT_EVENT_ID} instead`); 
+    } else if (!consts.SUPPORTED_EVENTS.includes(eventId)) {
+        errors.push(`event id isn't supported - using ${consts.DEFAULT_EVENT_ID} instead`); 
     }
 
     res.json(errors);
@@ -120,7 +121,7 @@ app.use('/api/v1/login', (req, res) => {
 
     try {
         jwt.verify(token, SECRET);
-        res.cookie(JWT_KEY, {token, currentEventId: process.env.DEFAULT_EVENT_ID});
+        res.cookie(JWT_KEY, {token, currentEventId: consts.DEFAULT_EVENT_ID});
         return servePage(req, res);
     }
     catch (err) {
