@@ -34,11 +34,10 @@ export default class VolunteerEditModal extends React.Component {
 
   fetchData = _ => {
     const departmentId = this.props.volunteer.departmentId;
-    const eventId = this.props.volunteer.eventId;
     const userId = this.props.volunteer.userId;
     Promise.all([
-      axios.get(`/api/v1/form/events/${eventId}/answer/${userId}`).then(res => res.data),
-      axios.get(`/api/v1/departments/${departmentId}/forms/events/${eventId}/answer/${userId}`).then(res => res.data)
+      axios.get(`/api/v1/form/answer/${userId}`).then(res => res.data),
+      axios.get(`/api/v1/departments/${departmentId}/forms/answer/${userId}`).then(res => res.data)
     ]).then(([generalAnswer, departmentAnswer]) => {
       this.setState({
         ...this.state,

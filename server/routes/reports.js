@@ -9,8 +9,8 @@ const co = require('co');
 
 // returns a csv file of shifts hours.
 // each line for each volunteer in a shift.
-router.get('/reports/events/:eventId/allShiftsHours', co.wrap(function*(req, res) {
-    const eventId = req.params.eventId; 
+router.get('/reports/allShiftsHours', co.wrap(function*(req, res) {
+    const eventId = req.userDetails.eventId;
 
     // admins only. maybe we can have another API for each departmant, but not in this scope.
     if (!permissionsUtils.isAdmin(req.userDetails)) {
