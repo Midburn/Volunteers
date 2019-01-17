@@ -78,7 +78,7 @@ export default class EditDepartment extends Component {
         this.setState(this.state);
     };
 
-    handleOnAllocatedEarlyEntrancesChange = event => {
+    handleOnAllocatedTicketsChange = event => {
         const allocationsDetails = this.state.department.allocationsDetails;
       
         if(event.target.value >= 0) {
@@ -238,15 +238,26 @@ export default class EditDepartment extends Component {
                                     onClick={this.delete}>Delete</Button>}
                         </Tab>
 
-                        <Tab eventKey={3} title="Early Entrance">
+                        <Tab eventKey={3} title="Tickets & Entrance">
+                            <br/>
+                            <FormGroup controlId="maxAllocatedTickets">
+                                <ControlLabel># Tickets Allocations</ControlLabel>
+                                <FormControl type="number" value={allocationsDetails.maxAllocatedTickets || 0}
+                                             disabled={!Permissions.isAdmin()}
+                                             onChange={this.handleOnAllocatedTicketsChange}/>
+                                <HelpBlock>The number of tickets for split among volunteers from last MibBurn<br/>
+                                    <b>{volunteersAllocations.allocatedTickets} entrance tickets</b> were already assigned to volunteers -  
+                                    <b> {allocationsDetails.maxAllocatedTickets - volunteersAllocations.allocatedTickets}</b> left
+                                </HelpBlock>
+                            </FormGroup>
                             <br/>
                             <FormGroup controlId="maxAllocatedEarlyEntrancesPhase1">
                                 <ControlLabel># Early Entrances 9.5.18</ControlLabel>
                                 <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase1 || 0}
                                              disabled={!Permissions.isAdmin()}
-                                             onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
+                                             onChange={this.handleOnAllocatedTicketsChange}/>
                                 <HelpBlock>The number of volunteers for this department that can enter on 09/05/2018 - 09:00 or after<br/>
-                                    <b>{volunteersAllocations.allocatedEarlyEntrancesPhase1}</b> were already assigned to volunteers -  
+                                    <b>{volunteersAllocations.allocatedEarlyEntrancesPhase1} early entrance vouchers</b> were already assigned to volunteers -  
                                     <b> {allocationsDetails.maxAllocatedEarlyEntrancesPhase1 - volunteersAllocations.allocatedEarlyEntrancesPhase1}</b> left
                                 </HelpBlock>
                             </FormGroup>
@@ -255,20 +266,12 @@ export default class EditDepartment extends Component {
                                 <ControlLabel># Early Entrances 13.5.18</ControlLabel>
                                 <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase2 || 0}
                                              disabled={!Permissions.isAdmin()}
-                                             onChange={this.handleOnAllocatedEarlyEntrancesChange}/>
+                                             onChange={this.handleOnAllocatedTicketsChange}/>
                                 <HelpBlock>The number of volunteers for this department that can enter on 13/05/2018 - 14:00 or after.<br/>
-                                    <b>{volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> were already assigned to volunteers - 
+                                    <b>{volunteersAllocations.allocatedEarlyEntrancesPhase2} early entrance vouchers</b> were already assigned to volunteers - 
                                     <b> {allocationsDetails.maxAllocatedEarlyEntrancesPhase2 - volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> left
                                 </HelpBlock>
                             </FormGroup>
-                            {/*<FormGroup controlId="maxAllocatedEarlyEntrancesPhase3">*/}
-                                {/*<ControlLabel># Allocated Early Entrances For Phase 3</ControlLabel>*/}
-                                {/*<FormControl type="text" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase3 || 0}*/}
-                                             {/*onChange={this.handleOnAllocatedEarlyEntrancesChange}/>*/}
-                                {/*<HelpBlock>The amount of early entrances allocated for this department on Phase 3 (since 10/05/2018)*/}
-                                    {/*(<b>{volunteersAllocations.allocatedEarlyEntrancesPhase3}</b> are already allocated for the department volunteers)*/}
-                                {/*</HelpBlock>*/}
-                            {/*</FormGroup>*/}
                         </Tab>
                         {department._id && <Tab eventKey={4} title="Join Form">
                             <FormManager questions={departmentForm} onSave={this.handleOnDepartmentFormSave}/>

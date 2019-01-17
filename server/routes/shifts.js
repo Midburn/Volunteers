@@ -5,9 +5,9 @@ const permissionsUtils = require('../utils/permissions');
 const co = require('co');
 const _ = require('lodash');
 
-router.get('/departments/:departmentId/events/:eventId/shifts', co.wrap(function*(req, res) {
+router.get('/departments/:departmentId/shifts', co.wrap(function*(req, res) {
   const departmentId = req.params.departmentId;
-  const eventId = req.params.eventId;
+  const eventId = req.userDetails.eventId;
 
   if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
     return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
@@ -20,9 +20,9 @@ router.get('/departments/:departmentId/events/:eventId/shifts', co.wrap(function
   return res.json(shifts);
 }));
 
-router.post('/departments/:departmentId/events/:eventId/shifts/:shiftId', co.wrap(function*(req, res) {
+router.post('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, res) {
   const departmentId = req.params.departmentId;
-  const eventId = req.params.eventId; 
+  const eventId = req.userDetails.eventId;
   const shiftId = req.params.shiftId;
 
   if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
@@ -47,9 +47,9 @@ router.post('/departments/:departmentId/events/:eventId/shifts/:shiftId', co.wra
   return res.json(shift);
 }));
 
-router.put('/departments/:departmentId/events/:eventId/shifts/:shiftId', co.wrap(function*(req, res) {
+router.put('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, res) {
   const departmentId = req.params.departmentId;
-  const eventId = req.params.eventId; 
+  const eventId = req.userDetails.eventId;
   const shiftId = req.params.shiftId;
 
   if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
@@ -83,9 +83,9 @@ router.put('/departments/:departmentId/events/:eventId/shifts/:shiftId', co.wrap
   return res.json(shift);
 }));
 
-router.delete('/departments/:departmentId/events/:eventId/shifts/:shiftId', co.wrap(function*(req, res) {
+router.delete('/departments/:departmentId/shifts/:shiftId', co.wrap(function*(req, res) {
   const departmentId = req.params.departmentId;
-  const eventId = req.params.eventId; 
+  const eventId = req.userDetails.eventId;
   const shiftId = req.params.shiftId;
 
   if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {

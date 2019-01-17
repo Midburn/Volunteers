@@ -1,7 +1,6 @@
 import {extendObservable} from 'mobx';
 import axios from 'axios';
 
-const eventId = "1";
 const createJoinProcess = () => ({
         departmentId: '',
         loading: false,
@@ -70,10 +69,10 @@ function VolunteerRequestModel() {
         const headers = {userdata: JSON.stringify(newUserData)};
         Promise.all([
             axios.get(`/api/v1/public/form`).then(req => req.data),
-            axios.get(`/api/v1/public/form/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/public/form/hasAnswer`, {headers}).then(req => req.data),
             axios.get(`/api/v1/public/departments/${departmentId}/forms`).then(req => req.data),
-            axios.get(`/api/v1/public/departments/${departmentId}/forms/events/${eventId}/hasAnswer`, {headers}).then(req => req.data),
-            axios.get(`/api/v1/public/departments/${departmentId}/events/${eventId}/hasRequest`, {headers}).then(req => req.data)
+            axios.get(`/api/v1/public/departments/${departmentId}/forms/hasAnswer`, {headers}).then(req => req.data),
+            axios.get(`/api/v1/public/departments/${departmentId}/hasRequest`, {headers}).then(req => req.data)
         ]).then(([generalQuestions, generalAnswer, departmentQuestions, departmentAnswer, requestAnswer]) => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
@@ -108,7 +107,7 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/public/form/events/${eventId}/answer`, answers, {headers}).then(res => {
+        axios.post(`/api/v1/public/form/answer`, answers, {headers}).then(res => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }
@@ -136,7 +135,7 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/public/departments/${departmentId}/forms/events/${eventId}/answer`, answers, {headers}).then(res => {
+        axios.post(`/api/v1/public/departments/${departmentId}/forms/answer`, answers, {headers}).then(res => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }
@@ -164,7 +163,7 @@ function VolunteerRequestModel() {
         }
         const headers = {userdata: JSON.stringify(this.joinProcess.userData)};
         const departmentId = this.joinProcess.departmentId;
-        axios.post(`/api/v1/public/departments/${departmentId}/events/${eventId}/join`,{}, {headers}).then(res => {
+        axios.post(`/api/v1/public/departments/${departmentId}/join`,{}, {headers}).then(res => {
             if (this.joinProcess.departmentId !== departmentId) { 
                 return; 
             }

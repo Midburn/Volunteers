@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const departmentSchema = new Schema({
     _id: String,
+    eventId: String,
     basicInfo: {
         nameEn: String,
         nameHe: String,
@@ -10,11 +11,6 @@ const departmentSchema = new Schema({
         descriptionHe: String,
         imageUrl: String
     },
-    requestForm: [{
-        question: String,
-        questionType: String,
-        options: [String]
-    }],
     status: {
         active: Boolean,
         visibleToJoin: Boolean,

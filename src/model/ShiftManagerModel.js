@@ -4,7 +4,6 @@ import axios from 'axios'
 import _ from 'lodash'
 import * as Permissions from './permissionsUtils';
 
-const eventId = "1";
 const createGuid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (
     (r => c == 'x' ? r : (r & 0x3 | 0x8))(Math.random() * 16 | 0).toString(16)
 ));
@@ -52,7 +51,7 @@ function ShiftManagerModel() {
     }
 
     this.refreshShifts = async() => {
-        const resp = await axios(`/api/v1/departments/${this.departmentID}/events/${eventId}/shifts`, {credentials: 'include'})
+        const resp = await axios(`/api/v1/departments/${this.departmentID}/shifts`, {credentials: 'include'})
         this.shifts = resp.data
     }
 
@@ -73,7 +72,7 @@ function ShiftManagerModel() {
 
         try {
             const method = this.currentShift.isNew ? 'post' : 'put'
-            await axios(`/api/v1/departments/${this.departmentID}/events/${eventId}/shifts/${this.currentShift._id}`,
+            await axios(`/api/v1/departments/${this.departmentID}/shifts/${this.currentShift._id}`,
                 {credentials: 'include', data: transformShift(this.currentShift), method}
             );
 
@@ -110,7 +109,7 @@ console.log(profileId, checkinTime, comment)
     }
 
     this.deleteShift = async shift => {
-        await axios.delete(`/api/v1/departments/${this.departmentID}/events/${eventId}/shifts/${shift._id}`)
+        await axios.delete(`/api/v1/departments/${this.departmentID}/shifts/${shift._id}`)
         this.refreshShifts()
     }
 
