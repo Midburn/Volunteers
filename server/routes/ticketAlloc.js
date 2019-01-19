@@ -9,41 +9,50 @@ const permissionsUtils = require('../utils/permissions');
 
 router.get('/rounds', co.wrap(function* (req, res) {
     if (!permissionsUtils.isAdmin(req.userDetails)) {
-        return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
+        return res.status(403).json([{ "error": "Action is not allowed - User doesn't have admin permissions" }]);
     }
-
 
     const rounds = yield Round.find({});
 
     return res.json(rounds);
 }));
 
+router.get('/rounds/active', co.wrap(function* (req, res) {
+    if (!permissionsUtils.isAdmin(req.userDetails)) {
+        return res.status(403).json([{ "error": "Action is not allowed - User doesn't have admin permissions" }]);
+    }
+
+    const round = yield Round.findOne({ is_show: true });
+
+    return res.json(round);
+}));
+
 router.post('/rounds/:eventId', co.wrap(function* (req, res) {
     // if (!permissionsUtils.isAdmin(req.userDetails)) {
     //     return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
     // }
-    
+
     // const round = new Round({
-        //     _id: roundId,
-        //     eventId: 'MIDBURN2019',
-        //     startDate: new Date('January 06, 2019 00:00:00'),
-        //     endDate: new Date('February 11, 2019 00:00:00'),
-        //     based_event_id: 'MIDBURN2019',
-        //     is_show: true,
-        //     description: 'כרטיסים למתנדבים חדשים'|| '' 
-        // });
-        const eventId = req.params.eventId;
-        const roundId = uuid()
-        const round = new Round({
-            _id: roundId,
-            eventId,
-            startDate: req.startDate,
-            endDate: req.endDate,
-            based_event_id: req.based_event_id,
-            is_show: req.is_show,
-            description: req.description || '' 
-        });
-        
+    //     _id: roundId,
+    //     eventId: 'MIDBURN2019',
+    //     startDate: new Date('January 06, 2019 00:00:00'),
+    //     endDate: new Date('February 11, 2019 00:00:00'),
+    //     based_event_id: 'MIDBURN2019',
+    //     is_show: true,
+    //     description: 'כרטיסים למתנדבים חדשים'|| '' 
+    // });
+    const eventId = req.params.eventId;
+    const roundId = uuid()
+    const round = new Round({
+        _id: roundId,
+        eventId,
+        startDate: req.startDate,
+        endDate: req.endDate,
+        based_event_id: req.based_event_id,
+        is_show: req.is_show,
+        description: req.description || ''
+    });
+
     yield round.save();
     return res.json(round);
 }));
@@ -56,7 +65,7 @@ router.post('/rounds/:eventId', co.wrap(function* (req, res) {
 //         res.status(404).json({error: `Event ${new_event} does not exist`});
 //         return
 //     }
-    
+
 //     if (new_event == req.userDetails.eventId) {
 //         res.json('OK')
 //         return
