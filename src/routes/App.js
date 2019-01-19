@@ -44,7 +44,7 @@ class App extends React.Component {
   }
 
     render() {
-        const routes = this.routes(document.roles)
+        const routes = this.routes(document.permissions.roles)
         if (!routes) {
             return <ComingSoon/>;
         }

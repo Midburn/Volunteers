@@ -8,7 +8,7 @@ function getUserIdRegex(userId) {
 
 module.exports = {
     getPermissions: co.wrap(function* (userDetails) {
-        if (!userDetails) {
+        if (!userDetails || !userDetails.email) {
             return [];
         }
         const userId = userDetails.email;

@@ -33,7 +33,7 @@ export default class VolunteerShifts extends React.Component {
   };
 
   fetchShifts() {
-    const departments = document.roles.map(role => role.department_id);
+    const departments = document.permissions.roles.map(role => role.department_id);
 
     for (let index = 0; index < departments.length; index++) {
       axios.get(`/api/v1/departments/${departments[index]}/shifts/me`, {credentials: 'include'}).then(response => {

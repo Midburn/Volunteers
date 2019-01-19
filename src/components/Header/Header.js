@@ -16,6 +16,7 @@ class Header extends React.Component {
       <div className="header">
         <a className="logo" href="https://spark.midburn.org">
           <img className="logo-img" src="http://tickets-registration.midburn.org/midburn.png"/>
+          <span id="profile">{ document.permissions.anonymousAccess ? "Log In" : document.permissions.profile }</span>
         </a>
         <div className="header-nav">
           <ul className="nav" style={{display: 'flex', justifyContent: 'center'}}>
