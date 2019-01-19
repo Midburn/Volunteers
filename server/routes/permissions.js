@@ -26,8 +26,10 @@ const addLocalAdmin = co.wrap(function* (userDetails) {
 
 router.get('/public/permissions/me', co.wrap(function* (req, res) {
     yield addLocalAdmin(req.userDetails);
-    const permissions = yield permissionsUtils.getPermissions(req.userDetails);
-    return res.json(permissions);
+    if (req.userDetails.anonymousAccess) {
+        return res.json({anonymousAccess: true, roles: []})
+    }
+    return res.json({anonymousAccess: false, roles: req.userDetails.permissions, profile: req.userDetails.email})
 }));
 
 router.get('/permissions/admins', co.wrap(function* (req, res) {

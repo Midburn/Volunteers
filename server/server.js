@@ -54,7 +54,6 @@ app.use(co.wrap(function* (req, res, next) {
             res.clearCookie(JWT_KEY);
             return res.redirect(SPARK_HOST);
         } else {
-            // TODO: (may) maybe read the default value from spark
             req.userDetails = { eventId: consts.DEFAULT_EVENT_ID, anonymousAccess: true }
             next();
         }

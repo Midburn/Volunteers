@@ -5,12 +5,20 @@
 
     .logo {
         float: left;
-        margin: 6px;
+        display: flex;
+        align-items: center;
         
         .logo-img {
             height: 38px;
+            margin: 6px;
+        }
+
+        #profile {
+            margin-left: 10px;
+            color: white;
         }
     }
+
     .header-nav {
         flex: 1;
         padding-right: 50px;

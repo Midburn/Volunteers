@@ -25,7 +25,7 @@ export default class FillUserDataView extends Component {
         this.state = { 
             contactEmail: '',
             contactPhoneNumber: '',
-            profileEmail: '',
+            profileEmail: document.permissions.anonymousAccess ? '' : document.permissions.profile,
 
             showValidation: false
         }
@@ -73,7 +73,8 @@ export default class FillUserDataView extends Component {
                         </FormGroup>
                         <FormGroup controlId="profileEmail">
                             <ControlLabel>{profileTitle[language]}</ControlLabel>
-                            <FormControl className="en-input" onChange={this.handleTextChange} placeholder="email@gmail.com"/>
+                            <FormControl defaultValue={document.permissions.anonymousAccess ? '' : document.permissions.profile} 
+                                        className="en-input" onChange={this.handleTextChange} placeholder="email@gmail.com"/>
                         </FormGroup>
                     </div>
                     <div className='button-container'>

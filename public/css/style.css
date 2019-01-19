@@ -12,6 +12,13 @@ h3 {
     text-align: center;
 }
 
+#version {
+    color: #f1f1f5;
+    text-align: center;
+    margin: 10px;
+    font-family: monospace;
+}
+
 .loader {
     border: 8px solid #f3f3f3; /* Light grey */
     border-top: 8px solid #3498db; /* Blue */
