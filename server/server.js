@@ -76,6 +76,7 @@ app.use('/api/v1', require('./routes/volunteerRequests'));
 app.use('/api/v1', require('./routes/permissions'));
 app.use('/api/v1', require('./routes/departmentForms'));
 app.use('/api/v1', require('./routes/reports'));
+app.use('/api/v1', require('./routes/ticketAlloc'));
 
 app.use('/api/v1/verifyCookie', (req, res) => {
     let token = req.cookies && req.cookies[JWT_KEY] && req.cookies[JWT_KEY].token;
