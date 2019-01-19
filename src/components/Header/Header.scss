@@ -5,10 +5,12 @@
 
     .logo {
         float: left;
-        margin: 6px;
+        display: flex;
+        align-items: center;
         
         .logo-img {
             height: 38px;
+            margin: 6px;
         }
 
         #profile {
