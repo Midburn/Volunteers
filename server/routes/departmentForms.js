@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Department = require("../models/deparment");
 const DepartmentForm = require("../models/departmentForms");
 const DepartmentFormAnswer = require("../models/departmentFormsAnswers");
 const co = require("co");
@@ -47,6 +48,43 @@ const saveDepartmentFrom = co.wrap(function* (departmentId, eventId, form) {
 router.get("/public/departments/:departmentId/forms", co.wrap(function* (req, res) {
     const eventId = req.userDetails.eventId;
     const departmentId = req.params.departmentId;
+    const departmentForm = yield getDepartmentFrom(departmentId, eventId);
+    return res.json(departmentForm ? departmentForm.form : []);
+}));
+
+// MANAGER - Returns a depertment form - used to load previous year form
+router.post("/departments/search-form", co.wrap(function* (req, res) {
+    if (!permissionsUtils.isManager(req.userDetails)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions"}]);
+    }
+
+    const eventId = req.body.eventId;
+    const nameEn = req.body.nameEn;
+    const nameHe = req.body.nameHe;
+
+    // search by en
+    let department = yield Department.findOne({
+        'basicInfo.nameEn': nameEn,
+        deleted: false,
+        eventId
+    });
+
+    // search by he
+    if (!department) {
+        department = yield Department.findOne({
+            'basicInfo.nameHe': nameHe,
+            deleted: false,
+            eventId
+        });
+    }
+
+    // not found
+    if (!department) {
+        return res.status(404).json([{"error": "not found"}]);
+    }
+
+    // get form
+    const departmentId = department._id;
     const departmentForm = yield getDepartmentFrom(departmentId, eventId);
     return res.json(departmentForm ? departmentForm.form : []);
 }));

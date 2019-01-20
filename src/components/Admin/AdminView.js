@@ -19,7 +19,8 @@ export default class AdminView extends Component {
             admins: [],
             showAddAdminModal: false,
             newAdminEmailInput: null,
-            generalForm: []
+            generalForm: [],
+            generalFormVersion: 0
         };
 
         this.handleOnFormSave = this.handleOnFormSave.bind(this);
@@ -34,7 +35,7 @@ export default class AdminView extends Component {
         axios.get("/api/v1/permissions/admins")
             .then(res => this.setState({admins: res.data}));
         axios.get("/api/v1/public/form")
-            .then(res => this.setState({generalForm: res.data}));
+            .then(res => this.setState({generalForm: res.data, generalFormVersion: this.state.generalFormVersion+1}));
     };
 
     handleAddDepartment() {
@@ -72,7 +73,7 @@ export default class AdminView extends Component {
 
     handleOnFormSave(form) {
         axios.post("/api/v1/form", {form})
-            .then(res => this.setState({generalForm: res.data}))
+            .then(res => this.setState({generalForm: res.data, generalFormVersion: this.state.generalFormVersion+1}))
     }
 
     componentDidMount() {
@@ -93,7 +94,7 @@ export default class AdminView extends Component {
     }
 
     render() {
-        const {departments, generalForm, selectedDepartmentId, addDepartment} = this.state;
+        const {departments, generalForm, generalFormVersion, selectedDepartmentId, addDepartment} = this.state;
 
         const selectedDepartment =
             selectedDepartmentId &&
@@ -171,6 +172,7 @@ export default class AdminView extends Component {
                 <div className="card container">
                     <FormManager showPreview
                                  questions={generalForm}
+                                 version={generalFormVersion}
                                  onSave={this.handleOnFormSave}
                     />
                 </div>

@@ -8,9 +8,9 @@ class FormEditor extends react.Component {
         super(props);
 
         this.state = {
-            questions: [...props.questions],
+            questions: props.questions,
             hasChanges: false,
-            isVisible: props.isVisible
+            lastNotFound: false
         };
 
         this.handleOnAddQuestion = this.handleOnAddQuestion.bind(this);
@@ -18,74 +18,141 @@ class FormEditor extends react.Component {
         this.handleOnQuestionTypeChange = this.handleOnQuestionTypeChange.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
         this.handleOnOptionsChange = this.handleOnOptionsChange.bind(this);
+        this.lastEventID = this.lastEventID.bind(this);
+        this.loadLastForm = this.loadLastForm.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({questions: [...nextProps.questions]});
+    componentDidUpdate(prevProps) {
+        if (prevProps.version !== this.props.version) {
+            this.setState({questions: [...this.props.questions]});
+        }
+    }
+
+    lastEventID = () => {
+        if (document.events.events.length < 2) {
+            return null;
+        }
+        return document.events.events[document.events.events.length-2];
+    }
+
+    loadLastForm() {
+        const body = {
+            eventId: this.lastEventID(),
+            nameEn: this.props.department.basicInfo.nameEn,
+            nameHe: this.props.department.basicInfo.nameHe
+        }
+        axios.post(`/api/v1/departments/search-form`, body)
+            .then(res => {
+                if (res.data.length) {
+                    this.state.questions = res.data;
+                    this.state.hasChanges = true;
+                } else {
+                    this.state.lastNotFound = true;
+                }
+                this.setState(this.state);
+            })
+            .catch(err => {
+                this.state.lastNotFound = true;
+                this.setState(this.state);
+            });
     }
 
     handleOnAddQuestion() {
-        this.setState({
-            hasChanges: true,
-            questions: [
-                ...this.state.questions,
-                {
-                    question: {
-                        he: "",
-                        en: ""
-                    },
-                    questionType: 'text',
-                    options: [],
-                    optional: true
-                }
-            ]
-        });
+        const questions = [
+            ...this.state.questions,
+            {
+                question: {
+                    he: "",
+                    en: ""
+                },
+                questionType: 'text',
+                options: [],
+                optional: true
+            }
+        ]
+
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
     handleOnQuestionChange(index, language, value) {
         const questions = [...this.state.questions];
         questions[index].question[language] = value;
 
-        this.setState({questions: questions, hasChanges: true});
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
     handleOnQuestionTypeChange(index, value) {
         const questions = [...this.state.questions];
         questions[index].questionType = value;
 
-        this.setState({questions: questions, hasChanges: true});
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
     handleOnOptionsChange(index, options) {
         const questions = [...this.state.questions];
         questions[index]["options"]  = options;
 
-        this.setState({questions: questions, hasChanges: true});
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
     handleOnQuestionOptionalChange(index, value) {
         const questions = [...this.state.questions];
         questions[index].optional = value;
 
-        this.setState({questions: questions, hasChanges: true});
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
     deleteQuestion(index) {
         const questions = [...this.state.questions];
         questions.splice(index, 1);
-        this.setState({hasChanges: true, questions});
+        
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
-    componentWillReceiveProps(nextProps){
-        this.setState({
-            isVisible: nextProps.isVisible
-        })
+    upQuestion(index) {
+        if (index == 0){
+            return
+        }
+        const questions = [...this.state.questions];
+        const temp = questions[index];
+        questions[index] = questions[index-1];
+        questions[index-1] = temp;
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
+    }
+
+    downQuestion(index) {
+        if (index == this.state.questions.length - 1){
+            return
+        }
+        const questions = [...this.state.questions];
+        const temp = questions[index];
+        questions[index] = questions[index+1];
+        questions[index+1] = temp;
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
     }
 
     render() {
-        const {questions, hasChanges} = this.state;
+        const {questions, hasChanges, lastNotFound} = this.state;
+        const {department} = this.props;
+        const lastEventID = this.lastEventID();
 
-        if(!this.state.isVisible) {
+        if(!this.props.isVisible) {
             return null
         }
         return (<div className="form-editor" style={{marginTop: 20}}>
@@ -94,9 +161,11 @@ class FormEditor extends react.Component {
                         <ListGroupItem key={index} className="question">
                             <header>
                                 <h3>{`Question ${index + 1}`}</h3>
-                                <Button bsStyle="danger" onClick={() => this.deleteQuestion(index)}>
-                                    Delete
-                                </Button>
+                                <div class="buttons">
+                                    <Button bsStyle="link" onClick={() => this.upQuestion(index)}>Up</Button>
+                                    <Button bsStyle="link" onClick={() => this.downQuestion(index)}>Down</Button>
+                                    <Button bsStyle="danger" onClick={() => this.deleteQuestion(index)}>Delete</Button>
+                                </div>
                             </header>
 
                             <FormGroup>
@@ -140,6 +209,8 @@ class FormEditor extends react.Component {
                 </ListGroup>
                 <footer>
                     <Button bsStyle="primary" onClick={this.handleOnAddQuestion}>Add Question</Button>
+                    {department && lastEventID && !lastNotFound && <Button bsStyle="link" onClick={this.loadLastForm}>Load {lastEventID} form</Button>}
+                    {department && lastEventID && lastNotFound && <p>Not Found</p>}
                     <Button bsStyle="primary" disabled={!hasChanges}
                             onClick={() => this.props.onSave(questions)}>Save</Button>
                 </footer>
