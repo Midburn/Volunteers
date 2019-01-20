@@ -7,9 +7,7 @@ import FormEditor from "../FormEditor/FormEditor";
 class FormManager extends react.Component {
     constructor(props) {
         super(props);
-
         this.state = {showPreview: !!props.showPreview};
-
         this.togglePreviewMode = this.togglePreviewMode.bind(this);
     }
 
@@ -19,7 +17,7 @@ class FormManager extends react.Component {
 
     render() {
         const {showPreview} = this.state;
-        const {questions, onSave} = this.props;
+        const {questions, onSave, version} = this.props;
 
         if (!questions) return null;
 
@@ -32,8 +30,10 @@ class FormManager extends react.Component {
                 </Button>
             </header>
                 <FormViewer questions={questions}
+                            isVisible={showPreview} 
                 /> 
-                <FormEditor questions={questions} 
+                <FormEditor questions={questions}
+                            version={version}
                             isVisible={!showPreview}  
                             onSave={onSave}
                 />

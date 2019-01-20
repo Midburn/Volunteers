@@ -8,9 +8,8 @@ class FormEditor extends react.Component {
         super(props);
 
         this.state = {
-            questions: [...props.questions],
-            hasChanges: false,
-            isVisible: props.isVisible
+            questions: props.questions,
+            hasChanges: false
         };
 
         this.handleOnAddQuestion = this.handleOnAddQuestion.bind(this);
@@ -20,8 +19,10 @@ class FormEditor extends react.Component {
         this.handleOnOptionsChange = this.handleOnOptionsChange.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({questions: [...nextProps.questions]});
+    componentDidUpdate(prevProps) {
+        if (prevProps.version !== this.props.version) {
+            this.setState({questions: [...this.props.questions]});
+        }
     }
 
     handleOnAddQuestion() {
@@ -76,16 +77,10 @@ class FormEditor extends react.Component {
         this.setState({hasChanges: true, questions});
     }
 
-    componentWillReceiveProps(nextProps){
-        this.setState({
-            isVisible: nextProps.isVisible
-        })
-    }
-
     render() {
         const {questions, hasChanges} = this.state;
 
-        if(!this.state.isVisible) {
+        if(!this.props.isVisible) {
             return null
         }
         return (<div className="form-editor" style={{marginTop: 20}}>
