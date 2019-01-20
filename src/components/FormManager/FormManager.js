@@ -17,7 +17,7 @@ class FormManager extends react.Component {
 
     render() {
         const {showPreview} = this.state;
-        const {questions, onSave, version} = this.props;
+        const {questions, onSave, version, department} = this.props;
 
         if (!questions) return null;
 
@@ -34,6 +34,7 @@ class FormManager extends react.Component {
                 /> 
                 <FormEditor questions={questions}
                             version={version}
+                            department={department}
                             isVisible={!showPreview}  
                             onSave={onSave}
                 />

@@ -15,6 +15,7 @@ import {
 import * as Permissions from "../../model/permissionsUtils";
 import FormManager from "../FormManager/FormManager";
 
+
 require('./EditDepartment.css');
 
 const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
@@ -278,6 +279,7 @@ export default class EditDepartment extends Component {
                             <FormManager 
                                 questions={departmentForm} 
                                 version={departmentFormVersion} 
+                                department={department}
                                 onSave={this.handleOnDepartmentFormSave}/>
                         </Tab>}
                     </Tabs>
