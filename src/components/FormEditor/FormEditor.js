@@ -121,6 +121,32 @@ class FormEditor extends react.Component {
         this.setState(this.state);
     }
 
+    upQuestion(index) {
+        if (index == 0){
+            return
+        }
+        const questions = [...this.state.questions];
+        const temp = questions[index];
+        questions[index] = questions[index-1];
+        questions[index-1] = temp;
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
+    }
+
+    downQuestion(index) {
+        if (index == this.state.questions.length - 1){
+            return
+        }
+        const questions = [...this.state.questions];
+        const temp = questions[index];
+        questions[index] = questions[index+1];
+        questions[index+1] = temp;
+        this.state.questions = questions;
+        this.state.hasChanges = true;
+        this.setState(this.state);
+    }
+
     render() {
         const {questions, hasChanges, lastNotFound} = this.state;
         const {department} = this.props;
@@ -135,9 +161,11 @@ class FormEditor extends react.Component {
                         <ListGroupItem key={index} className="question">
                             <header>
                                 <h3>{`Question ${index + 1}`}</h3>
-                                <Button bsStyle="danger" onClick={() => this.deleteQuestion(index)}>
-                                    Delete
-                                </Button>
+                                <div class="buttons">
+                                    <Button bsStyle="link" onClick={() => this.upQuestion(index)}>Up</Button>
+                                    <Button bsStyle="link" onClick={() => this.downQuestion(index)}>Down</Button>
+                                    <Button bsStyle="danger" onClick={() => this.deleteQuestion(index)}>Delete</Button>
+                                </div>
                             </header>
 
                             <FormGroup>
