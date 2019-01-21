@@ -15,6 +15,7 @@ import {
 import * as Permissions from "../../model/permissionsUtils";
 import FormManager from "../FormManager/FormManager";
 
+
 require('./EditDepartment.css');
 
 const DEFAULT_LOGO = 'https://yt3.ggpht.com/-t7buXM4UqEc/AAAAAAAAAAI/AAAAAAAAAAA/n5U37nYuExw/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';
@@ -50,6 +51,7 @@ export default class EditDepartment extends Component {
         this.state = {
             department: props.department || defaultDepartment,
             departmentForm: [],
+            departmentFormVersion: 0,
             volunteersAllocations: {},
             hasChanges: false
         };
@@ -64,7 +66,7 @@ export default class EditDepartment extends Component {
         if (!this.state.department._id) return;
 
         axios.get(`/api/v1/public/departments/${this.state.department._id}/forms`)
-            .then(res => this.setState({departmentForm: res.data}));
+            .then(res => this.setState({departmentForm: res.data, departmentFormVersion: this.state.departmentFormVersion+1}));
 
         axios.get(`/api/v1/departments/${this.state.department._id}/volunteersAllocations`)
             .then(res => this.setState({volunteersAllocations: res.data}));
@@ -132,7 +134,7 @@ export default class EditDepartment extends Component {
 
     handleOnDepartmentFormSave(form) {
         axios.post(`/api/v1/departments/${this.state.department._id}/forms`, {form})
-            .then(res => this.setState({departmentForm: res.data}));
+            .then(res => this.setState({departmentForm: res.data, departmentFormVersion: this.state.departmentFormVersion+1}));
     }
 
     delete = _ => {
@@ -149,7 +151,7 @@ export default class EditDepartment extends Component {
     }
 
     render() {
-        const {department, volunteersAllocations, departmentForm, hasChanges} = this.state;
+        const {department, volunteersAllocations, departmentForm, departmentFormVersion, hasChanges} = this.state;
         const {basicInfo, status, allocationsDetails} = department;
         const departmentLogo = basicInfo.imageUrl ? basicInfo.imageUrl : DEFAULT_LOGO;
 
@@ -274,7 +276,11 @@ export default class EditDepartment extends Component {
                             </FormGroup>
                         </Tab>
                         {department._id && <Tab eventKey={4} title="Join Form">
-                            <FormManager questions={departmentForm} onSave={this.handleOnDepartmentFormSave}/>
+                            <FormManager 
+                                questions={departmentForm} 
+                                version={departmentFormVersion} 
+                                department={department}
+                                onSave={this.handleOnDepartmentFormSave}/>
                         </Tab>}
                     </Tabs>
                 </Modal.Body>

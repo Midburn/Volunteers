@@ -19,8 +19,12 @@ export default class FormViewer extends Component {
     }
 
     render() {
-        const {questions} = this.props;
+        const {questions, isVisible} = this.props;
         const {language} = this.state;
+
+        if (!isVisible) {
+            return null
+        }
 
         if (questions.length === 0) {
             return <div>Nothing to show</div>
