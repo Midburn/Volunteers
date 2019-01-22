@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const co = require('co');
-const consts = require('../utils/consts');
 const JWT_KEY = process.env.JWT_KEY;
 const Round = require('../models/TicketsAllocByRound');
 const uuid = require('uuid/v1');
@@ -32,19 +31,8 @@ router.post('/rounds/:eventId', co.wrap(function* (req, res) {
     //     return res.status(403).json([{"error": "Action is not allowed - User doesn't have admin permissions"}]);
     // }
 
-    // const round = new Round({
-    //     _id: roundId,
-    //     eventId: 'MIDBURN2019',
-    //     startDate: new Date('January 06, 2019 00:00:00'),
-    //     endDate: new Date('February 11, 2019 00:00:00'),
-    //     based_event_id: 'MIDBURN2019',
-    //     is_show: true,
-    //     description: 'כרטיסים למתנדבים חדשים'|| '' 
-    // });
     const eventId = req.params.eventId;
-    const roundId = uuid()
     const round = new Round({
-        _id: roundId,
         eventId,
         startDate: req.startDate,
         endDate: req.endDate,
@@ -56,8 +44,6 @@ router.post('/rounds/:eventId', co.wrap(function* (req, res) {
     yield round.save();
     return res.json(round);
 }));
-
-
 
 // router.post('/events/change', co.wrap(function*(req, res) {
 //     const new_event = req.body.event;
