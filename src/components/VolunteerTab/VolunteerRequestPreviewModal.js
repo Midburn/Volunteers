@@ -113,7 +113,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     this.setState(this.state)
 
     const request = this.state.request;
-    axios.delete(`/api/v1/departments/${request.departmentId}/events/${request.eventId}/request/${request.userId}`)
+    axios.delete(`/api/v1/departments/${request.departmentId}/request/${request.userId}`)
     .then(response => {
         this.state.removeEnabled = true
         this.setState(this.state)
@@ -127,7 +127,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     this.state.addEnabled = false
     this.setState(this.state)
     const request = this.state.request;
-    axios.post(`/api/v1/departments/${request.departmentId}/events/${request.eventId}/volunteer`, {
+    axios.post(`/api/v1/departments/${request.departmentId}/volunteer`, {
         permission: this.state.permission,
         yearly: this.state.yearly === 'true' ? true : false,
         userId: request.userId,
