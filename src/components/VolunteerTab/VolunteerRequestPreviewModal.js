@@ -21,6 +21,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
       departmentAnswer: null,
 
       removeEnabled: true,
+      showAreYouSure: false,
 
       permission: 'volunteer',
       yearly: 'false',
@@ -71,14 +72,6 @@ export default class VolunteerRequestPreviewModal extends React.Component {
         </Alert>
       )
     }
-    if (this.state.request.needToRefillGeneralForm) {
-      return (
-        <Alert className="profile-alert" bsStyle="warning">
-          <big><strong>{this.state.request.userId}</strong> has filled an old general form.</big><br/>
-          Ask the volunteer to send a new join request. It won't add a new request just fill the missing details for this request.
-        </Alert>
-      )
-    }
     return null;
   }
   
@@ -107,6 +100,14 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     })
   }
 
+  showAreYouSure = _ => {
+    this.setState({ showAreYouSure: true });
+  }
+
+  closeAreYouSure = _ => {
+    this.setState({ showAreYouSure: false });
+  }
+
   remove = _ => {
     //TODO: show "are you sure" alert
     this.state.removeEnabled = false
@@ -116,6 +117,7 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     axios.delete(`/api/v1/departments/${request.departmentId}/request/${request.userId}`)
     .then(response => {
         this.state.removeEnabled = true
+        this.state.showAreYouSure = false;
         this.setState(this.state)
         this.props.onSuccess()
         this.props.onHide() 
@@ -196,8 +198,18 @@ export default class VolunteerRequestPreviewModal extends React.Component {
                     <div className="add-error">{this.state.status}</div>}
                 </div>
               </div>
-
-              <Button bsStyle="danger" disabled={!this.state.removeEnabled} onClick={this.remove}>Remove</Button>
+              <Button bsStyle="danger" disabled={!this.state.removeEnabled} onClick={this.showAreYouSure}>Remove</Button>
+              {this.state.showAreYouSure && 
+              <div className="are-you-sure">Are you sure you want to remove <b>{email}</b> request?
+                <div>
+                  <Button className="are-you-sure-button"  onClick={this.closeAreYouSure}>
+                    No
+                  </Button>
+                  <Button className="are-you-sure-button" bsStyle="danger" onClick={this.remove}>
+                    Yes
+                  </Button>
+                </div>
+              </div>}
             </Tab>
             
             <Tab eventKey={2} title="Forms">
@@ -207,7 +219,6 @@ export default class VolunteerRequestPreviewModal extends React.Component {
                 <FromAnswersView answers={this.state.departmentAnswer}/>
             </Tab>
           </Tabs>
-          {/* <Button className="edit-volunteer-delete" bsStyle="danger" onClick={this.remove}>Remove</Button> */}
         </Modal.Body>
       </Modal>
     )

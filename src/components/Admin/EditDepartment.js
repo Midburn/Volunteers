@@ -247,13 +247,13 @@ export default class EditDepartment extends Component {
                                 <FormControl type="number" value={allocationsDetails.maxAllocatedTickets || 0}
                                              disabled={!Permissions.isAdmin()}
                                              onChange={this.handleOnAllocatedTicketsChange}/>
-                                <HelpBlock>The number of tickets for split among volunteers from last MibBurn<br/>
-                                    <b>{volunteersAllocations.allocatedTickets} entrance tickets</b> were already assigned to volunteers -  
+                                <HelpBlock>The total number of tickets<br/>
+                                    <b>{volunteersAllocations.allocatedTickets} tickets</b> were already assigned to volunteers -  
                                     <b> {allocationsDetails.maxAllocatedTickets - volunteersAllocations.allocatedTickets}</b> left
                                 </HelpBlock>
                             </FormGroup>
                             <br/>
-                            <FormGroup controlId="maxAllocatedEarlyEntrancesPhase1">
+                            {/* <FormGroup controlId="maxAllocatedEarlyEntrancesPhase1">
                                 <ControlLabel># Early Entrances 9.5.18</ControlLabel>
                                 <FormControl type="number" value={allocationsDetails.maxAllocatedEarlyEntrancesPhase1 || 0}
                                              disabled={!Permissions.isAdmin()}
@@ -273,7 +273,7 @@ export default class EditDepartment extends Component {
                                     <b>{volunteersAllocations.allocatedEarlyEntrancesPhase2} early entrance vouchers</b> were already assigned to volunteers - 
                                     <b> {allocationsDetails.maxAllocatedEarlyEntrancesPhase2 - volunteersAllocations.allocatedEarlyEntrancesPhase2}</b> left
                                 </HelpBlock>
-                            </FormGroup>
+                            </FormGroup> */}
                         </Tab>
                         {department._id && <Tab eventKey={4} title="Join Form">
                             <FormManager 

@@ -66,9 +66,6 @@ const enrichVolunteerDetailsFromGeneralForm = co.wrap(function* (volunteers) {
         if (!form) {
             volunteer._doc.needToFillGeneralForm = !form;
         } else {
-            // HACK - This is a hack to catch users that filled the old form - without the 18+ question
-            const newForm = utils.isNewGeneralForm(form)
-            volunteer._doc.needToRefillGeneralForm = !newForm;
             volunteer._doc.generalForm = form;
             if (!volunteer._doc.sparkInfo) {
                 volunteer._doc.sparkInfo = {};

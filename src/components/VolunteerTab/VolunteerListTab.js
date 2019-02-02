@@ -531,10 +531,10 @@ export default class VolunteerListTab extends Component {
                                     {/* <th className="ellipsis-text flex2">Added Date</th> */}
                                     <th className="ellipsis-text flex2">Role</th>
                                     <th className="ellipsis-text flex1">Yearly</th>
-                                    <th className="ellipsis-text flex1">#Tickets</th>
+                                    {/* <th className="ellipsis-text flex1">#Tickets</th> */}
                                     {/*<th className="ellipsis-text flex1">#Tickets Allocated</th>*/}
-                                    <th className="ellipsis-text flex1">9.5</th>
-                                    <th className="ellipsis-text flex1">13.5</th>
+                                    {/* <th className="ellipsis-text flex1">9.5</th>
+                                    <th className="ellipsis-text flex1">13.5</th> */}
                                     {/*<th className="ellipsis-text flex1">Early Entrance Phase 3?</th>*/}
                                     {/* <th className="ellipsis-text flex2">Other Departments</th> */}
                                     {showTags && <th className="ellipsis-text flex3">Tags</th>}
@@ -543,7 +543,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleVolunteers.map(volunteer =>
                                     <tr key={volunteer._id}
-                                        className={`${(!volunteer.sparkInfo || !volunteer.sparkInfo.validProfile) ? 'invalid' : (volunteer.needToFillGeneralForm || volunteer.needToRefillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
+                                        className={`${(!volunteer.sparkInfo || !volunteer.sparkInfo.validProfile) ? 'invalid' : (volunteer.needToFillGeneralForm ? 'missing-sign' : '')} ${volunteer.permission}`}
                                         // onClick={() => this.showEditModal(volunteer._id)}
                                     >
                                         {!this.state.filter.departmentId &&
@@ -572,9 +572,9 @@ export default class VolunteerListTab extends Component {
                                             className="ellipsis-text flex2">{volunteer.createdAt ? volunteer.createdAt.split('T')[0] : 'N/A'}</td> */}
                                         <td className="ellipsis-text flex2" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.permission}</td>
                                         <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>{volunteer.yearly ? 'Yes' : 'No'}</td>
-                                        <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>
+                                        {/* <td className="ellipsis-text flex1" onClick={() => this.showEditModal(volunteer._id)}>
                                             {volunteer.sparkInfo && typeof volunteer.sparkInfo.numOfTickets !== "undefined" ? volunteer.sparkInfo.numOfTickets : '???'}
-                                        </td>
+                                        </td> */}
                                         {/*<td className="ellipsis-text flex1">*/}
                                             {/*<input type="number"*/}
                                                    {/*min="1"*/}
@@ -582,7 +582,7 @@ export default class VolunteerListTab extends Component {
                                                    {/*required value={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedTickets : 0}*/}
                                                    {/*onChange={(event) => this.onTicketsAllocatedChange(volunteer.userId, event.target.value)}/>*/}
                                         {/*</td>*/}
-                                        <td className="ellipsis-text flex1">
+                                        {/* <td className="ellipsis-text flex1">
                                             <input type="checkbox" 
                                                    disabled={maxAllocationReachedPhase1 && !volunteer.allocationsDetails.allocatedEarlyEntrancePhase1} 
                                                    checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase1 : false}
@@ -595,7 +595,7 @@ export default class VolunteerListTab extends Component {
                                                    checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrancePhase2 : false}
                                                    onChange={(event) => this.onEarlyEntranceAllocatedChange(volunteer.userId, event.target.checked, 2)}/>
 
-                                        </td>
+                                        </td> */}
                                         {/*<td className="ellipsis-text flex1">*/}
                                             {/*<input type="checkbox"*/}
                                                    {/*checked={volunteer.allocationsDetails !== null ? volunteer.allocationsDetails.allocatedEarlyEntrance : false}*/}
@@ -658,7 +658,7 @@ export default class VolunteerListTab extends Component {
                                 <tbody>
                                 {this.state.visibleRequests.map(volunteerRequest =>
                                     <tr key={volunteerRequest._id}
-                                        className={`volunteer-list-group-item ${(!volunteerRequest.sparkInfo || !volunteerRequest.sparkInfo.validProfile)  ? 'invalid' : (volunteerRequest.needToFillGeneralForm || volunteerRequest.needToRefillGeneralForm ? 'missing-sign' : '')}`}
+                                        className={`volunteer-list-group-item ${(!volunteerRequest.sparkInfo || !volunteerRequest.sparkInfo.validProfile)  ? 'invalid' : (volunteerRequest.needToFillGeneralForm ? 'missing-sign' : '')}`}
                                         onClick={() => this.showRequestModal(volunteerRequest._id)}>
                                         {!this.state.filter.departmentId &&
                                         <td className="ellipsis-text flex2">

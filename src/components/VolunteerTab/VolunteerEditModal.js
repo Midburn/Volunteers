@@ -22,7 +22,8 @@ export default class VolunteerEditModal extends React.Component {
         yearly: this.props.volunteer.yearly ? 'true' : 'false'
       },
       hasChanges: false,
-      isButtonEnabled: true
+      isButtonEnabled: true,
+      showAreYouSure: false
     }
   }
 
@@ -81,14 +82,6 @@ export default class VolunteerEditModal extends React.Component {
         </Alert>
       )
     }
-    if (this.props.volunteer.needToRefillGeneralForm) {
-      return (
-        <Alert className="profile-alert" bsStyle="warning">
-          <big><strong>{this.props.volunteer.userId}</strong> has filled an old general form.</big><br/>
-          Ask the volunteer to send a new join request. It won't add a new request just fill the missing details for this volunteer.
-        </Alert>
-      )
-    }
     return null;
   }
 
@@ -106,12 +99,20 @@ export default class VolunteerEditModal extends React.Component {
     })
   }
 
+  showAreYouSure = _ => {
+    this.setState({ showAreYouSure: true });
+  }
+
+  closeAreYouSure = _ => {
+    this.setState({ showAreYouSure: false });
+  }
+
   remove = _ => {
-    //TODO: show "are you sure" alert
     this.state.isButtonEnabled = false
     axios.delete(`/api/v1/departments/${this.props.volunteer.departmentId}/volunteer/${this.props.volunteer._id}`)
     .then(response => {
         this.state.isButtonEnabled = true
+        this.state.showAreYouSure = false;
         this.state.hasChanges = false
         this.setState(this.state)
         this.props.onSuccess()
@@ -157,7 +158,7 @@ export default class VolunteerEditModal extends React.Component {
         {this.renderInfoData('Midburn Profile', profile)}
         {this.renderInfoData('Contact Email', email)}
         {this.renderInfoData('Contact Phone', phone)}
-        {this.renderInfoData('Num of Tickets', tickets)}
+        {/* {this.renderInfoData('Num of Tickets', tickets)} */}
       </div>
 
     const systemDataSection = 
@@ -165,8 +166,8 @@ export default class VolunteerEditModal extends React.Component {
         {this.renderInfoData('Permission', permission)}
         {this.renderInfoData('Yearly', yearly)}
         {this.renderInfoData('Added Date', addedDate)}
-        {otherDep ? this.renderInfoData('Also in', otherDep) : null}
-        {this.renderInfoData('Early Entrance', early)}
+        {otherDep ? this.renderInfoData('Also volunteers in', otherDep) : null}
+        {/* {this.renderInfoData('Early Entrance', early)} */}
       </div>
 
     return (
@@ -207,7 +208,18 @@ export default class VolunteerEditModal extends React.Component {
                 </FormGroup>
                   <Button className="edit-volunteer-save" bsStyle="success" disabled={!this.state.hasChanges} onClick={this.save}>Save</Button>
               </div>
-              <Button className="edit-volunteer-delete" bsStyle="danger" onClick={this.remove}>Remove</Button>
+              <Button className="edit-volunteer-delete" bsStyle="danger" onClick={this.showAreYouSure}>Remove</Button>
+              {this.state.showAreYouSure && 
+              <div className="are-you-sure">Are you sure you want to remove <b>{profile}</b>?
+                <div>
+                  <Button className="are-you-sure-button"  onClick={this.closeAreYouSure}>
+                    No
+                  </Button>
+                  <Button className="are-you-sure-button" bsStyle="danger" onClick={this.remove}>
+                    Yes
+                  </Button>
+                </div>
+              </div>}
             </Tab>
             <Tab eventKey={2} title="Forms">
               <h4>General</h4>
