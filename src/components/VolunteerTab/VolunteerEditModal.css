@@ -43,3 +43,13 @@
 .volunteer-edit-data-info {
   flex: 4;
 }
+
+.are-you-sure {
+  margin-top: 10px;
+}
+
+.are-you-sure-button {
+  margin-top: 10px;
+  margin-right: 10px;
+  width: 80px;
+}

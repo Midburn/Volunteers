@@ -22,7 +22,8 @@ export default class VolunteerEditModal extends React.Component {
         yearly: this.props.volunteer.yearly ? 'true' : 'false'
       },
       hasChanges: false,
-      isButtonEnabled: true
+      isButtonEnabled: true,
+      showAreYouSure: false
     }
   }
 
@@ -98,12 +99,20 @@ export default class VolunteerEditModal extends React.Component {
     })
   }
 
+  showAreYouSure = _ => {
+    this.setState({ showAreYouSure: true });
+  }
+
+  closeAreYouSure = _ => {
+    this.setState({ showAreYouSure: false });
+  }
+
   remove = _ => {
-    //TODO: show "are you sure" alert
     this.state.isButtonEnabled = false
     axios.delete(`/api/v1/departments/${this.props.volunteer.departmentId}/volunteer/${this.props.volunteer._id}`)
     .then(response => {
         this.state.isButtonEnabled = true
+        this.state.showAreYouSure = false;
         this.state.hasChanges = false
         this.setState(this.state)
         this.props.onSuccess()
@@ -199,7 +208,18 @@ export default class VolunteerEditModal extends React.Component {
                 </FormGroup>
                   <Button className="edit-volunteer-save" bsStyle="success" disabled={!this.state.hasChanges} onClick={this.save}>Save</Button>
               </div>
-              <Button className="edit-volunteer-delete" bsStyle="danger" onClick={this.remove}>Remove</Button>
+              <Button className="edit-volunteer-delete" bsStyle="danger" onClick={this.showAreYouSure}>Remove</Button>
+              {this.state.showAreYouSure && 
+              <div className="are-you-sure">Are you sure you want to remove <b>{profile}</b>?
+                <div>
+                  <Button className="are-you-sure-button"  onClick={this.closeAreYouSure}>
+                    No
+                  </Button>
+                  <Button className="are-you-sure-button" bsStyle="danger" onClick={this.remove}>
+                    Yes
+                  </Button>
+                </div>
+              </div>}
             </Tab>
             <Tab eventKey={2} title="Forms">
               <h4>General</h4>
