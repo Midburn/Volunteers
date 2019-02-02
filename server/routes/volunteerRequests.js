@@ -42,9 +42,6 @@ const enrichRequestDetailsFromGeneralForm = co.wrap(function* (requests) {
         if (!form) {
             request._doc.needToFillGeneralForm = !form;
         } else {
-            // HACK - This is a hack to catch users that filled the old form - without the 18+ question
-            const newForm = utils.isNewGeneralForm(form)
-            request._doc.needToRefillGeneralForm = !newForm;
             request._doc.generalForm = form;
             if (!request._doc.sparkInfo) {
                 request._doc.sparkInfo = {};

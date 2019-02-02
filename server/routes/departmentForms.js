@@ -223,9 +223,7 @@ router.get('/public/form/hasAnswer', co.wrap(function* (req, res) {
         answer = yield getAnswer(consts.GENERAL_FORM, email, eventId);
     }
 
-    // HACK - if the user filled the old form (without the 18+ answer) he should fill again
-    const newForm = utils.isNewGeneralForm(answer);
-    return res.json({hasAnswer: !!answer && newForm});
+    return res.json({hasAnswer: !!answer});
 }));
 
 // PUBLIC - Submit answers to the general form

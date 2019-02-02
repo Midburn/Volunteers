@@ -71,14 +71,6 @@ export default class VolunteerRequestPreviewModal extends React.Component {
         </Alert>
       )
     }
-    if (this.state.request.needToRefillGeneralForm) {
-      return (
-        <Alert className="profile-alert" bsStyle="warning">
-          <big><strong>{this.state.request.userId}</strong> has filled an old general form.</big><br/>
-          Ask the volunteer to send a new join request. It won't add a new request just fill the missing details for this request.
-        </Alert>
-      )
-    }
     return null;
   }
   
