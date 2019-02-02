@@ -157,7 +157,7 @@ export default class VolunteerEditModal extends React.Component {
         {this.renderInfoData('Midburn Profile', profile)}
         {this.renderInfoData('Contact Email', email)}
         {this.renderInfoData('Contact Phone', phone)}
-        {this.renderInfoData('Num of Tickets', tickets)}
+        {/* {this.renderInfoData('Num of Tickets', tickets)} */}
       </div>
 
     const systemDataSection = 
@@ -165,8 +165,8 @@ export default class VolunteerEditModal extends React.Component {
         {this.renderInfoData('Permission', permission)}
         {this.renderInfoData('Yearly', yearly)}
         {this.renderInfoData('Added Date', addedDate)}
-        {otherDep ? this.renderInfoData('Also in', otherDep) : null}
-        {this.renderInfoData('Early Entrance', early)}
+        {otherDep ? this.renderInfoData('Also volunteers in', otherDep) : null}
+        {/* {this.renderInfoData('Early Entrance', early)} */}
       </div>
 
     return (
