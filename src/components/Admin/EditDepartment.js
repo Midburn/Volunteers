@@ -226,13 +226,20 @@ export default class EditDepartment extends Component {
 
                             <HelpBlock>New volunteers can fill the join form. You should close it if you're not ready
                                 yet or already full.</HelpBlock>
+                            {this.state.department._id && this.state.department.status.active &&
+                            <HelpBlock><br/>Here's a <b>public link</b> to join your department:
+                                <br/><a href={`../volunteer-requests?departmentId=${this.state.department._id}`} target="_blank">
+                                {`${window.location.origin}/volunteer-requests?departmentId=${this.state.department._id}`}</a>
+                                <br/>You <b>can publish this link anywhere you want</b>, it will open the join process to your department directly.
+                                <br/>People won't be able to join if the department is close or hidden - so feel free to publish it :)
+                            </HelpBlock>
+                            }
                             {this.state.department._id && (!this.state.department.status.visibleToJoin || !this.state.department.status.availableToJoin) &&
-                            <HelpBlock><br/>Here's a <a href={`../volunteer-requests?departmentId=${this.state.department._id}`}
-                                   target="_blank">
-                                    secret link
-                                </a> to join your department.
-                                <br/>You can send this link to other volunteers in your department, and they will be able to send join requests even if the department is closed or hidden.
-                                <br/>Don't publish this link!!! . Use carefully :)
+                            <HelpBlock><br/>Here's a <b>secret link</b> to join your department:
+                                <br/><a href={`../volunteer-requests?secret=true&departmentId=${this.state.department._id}`} target="_blank">
+                                {`${window.location.origin}/volunteer-requests?secret=true&departmentId=${this.state.department._id}`}</a>
+                                <br/>You can send this link to other volunteers in your department, and they will be able to send join requests even if the department is <b>closed</b> or <b>hidden</b>.
+                                <br/><b>Don't publish this link!!! . Use carefully</b> :)
                             </HelpBlock>}
 
                             {this.state.department._id && Permissions.isAdmin() &&

@@ -21,8 +21,15 @@ class VolunteerRequest extends React.Component {
         // auto open department
         const queryParams = queryString.parse(this.props.location.search);
         const departmentId = queryParams['departmentId'];
-        if (departmentId) {
+        const secret = queryParams['secret'];
+        console.log(queryParams)
+        if (departmentId && secret) {
             volunteerRequestModel.startJoinProcess(departmentId)
+        } else if (departmentId) {
+            const department = volunteerRequestModel.departments.find(department => department._id === departmentId)
+            if (department.status.availableToJoin) {
+                volunteerRequestModel.startJoinProcess(departmentId)
+            }
         }
 
         this.handleOnChangeLanguage = this.handleOnChangeLanguage.bind(this);
