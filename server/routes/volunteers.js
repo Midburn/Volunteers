@@ -12,10 +12,11 @@ const permissionsUtils = require('../utils/permissions');
 const consts = require('../utils/consts');
 const utils = require('../utils/utils');
 
-const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers) {
+const enrichVolunteerOtherDepartments = co.wrap(function* (departmentId, departmentVolunteers, eventId) {
     const departmentVolunteersOtherDepartments = yield Volunteer
         .find({
             userId: {$in: departmentVolunteers.map(volunteer => volunteer.userId)},
+            eventId,
             deleted: false
         });
 
@@ -266,7 +267,7 @@ router.get('/departments/:departmentId/volunteers', co.wrap(function* (req, res)
     console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - find`);
     if (departmentVolunteers) {
         console.time(`Get volunteers - ${department.basicInfo.nameEn} - enrich other departments`);
-        yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers);
+        yield enrichVolunteerOtherDepartments(departmentId, departmentVolunteers, eventId);
         console.timeEnd(`Get volunteers - ${department.basicInfo.nameEn} - enrich other departments`);
 
         console.time(`Get volunteers - ${department.basicInfo.nameEn} - enrich general form`);
