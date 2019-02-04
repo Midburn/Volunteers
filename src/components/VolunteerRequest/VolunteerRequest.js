@@ -22,7 +22,6 @@ class VolunteerRequest extends React.Component {
         const queryParams = queryString.parse(this.props.location.search);
         const departmentId = queryParams['departmentId'];
         const secret = queryParams['secret'];
-        console.log(queryParams)
         if (departmentId && secret) {
             volunteerRequestModel.startJoinProcess(departmentId)
         } else if (departmentId) {
@@ -52,19 +51,25 @@ class VolunteerRequest extends React.Component {
             <div className="requests-view">
                 <div className={classNames("card", "container", {rtl: language === "he"})}>
                     <header>
-                        <h1>{rtl ? "התנדבות במידברן" : "Volunteering"}</h1>
+                        <h1>{rtl ? "השתתפות במידברן" : "Participation at Midburn!"}</h1>
                         <FormLanguagePicker value={language} onChange={this.handleOnChangeLanguage}/>
                     </header>
                     
                     {rtl ?
                     <p>
-                        התנדבות היא חלק בלתי נפרד מחוויית מידברן והמתנדבים הם אלו שבונים את העיר, מתפעלים אותה ולבסוף גם דואגים לפרק אותה.<br/>
-                        התנדבות במחלקות אינה שוללת לקיחת חלק במחנה נושא או מיצב אומנות.
+                        כל אחד מוזמן להשתתף, כל אחת מוזמנת לשחק. <br/>
+                        אנו הופכים את העולם לממשי דרך פעולות הפותחות את הלב. <br/>
+                        שלא כמו בפסטיבלים מסורתיים, מידברן הוא אירוע שמושתת כולו על מעורבות המשתתפים בו. <br/>
+                        אתן אלה שהופכות את מידברן למה שהוא. <br/>
+                        אתם אחראים לחוויה שלכם. אין צופים מהצד!
                     </p>
                         :
                     <p>
-                        Volunteering is an inseparable part of the Midburn experience. The volunteers are the ones to build, operate and teardown the city.<br/>
-                        Volunteering in a department does not exclude participation in a theme camp or an art installation.
+                        Everyone is welcome to participate and play. <br/>
+                        We bring this inspiring world to life through our heart-opening actions.<br/>
+                        Unlike other festivals, Midburn is an event entirely participant-led. We are responsible for our experience. <br/>
+                        We are the creators and turn Midburn into what it is.<br/>
+                        No one stands on the sidelines!
                     </p>
                     }
                     
