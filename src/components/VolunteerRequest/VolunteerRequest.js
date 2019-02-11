@@ -26,7 +26,7 @@ class VolunteerRequest extends React.Component {
             volunteerRequestModel.startJoinProcess(departmentId)
         } else if (departmentId) {
             const department = volunteerRequestModel.departments.find(department => department._id === departmentId)
-            if (department.status.availableToJoin) {
+            if (department && department.status.availableToJoin) {
                 volunteerRequestModel.startJoinProcess(departmentId)
             }
         }
