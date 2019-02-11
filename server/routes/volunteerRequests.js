@@ -202,6 +202,25 @@ router.put("/public/departments/:departmentId/join", co.wrap(function* (req, res
     return res.json(volunteerRequest);
 }));
 
+// Get request details of a specific user
+router.get("/departments/:departmentId/requests/:userId", co.wrap(function* (req, res) {
+    const departmentId = req.params.departmentId;
+    const eventId = req.userDetails.eventId;
+    const userId = req.params.userId;
+
+    if (!permissionsUtils.isDepartmentManager(req.userDetails, departmentId)) {
+        return res.status(403).json([{"error": "Action is not allowed - User doesn't have manager permissions for department " + departmentId}]);
+    }
+
+    const volunteerRequest = yield VolunteerRequest.findOne({
+        userId: userId,
+        eventId: eventId,
+        departmentId: departmentId
+    });
+
+    return res.json(volunteerRequest);
+}));
+
 // Edit Request
 router.put("/departments/:departmentId/requests/:userId", co.wrap(function* (req, res) {
     const departmentId = req.params.departmentId;

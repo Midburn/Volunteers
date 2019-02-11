@@ -40,12 +40,14 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     const userId = this.props.request.userId;
     Promise.all([
       axios.get(`/api/v1/form/answer/${userId}`).then(res => res.data),
+      axios.get(`/api/v1/departments/${departmentId}/requests/${userId}`).then(res => res.data),
       axios.get(`/api/v1/departments/${departmentId}/forms/answer/${userId}`).then(res => res.data)
-    ]).then(([generalAnswer, departmentAnswer]) => {
+    ]).then(([generalAnswer, requestDetails, departmentAnswer]) => {
       this.setState({
         ...this.state,
         generalAnswer: generalAnswer && generalAnswer.form ? generalAnswer.form : [],
         departmentAnswer: departmentAnswer && departmentAnswer.form ? departmentAnswer.form : [],
+        requestDetails: requestDetails ? requestDetails: [],
         loading: false
       })
     })
@@ -153,8 +155,10 @@ export default class VolunteerRequestPreviewModal extends React.Component {
     if (!this.props.request) {
       return (<span/>)
     }
-
-    const name = this.props.request ? `${this.props.request.firstName} ${this.props.request.lastName}` : 'No Data';
+    const sparkInfo = this.state.requestDetails && this.state.requestDetails.sparkInfo ? this.state.requestDetails.sparkInfo : [];
+    const firstName = sparkInfo && sparkInfo.firstName? sparkInfo.firstName : 'No Data';
+    const lastName = sparkInfo && sparkInfo.LastName? sparkInfo.LastName : 'No Data'; 
+    const name = `${firstName} ${lastName}`;
     const email = this.props.request ? this.props.request.userId : 'No Data';
 
     const errorMessage = this.errorMessage();
