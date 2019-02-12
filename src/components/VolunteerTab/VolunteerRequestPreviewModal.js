@@ -154,11 +154,13 @@ export default class VolunteerRequestPreviewModal extends React.Component {
       return (<span/>)
     }
 
-    const name = this.props.request ? `${this.props.request.firstName} ${this.props.request.lastName}` : 'No Data';
-    const email = this.props.request ? this.props.request.userId : 'No Data';
+    const request = this.props.request;
+    const firstName = request && request.sparkInfo && request.sparkInfo.firstName ? request.sparkInfo.firstName : 'No Data';
+    const lastName = request && request.sparkInfo && request.sparkInfo.lastName ? request.sparkInfo.lastName : 'No Data';
+    const name = `${firstName} ${lastName}`;
+    const email = request && request.userId ? request.userId : 'No Data';
 
     const errorMessage = this.errorMessage();
-
 
     return (
       <Modal show={this.props.show} onHide={this.onHide} onEnter={this.onEnter} bsSize="lg">
