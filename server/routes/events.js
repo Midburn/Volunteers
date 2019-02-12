@@ -8,6 +8,7 @@ router.get('/public/events', co.wrap(function*(req, res) {
     const events = {
         events: consts.SUPPORTED_EVENTS,
         current: req.userDetails.eventId,
+        default: consts.DEFAULT_EVENT_ID,
         canChange: !req.userDetails.anonymousAccess
     }
     res.json(events)
