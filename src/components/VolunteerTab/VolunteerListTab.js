@@ -66,6 +66,8 @@ export default class VolunteerListTab extends Component {
         this.hideSuccessAlert = this.hideSuccessAlert.bind(this);
         this.showErrorAlert = this.showErrorAlert.bind(this);
         this.hideErrorAlert = this.hideErrorAlert.bind(this);
+        this.cleanQuestionString = this.cleanQuestionString.bind(this);
+        this.cleanAnswerString = this.cleanAnswerString.bind(this);
     }
 
     componentWillMount() {
@@ -336,6 +338,14 @@ export default class VolunteerListTab extends Component {
             this.updateVisibleVolunteers);
     }
 
+    cleanQuestionString = (string) => {
+        return string.replace(/\r?\n|\r|\n|\,|\.|"/g, '')
+    }
+
+    cleanAnswerString = (string) => {
+        return string.replace(/\r?\n|\r|\n|\,|"/g, '').replace(/\,/g, '.')
+    }
+
     downloadVolunteers = _ => {
         const departmentName = this.state.filter.departmentId ? this.state.departments.find(d => d._id === this.state.filter.departmentId).basicInfo.nameEn : 'all';
         const filename = `${departmentName}-volunteers.csv`;
@@ -364,8 +374,8 @@ export default class VolunteerListTab extends Component {
             };
             if (volunteer.generalForm && volunteer.generalForm.form) {
                 volunteer.generalForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r|\n/g, '').replace('"','\'\'').replace(',', '.');
-                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
+                    const que = this.cleanQuestionString(question.question);
+                    volData[que] = question.answer ? this.cleanAnswerString(question.answer) : '';
                     if (generalQuestions.indexOf(que) === -1) {
                         generalQuestions.push(que);
                     }
@@ -378,8 +388,8 @@ export default class VolunteerListTab extends Component {
             }
             if (volunteer.departmentForm && volunteer.departmentForm.form) {
                 volunteer.departmentForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r|\n/g, '').replace('"','\'\'').replace(',', '.');
-                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
+                    const que = this.cleanQuestionString(question.question);
+                    volData[que] = question.answer ? this.cleanAnswerString(question.answer) : '';
                     if (departmentQuestions.indexOf(que) === -1) {
                         departmentQuestions.push(que);
                     }
@@ -415,8 +425,8 @@ export default class VolunteerListTab extends Component {
             };
             if (request.generalForm && request.generalForm.form) {
                 request.generalForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r|\n/g, '').replace('"','\'\'').replace(',', '.');
-                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
+                    const que = this.cleanQuestionString(question.question);
+                    reqData[que] = question.answer ? this.cleanAnswerString(question.answer) : '';
                     if (generalQuestions.indexOf(que) === -1) {
                         generalQuestions.push(que);
                     }
@@ -429,8 +439,8 @@ export default class VolunteerListTab extends Component {
             }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r|\n/g, '').replace('"','\'\'').replace(',', '.');
-                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
+                    const que = this.cleanQuestionString(question.question);
+                    reqData[que] = question.answer ? this.cleanAnswerString(question.answer) : '';
                     if (departmentQuestions.indexOf(que) === -1) {
                         departmentQuestions.push(que);
                     }
