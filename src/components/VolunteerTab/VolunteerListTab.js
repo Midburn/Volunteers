@@ -429,7 +429,9 @@ export default class VolunteerListTab extends Component {
             }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
-                    console.log(question.question)
+                    console.log(question.question.charCodeAt(3))
+                    console.log(question.question.charCodeAt(4))
+                    console.log(question.question.charCodeAt(5))
                     const que = question.question.replace(/\r?\n|\r|\n/g, '').replace('"','\'\'').replace(',|,', '.');
                     console.log(que)
                     reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r|\n/g, '').replace('"','\'\'').replace(',|,', '.') : '';
