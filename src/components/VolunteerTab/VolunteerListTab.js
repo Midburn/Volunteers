@@ -364,8 +364,8 @@ export default class VolunteerListTab extends Component {
             };
             if (volunteer.generalForm && volunteer.generalForm.form) {
                 volunteer.generalForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'');
-                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'') : '';
+                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.');
+                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
                     if (generalQuestions.indexOf(que) === -1) {
                         generalQuestions.push(que);
                     }
@@ -378,8 +378,8 @@ export default class VolunteerListTab extends Component {
             }
             if (volunteer.departmentForm && volunteer.departmentForm.form) {
                 volunteer.departmentForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'');
-                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'') : '';
+                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.');
+                    volData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
                     if (departmentQuestions.indexOf(que) === -1) {
                         departmentQuestions.push(que);
                     }
@@ -415,8 +415,8 @@ export default class VolunteerListTab extends Component {
             };
             if (request.generalForm && request.generalForm.form) {
                 request.generalForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'');
-                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'') : '';
+                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.');
+                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
                     if (generalQuestions.indexOf(que) === -1) {
                         generalQuestions.push(que);
                     }
@@ -429,8 +429,8 @@ export default class VolunteerListTab extends Component {
             }
             if (request.departmentForm && request.departmentForm.form) {
                 request.departmentForm.form.forEach(question => {
-                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'');
-                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'') : '';
+                    const que = question.question.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.');
+                    reqData[que] = question.answer ? question.answer.replace(/\r?\n|\r/g, '').replace('"','\'\'').replace(',', '.') : '';
                     if (departmentQuestions.indexOf(que) === -1) {
                         departmentQuestions.push(que);
                     }
